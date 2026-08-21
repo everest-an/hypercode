@@ -561,7 +561,7 @@
       "name": "opencode",
       "version": "1.18.21",
       "bin": {
-        "opencode": "./bin/opencode",
+        "hypercode": "./bin/opencode",
       },
       "dependencies": {
         "@actions/core": "1.11.1",
