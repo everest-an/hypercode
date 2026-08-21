@@ -1,20 +1,33 @@
 {
   // HyperCode 引擎配置 —— 安装器首次安装时生成;后续升级永不覆盖用户修改。
   "plugin": ["oh-my-openagent"],
-  // 默认算力:HyperCode Cloud 网关(上游 trust3.pro)。
-  // apiKey 用环境变量引用:登录后由网关注入 HYPERCODE_API_KEY,裸 key 永不落盘。
+  // 双上游:主力 DeepSeek 官方 + premium trust3(GPT 系)。
+  // apiKey 一律用环境变量引用({env:...}),裸 key 永不落盘;由网关登录后注入。
   // 用户自带模型:在下方自行追加 provider 块,或用 TUI /connect。
   "provider": {
-    "hypercode": {
+    "hypercode-deepseek": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "HyperCode",
+      "name": "DeepSeek",
       "options": {
-        "baseURL": "http://trust3.pro/v1",
-        "apiKey": "{env:HYPERCODE_API_KEY}"
+        "baseURL": "https://api.deepseek.com/v1",
+        "apiKey": "{env:HYPERCODE_DEEPSEEK_KEY}"
       },
       "models": {
-        "hypercode-pro": { "name": "HyperCode Pro" },
-        "hypercode-flash": { "name": "HyperCode Flash" }
+        "deepseek-v4-pro": { "name": "DeepSeek V4 Pro" },
+        "deepseek-v4-flash": { "name": "DeepSeek V4 Flash" }
+      }
+    },
+    "hypercode-trust3": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "HyperCode Premium",
+      "options": {
+        "baseURL": "https://api.trust3.pro/v1",
+        "apiKey": "{env:HYPERCODE_TRUST3_KEY}"
+      },
+      "models": {
+        "gpt-5.4": { "name": "Premium (GPT-5.4)" },
+        "gpt-5.4-mini": { "name": "Premium Mini" },
+        "gpt-5.5": { "name": "Premium Max" }
       }
     }
   }
