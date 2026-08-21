@@ -1,0 +1,20 @@
+{
+  // === HYPERCODE MANAGED BEGIN ===
+  // 此块由 HyperCode 升级器维护;请勿手动编辑,块外内容可自由修改且升级时保留。
+  "agents": {
+    "sisyphus":          { "displayName": "Lead",       "description": "Lead engineer: decomposes and executes development tasks" },
+    "sisyphus-junior":   { "displayName": "Worker",     "description": "Worker: completes individual subtasks" },
+    "oracle":            { "displayName": "Architect",  "description": "Read-only consultant for hard problems" },
+    "momus":             { "displayName": "Reviewer",   "description": "Reviews plans and deliverables" },
+    "prometheus":        { "displayName": "Planner",    "description": "Exploratory task planning" },
+    "metis":             { "displayName": "Analyst",    "description": "Requirement and ambiguity analysis" },
+    "librarian":         { "displayName": "Researcher", "description": "External documentation and reference research" },
+    "explore":           { "displayName": "Scout",      "description": "Codebase exploration and location" },
+    "hephaestus":        { "displayName": "Builder",    "description": "Default build and implementation agent" },
+    "atlas":             { "displayName": "Mapper",     "description": "Code map and navigation" },
+    "multimodal-looker": { "displayName": "Looker",     "description": "Image and document content analysis" }
+  },
+  "codegraph": { "enabled": false },
+  "telemetry": { "enabled": false },
+  // === HYPERCODE MANAGED END ===
+}
