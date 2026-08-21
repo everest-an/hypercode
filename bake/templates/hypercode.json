@@ -1,6 +1,21 @@
 {
   // HyperCode 引擎配置 —— 安装器首次安装时生成;后续升级永不覆盖用户修改。
-  "plugin": ["oh-my-openagent"]
-  // provider(DeepSeek/网关)配置在用户登录 HyperCode Cloud 后动态注入,
-  // 用户永远不接触任何 API key。
+  "plugin": ["oh-my-openagent"],
+  // 默认算力:HyperCode Cloud 网关(上游 trust3.pro)。
+  // apiKey 用环境变量引用:登录后由网关注入 HYPERCODE_API_KEY,裸 key 永不落盘。
+  // 用户自带模型:在下方自行追加 provider 块,或用 TUI /connect。
+  "provider": {
+    "hypercode": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "HyperCode",
+      "options": {
+        "baseURL": "http://trust3.pro/v1",
+        "apiKey": "{env:HYPERCODE_API_KEY}"
+      },
+      "models": {
+        "hypercode-pro": { "name": "HyperCode Pro" },
+        "hypercode-flash": { "name": "HyperCode Flash" }
+      }
+    }
+  }
 }
