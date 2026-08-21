@@ -1,0 +1,52 @@
+name: build
+run-name: "build ${{ inputs.version || 'snapshot' }}"
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version override (optional, semver)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node (for node-gyp native installs)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build hypercode binaries (cross-compile)
+        run: ./packages/opencode/script/build.ts
+        env:
+          OPENCODE_VERSION: ${{ inputs.version || '0.0.0-dev' }}
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-binaries
+          path: |
+            packages/opencode/dist/hypercode-darwin-*/
+            packages/opencode/dist/hypercode-linux-*/
+            packages/opencode/dist/hypercode-windows-*/
+          if-no-files-found: error
