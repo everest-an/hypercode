@@ -51,7 +51,7 @@ jobs:
 
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
-        run: bun run package:win
+        run: bun run package:win -- --publish never
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
@@ -93,7 +93,7 @@ jobs:
 
       - name: Package macOS (dmg + zip)
         working-directory: packages/desktop
-        run: bun run package:mac
+        run: bun run package:mac -- --publish never
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
