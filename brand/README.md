@@ -4,9 +4,10 @@
 
 | 文件 | 用途 | 说明 |
 |---|---|---|
-| `hypercode-mark.svg` | HyperCode 主徽记(Code 面) | 环内 `</>` 代码符号 + 终端光标块 |
+| `hypercode-mark.svg` | HyperCode 主徽记(Code 面) | 环内 `</>` 代码符号 + 环上三节点 |
 | `hyperwork-mark.svg` | HyperWork 徽记(Work 面) | 同环同节点,环内换为"增长柱条"(工作产出) |
 | `hypercode-favicon.svg` | 网站 favicon / 安装器图标 | 简化版(无节点) |
+| `hypercode-mark.png` / `hyperwork-mark.png` | 预览/直接使用 | 512px,Edge 无头渲染 |
 
 **双态规则**:
 - 深色背景 → 徽记用白色(`color="#ffffff"`)
