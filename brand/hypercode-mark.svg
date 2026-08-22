@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" fill="currentColor" shape-rendering="crispEdges">
-  <!-- HyperCode pixel mark: blocky <square> — chevrons left/right, hollow square center. 25x25 grid, 10px cells. -->
-  <!-- left chevron < -->
-  <rect x="80" y="90" width="10" height="10"/><rect x="70" y="100" width="10" height="10"/><rect x="60" y="110" width="10" height="10"/><rect x="50" y="120" width="10" height="10"/><rect x="60" y="130" width="10" height="10"/><rect x="70" y="140" width="10" height="10"/><rect x="80" y="150" width="10" height="10"/>
-  <!-- hollow square o (5x5 outer, 3x3 hole) -->
-  <rect x="110" y="100" width="50" height="10"/><rect x="110" y="140" width="50" height="10"/><rect x="110" y="110" width="10" height="30"/><rect x="150" y="110" width="10" height="30"/>
-  <!-- right chevron > -->
-  <rect x="180" y="90" width="10" height="10"/><rect x="190" y="100" width="10" height="10"/><rect x="200" y="110" width="10" height="10"/><rect x="210" y="120" width="10" height="10"/><rect x="200" y="130" width="10" height="10"/><rect x="190" y="140" width="10" height="10"/><rect x="180" y="150" width="10" height="10"/>
+  <!-- HyperCode pixel mark: large chevrons + small hollow square, fills square icon. 25x25 grid, 10px cells. -->
+  <!-- left chevron < (11 tall) -->
+  <rect x="80" y="70" width="10" height="10"/><rect x="70" y="80" width="10" height="10"/><rect x="60" y="90" width="10" height="10"/><rect x="50" y="100" width="10" height="10"/><rect x="40" y="110" width="10" height="10"/><rect x="30" y="120" width="10" height="10"/><rect x="40" y="130" width="10" height="10"/><rect x="50" y="140" width="10" height="10"/><rect x="60" y="150" width="10" height="10"/><rect x="70" y="160" width="10" height="10"/><rect x="80" y="170" width="10" height="10"/>
+  <!-- small hollow square o (3x3) -->
+  <rect x="110" y="110" width="30" height="10"/><rect x="110" y="130" width="30" height="10"/><rect x="110" y="120" width="10" height="10"/><rect x="130" y="120" width="10" height="10"/>
+  <!-- right chevron > (11 tall) -->
+  <rect x="160" y="70" width="10" height="10"/><rect x="170" y="80" width="10" height="10"/><rect x="180" y="90" width="10" height="10"/><rect x="190" y="100" width="10" height="10"/><rect x="200" y="110" width="10" height="10"/><rect x="210" y="120" width="10" height="10"/><rect x="200" y="130" width="10" height="10"/><rect x="190" y="140" width="10" height="10"/><rect x="180" y="150" width="10" height="10"/><rect x="170" y="160" width="10" height="10"/><rect x="160" y="170" width="10" height="10"/>
 </svg>
