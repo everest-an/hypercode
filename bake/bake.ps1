@@ -50,13 +50,10 @@ $skillsSrc = Join-Path $PSScriptRoot "skills"
 if (Test-Path -LiteralPath $skillsSrc) {
     $skillsDest = Join-Path $configDir "skills"
     New-Item -ItemType Directory -Force -Path $skillsDest | Out-Null
-    foreach ($ns in @("hypercode-academic", "hypercode-finance")) {
-        $srcDir = Join-Path $skillsSrc ($ns -replace "hypercode-", "")
-        if (Test-Path -LiteralPath $srcDir) {
-            $dstDir = Join-Path $skillsDest $ns
-            if (Test-Path -LiteralPath $dstDir) { Remove-Item -LiteralPath $dstDir -Recurse -Force }
-            Copy-Item -LiteralPath $srcDir -Destination $dstDir -Recurse -Force
-        }
+    Get-ChildItem -LiteralPath $skillsSrc -Directory | ForEach-Object {
+        $dstDir = Join-Path $skillsDest ("hypercode-" + $_.Name)
+        if (Test-Path -LiteralPath $dstDir) { Remove-Item -LiteralPath $dstDir -Recurse -Force }
+        Copy-Item -LiteralPath $_.FullName -Destination $dstDir -Recurse -Force
     }
     Write-Output "[bake] skills installed: $skillsDest"
 }

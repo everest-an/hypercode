@@ -55,13 +55,11 @@ SKILLS_SRC="$(cd "$(dirname "$0")" && pwd)/skills"
 if [ -d "$SKILLS_SRC" ]; then
   SKILLS_DEST="$CONFIG_DIR/skills"
   mkdir -p "$SKILLS_DEST"
-  for NS in hypercode-academic hypercode-finance; do
-    SRC_DIR="$SKILLS_SRC/${NS#hypercode-}"
-    if [ -d "$SRC_DIR" ]; then
-      DST_DIR="$SKILLS_DEST/$NS"
-      rm -rf "$DST_DIR"
-      cp -r "$SRC_DIR" "$DST_DIR"
-    fi
+  for NS_DIR in "$SKILLS_SRC"/*/; do
+    NS_NAME="$(basename "$NS_DIR")"
+    DST_DIR="$SKILLS_DEST/hypercode-$NS_NAME"
+    rm -rf "$DST_DIR"
+    cp -r "$NS_DIR" "$DST_DIR"
   done
   echo "[bake] skills installed: $SKILLS_DEST"
 fi
