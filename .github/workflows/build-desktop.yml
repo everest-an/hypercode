@@ -48,6 +48,8 @@ jobs:
       - name: Build
         working-directory: packages/desktop
         run: bun run build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
@@ -90,6 +92,8 @@ jobs:
       - name: Build
         working-directory: packages/desktop
         run: bun run build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Package macOS (dmg + zip)
         working-directory: packages/desktop
