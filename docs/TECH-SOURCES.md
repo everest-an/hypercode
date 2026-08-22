@@ -17,8 +17,8 @@
 | apply-opencode | dpshde/apply-opencode | MIT | main(4 stars) | 批量 frontmatter/标题/wiki-link/周报 | 借鉴功能集,重实现进 Omega |
 | Obsidian-OpenCode-Knowledge | zxfccmm4/Obsidian-OpenCode-Knowledge | — | — | 示例 Vault 模板 | 仅参考,不整合 |
 | awareness.market | — | 商业 SaaS | — | 记忆服务机制(认知层/知识卡/冲突检测) | **机制借鉴,自研实现**(本地 SQLite,不用其云) |
-| anthropics/financial-services | anthropics/financial-services | **Apache-2.0** | main @ 2026-08-22 | 金融投研技能(comps/DCF/LBO/pitch-deck 等) | 技能打包内置(仅 methodology,不含付费数据连接器) |
-| nature-skills | Yuan1z0825/nature-skills | **Apache-2.0** | main @ 2026-08-22 | 学术科研技能(19 个,中英触发词) | 技能打包内置 |
+| anthropics/financial-services | anthropics/financial-services | **Apache-2.0** | main @ `33a3d8a`(2026-08-21) | 金融投研技能(comps/DCF/LBO/pitch-deck 等) | 技能打包内置(仅 methodology,不含付费数据连接器) |
+| nature-skills | Yuan1z0825/nature-skills | **Apache-2.0** | main @ `a6e6f34`(2026-08-22) | 学术科研技能(19 个,中英触发词) | 技能打包内置 |
 | agentii-investment-intelligence | agentii-ai/agentii-investment-intelligence | Apache-2.0 | — | 金融技能(衍生自 anthropics + 付费数据层) | **弃用**(数据层付费依赖;技能本体与 anthropics 重复) |
 | DeepSeek | api.deepseek.com | 商业 | V4 Pro / Flash(2026-08-17 峰谷价) | 主力模型 | API 网关代理 |
 

@@ -45,6 +45,22 @@ if (Test-Path -LiteralPath $omoCfg) {
     Write-Output "[bake] wrote omo config: $omoCfg"
 }
 
+# ---- 3.5 内置技能(系统区整体替换;用户自建技能在 skills/ 其他目录,永不覆盖) ----
+$skillsSrc = Join-Path $PSScriptRoot "skills"
+if (Test-Path -LiteralPath $skillsSrc) {
+    $skillsDest = Join-Path $configDir "skills"
+    New-Item -ItemType Directory -Force -Path $skillsDest | Out-Null
+    foreach ($ns in @("hypercode-academic", "hypercode-finance")) {
+        $srcDir = Join-Path $skillsSrc ($ns -replace "hypercode-", "")
+        if (Test-Path -LiteralPath $srcDir) {
+            $dstDir = Join-Path $skillsDest $ns
+            if (Test-Path -LiteralPath $dstDir) { Remove-Item -LiteralPath $dstDir -Recurse -Force }
+            Copy-Item -LiteralPath $srcDir -Destination $dstDir -Recurse -Force
+        }
+    }
+    Write-Output "[bake] skills installed: $skillsDest"
+}
+
 # ---- 4. 插件安装(引擎自带插件管理器) ----
 # 生产版:从 HyperCode CDN 下发插件包并本地安装(不走外网 npmjs)。
 & hypercode plugin install oh-my-openagent

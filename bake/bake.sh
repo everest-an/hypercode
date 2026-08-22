@@ -50,6 +50,22 @@ else
   echo "[bake] wrote omo config: $OMO_CFG"
 fi
 
+# ---- 3.5 内置技能(系统区整体替换;用户自建技能在 skills/ 其他目录,永不覆盖) ----
+SKILLS_SRC="$(cd "$(dirname "$0")" && pwd)/skills"
+if [ -d "$SKILLS_SRC" ]; then
+  SKILLS_DEST="$CONFIG_DIR/skills"
+  mkdir -p "$SKILLS_DEST"
+  for NS in hypercode-academic hypercode-finance; do
+    SRC_DIR="$SKILLS_SRC/${NS#hypercode-}"
+    if [ -d "$SRC_DIR" ]; then
+      DST_DIR="$SKILLS_DEST/$NS"
+      rm -rf "$DST_DIR"
+      cp -r "$SRC_DIR" "$DST_DIR"
+    fi
+  done
+  echo "[bake] skills installed: $SKILLS_DEST"
+fi
+
 # ---- 4. 插件安装(引擎自带插件管理器) ----
 # 生产版:从 HyperCode CDN 下发插件包并本地安装(不走外网 npmjs)。
 hypercode plugin install oh-my-openagent
