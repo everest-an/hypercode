@@ -75,11 +75,12 @@ const getBase = (appId: string): Configuration => ({
   mac: {
     category: "public.app-category.developer-tools",
     icon: `resources/icons/icon.png`,
-    hardenedRuntime: false,
+    // 签名/公证:由 HC_NOTARIZE 环境变量控制(CI 检测到 Apple 凭证时置 1)
+    hardenedRuntime: process.env.HC_NOTARIZE === "1",
     gatekeeperAssess: false,
     entitlements: "resources/entitlements.plist",
     entitlementsInherit: "resources/entitlements.plist",
-    notarize: false,
+    notarize: process.env.HC_NOTARIZE === "1",
     target: ["dmg", "zip"],
   },
   dmg: {
