@@ -430,3 +430,8 @@ Check these danger signs FIRST before deep analysis:
 - **Show what's acceptable**: Always include "Reviewed & Acceptable" section
 - **Document status matters**: Note if already executed (review is informational)
 
+
+
+## 交付前强制验证
+
+本技能产出的任何合同/协议文本,交付前必须执行 hc-verify 溯源比对:条款、金额、主体名称、日期、法条引用逐条对照用户提供的源材料;无法溯源的标【推断】或删除;矛盾以源材料为准修正;文末附溯源表。
