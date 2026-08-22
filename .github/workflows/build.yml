@@ -39,7 +39,7 @@ jobs:
       - name: Build hypercode binaries (cross-compile)
         run: ./packages/opencode/script/build.ts
         env:
-          OPENCODE_VERSION: ${{ inputs.version || '0.0.0-dev' }}
+          OPENCODE_VERSION: ${{ inputs.version || '0.1.0' }}
 
       - name: Upload binaries
         uses: actions/upload-artifact@v4
