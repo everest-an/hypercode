@@ -251,7 +251,32 @@ const layer = Layer.effect(
         const file = globalConfigFile()
         if (!existsSync(file)) {
           yield* fs
-            .writeWithDirs(file, JSON.stringify({ $schema: "https://opencode.ai/config.json" }, null, 2))
+            .writeWithDirs(
+              file,
+              JSON.stringify(
+                {
+                  $schema: "https://opencode.ai/config.json",
+                  // HyperCode 默认供应商:首次启动自动带上 DeepSeek,用户只需在界面里粘贴 key
+                  provider: {
+                    deepseek: {
+                      npm: "@ai-sdk/openai-compatible",
+                      name: "DeepSeek",
+                      options: {
+                        baseURL: "https://api.deepseek.com/v1",
+                        apiKey: "",
+                      },
+                      models: {
+                        "deepseek-v4-pro": { name: "DeepSeek V4 Pro" },
+                        "deepseek-v4-flash": { name: "DeepSeek V4 Flash" },
+                      },
+                    },
+                  },
+                  model: "deepseek/deepseek-v4-pro",
+                },
+                null,
+                2,
+              ),
+            )
             .pipe(Effect.catch(() => Effect.void))
         }
       }
