@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- HyperCode favicon: simplified mark, chevrons only -->
+  <circle cx="128" cy="128" r="120" stroke="currentColor" stroke-width="16"/>
+  <path d="M108 92 L78 128 L108 164" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M148 92 L178 128 L148 164" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="123" y1="103" x2="133" y2="153" stroke="currentColor" stroke-width="22" stroke-linecap="round"/>
+</svg>

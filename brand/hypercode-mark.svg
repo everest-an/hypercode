@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- HyperCode mark: liquid-code ring, monochrome, sibling of AwareLiquid -->
+  <!-- outer ring -->
+  <circle cx="128" cy="128" r="112" stroke="currentColor" stroke-width="12"/>
+  <!-- code chevrons: left -->
+  <path d="M104 84 L72 128 L104 172" stroke="currentColor" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- code chevrons: right -->
+  <path d="M152 84 L184 128 L152 172" stroke="currentColor" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- slash -->
+  <line x1="122" y1="100" x2="134" y2="156" stroke="currentColor" stroke-width="17" stroke-linecap="round"/>
+  <!-- network nodes on the ring -->
+  <circle cx="128" cy="16" r="10" fill="currentColor"/>
+  <circle cx="48" cy="200" r="8" fill="currentColor"/>
+  <circle cx="208" cy="200" r="8" fill="currentColor"/>
+</svg>
