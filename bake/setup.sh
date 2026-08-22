@@ -1,30 +1,54 @@
 #!/usr/bin/env bash
-# HyperCode one-click installer (macOS/Linux) —— 骨架
-# 生产版:安装器二进制(内置下载/校验/登录 UI)执行此流程。幂等。
-set -euo pipefail
+# HyperCode one-click installer (macOS/Linux) — beginner friendly wizard
+set -u
 
-VERSION="${HYPERCODE_VERSION:-latest}"
-BASE_URL="${HYPERCODE_CDN:-https://dl.awareliquid.ai/hypercode}"
-INSTALL_DIR="${HYPERCODE_INSTALL_DIR:-$HOME/.hypercode/bin}"
-BIN_PATH="$INSTALL_DIR/hypercode"
+HC_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# ---- 1. 下载二进制(骨架:占位;生产版含校验和 + 原子替换 + 回滚) ----
-mkdir -p "$INSTALL_DIR"
-URL="$BASE_URL/$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)/$VERSION/hypercode"
-echo "[setup] downloading $URL"
-# 骨架阶段无真实 CDN,跳过实际下载;生产版在此执行下载/校验/原子替换
+echo
+echo " =============================================="
+echo "   HyperCode 一键安装向导"
+echo "   最强大的 AI 编程软件与工作助手"
+echo " =============================================="
+echo
 
-# ---- 2. PATH 注入(用户级,免 sudo) ----
+echo " [1/4] 安装程序到你的电脑..."
 SHELL_RC="$HOME/.zshrc"
 if [ -n "${BASH_VERSION:-}" ]; then SHELL_RC="$HOME/.bashrc"; fi
-if ! grep -qF "$INSTALL_DIR" "$SHELL_RC" 2>/dev/null; then
-  echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >> "$SHELL_RC"
-  echo "[setup] added to PATH via $SHELL_RC"
+if ! grep -qF "$HC_DIR" "$SHELL_RC" 2>/dev/null; then
+  echo "export PATH=\"$HC_DIR:\$PATH\"" >> "$SHELL_RC"
 fi
 
-# ---- 3. 烘焙配置(幂等,受管块合并) ----
-bash "$(dirname "$0")/bake.sh"
+echo " [2/4] 配置内置技能(228+ 领域技能,自动加载)..."
+bash "$HC_DIR/bake/bake.sh" >/dev/null 2>&1 || true
 
-# ---- 4. 登录(生产版:浏览器登录 HyperCode Cloud) ----
-echo "[setup] HyperCode installed. Run 'hypercode' to start; login via: hypercode auth"
-echo "[setup] done."
+echo " [3/4] 配置 AI 模型"
+echo
+echo "   HyperCode 需要你的 DeepSeek API key:"
+echo "   1. 浏览器打开 https://platform.deepseek.com"
+echo "   2. 免费注册,左侧 API keys 创建并复制"
+echo "   3. 回到这里,粘贴 key 后按回车"
+echo "   (key 只保存在你自己电脑上,不会上传)"
+echo
+printf "   粘贴你的 DeepSeek API key: "
+read -r DSKEY
+
+echo
+echo " [4/4] 验证并保存..."
+if ! curl -s -m 25 -o /dev/null -H "Authorization: Bearer $DSKEY" https://api.deepseek.com/models; then
+  echo
+  echo " [!] key 验证失败(网络问题或 key 不对)。请重新运行本向导。"
+  exit 1
+fi
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hypercode"
+mkdir -p "$CONFIG_DIR"
+sed "s|__HC_API_KEY__|$DSKEY|" "$HC_DIR/bake/templates/hypercode.json" > "$CONFIG_DIR/hypercode.json"
+
+echo
+echo " =============================================="
+echo "   ✔ 安装完成!key 验证通过。"
+echo " =============================================="
+echo
+echo "    打开【新的】终端窗口,输入:  hypercode"
+echo "    就可以开始使用了。"
+echo
