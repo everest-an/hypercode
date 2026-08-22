@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "writable": ["melting-asphalt"],
+  "protected": ["TODO-Colonization.md", "sisyphus/plans"],
+  "hook": "prometheus-md-only",
+  "defaultAgent": "prometheus"
+}

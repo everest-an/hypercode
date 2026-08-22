@@ -43,6 +43,7 @@ export type HomeProjectsViewProps = {
   unseenCount: (server: ServerConnection.Any, project: LocalProject) => number
   onWheel: (event: WheelEvent) => void
   onChooseProject: (server: ServerConnection.Any) => void
+  onOpenVault?: (server: ServerConnection.Any) => void
   onFocusServer: (server: ServerConnection.Any) => void
   onToggleCollapsed: (server: ServerConnection.Any) => void
   onEditServer: (server: ServerConnection.Http) => void
@@ -83,18 +84,36 @@ export function HomeProjectsView(props: HomeProjectsViewProps) {
         <Show
           when={props.servers().length === 1 && !(props.projects().length === 0 && props.recentlyClosed().length > 0)}
         >
-          <TooltipV2 placement="bottom" value={props.language.t("home.project.add")}>
-            <IconButtonV2
-              data-action="home-add-project"
-              variant="ghost-muted"
-              size="large"
-              class="titlebar-icon [&_[data-slot=icon-svg]]:text-v2-icon-icon-muted"
-              icon={<IconV2 name="folder-add-left" />}
-              disabled={props.serverHealth(props.servers()[0])?.healthy === false}
-              onClick={() => props.onChooseProject(props.servers()[0])}
-              aria-label={props.language.t("home.project.add")}
-            />
-          </TooltipV2>
+          <div class="flex items-center">
+            <Show when={props.onOpenVault}>
+              {(onOpenVault) => (
+                <TooltipV2 placement="bottom" value="Open Vault">
+                  <IconButtonV2
+                    data-action="home-open-vault"
+                    variant="ghost-muted"
+                    size="large"
+                    class="titlebar-icon [&_[data-slot=icon-svg]]:text-v2-icon-icon-muted"
+                    icon={<IconV2 name="archive" />}
+                    disabled={props.serverHealth(props.servers()[0])?.healthy === false}
+                    onClick={() => onOpenVault()(props.servers()[0])}
+                    aria-label="Open Vault"
+                  />
+                </TooltipV2>
+              )}
+            </Show>
+            <TooltipV2 placement="bottom" value={props.language.t("home.project.add")}>
+              <IconButtonV2
+                data-action="home-add-project"
+                variant="ghost-muted"
+                size="large"
+                class="titlebar-icon [&_[data-slot=icon-svg]]:text-v2-icon-icon-muted"
+                icon={<IconV2 name="folder-add-left" />}
+                disabled={props.serverHealth(props.servers()[0])?.healthy === false}
+                onClick={() => props.onChooseProject(props.servers()[0])}
+                aria-label={props.language.t("home.project.add")}
+              />
+            </TooltipV2>
+          </div>
         </Show>
       </div>
       <ScrollView data-slot="home-projects-scroll" class="min-h-0 min-w-0 shrink">

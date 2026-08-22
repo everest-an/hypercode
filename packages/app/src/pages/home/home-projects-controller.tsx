@@ -10,6 +10,8 @@ import { ServerConnection } from "@/context/server"
 import { closeHomeProject, errorMessage, homeProjectDirectories } from "@/pages/layout/helpers"
 import { Persist, persisted } from "@/utils/persist"
 import { showToast } from "@/utils/toast"
+import { base64Encode } from "@opencode-ai/core/util/encode"
+import { useNavigate } from "@solidjs/router"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { createResource } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -17,6 +19,7 @@ import type { HomeController } from "./home-controller"
 
 export function createHomeProjectsController(home: HomeController) {
   const platform = usePlatform()
+  const navigate = useNavigate()
   const pickDirectory = useDirectoryPicker()
   const dialog = useDialog()
   const language = useLanguage()
@@ -93,6 +96,18 @@ export function createHomeProjectsController(home: HomeController) {
           title: language.t("command.project.open"),
           multiple: true,
           onSelect: (result) => home.project.add(conn, homeProjectDirectories(result)),
+        })
+      },
+      chooseVault: (conn: ServerConnection.Any) => {
+        if (home.server.health(conn)?.healthy === false) return
+        pickDirectory({
+          server: conn,
+          title: "Open Vault",
+          onSelect: (result) => {
+            const directory = Array.isArray(result) ? result[0] : result
+            if (!directory) return
+            navigate(`/vault/${base64Encode(directory)}`)
+          },
         })
       },
       close: (conn: ServerConnection.Any, directory: string) => {

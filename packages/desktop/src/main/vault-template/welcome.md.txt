@@ -1,0 +1,21 @@
+# Welcome
+
+Welcome to your HyperCode vault. This is an Obsidian-compatible knowledge base with a
+built-in permission model, so AI agents can grow your notes without ever touching the
+files you own.
+
+## Vault layout
+
+- ✨ `melting-asphalt/` — the **AI-writable** area. Agents create atomic notes here through
+  the `obsidian_write_note` tool (the only sanctioned write path). Everything else on disk
+  is off-limits to that tool.
+- 🔒 `TODO-Colonization.md` — your protected progress board. Agents are denied Edit/Write
+  on it at the engine level.
+- 🔒 `sisyphus/plans/` — protected planning documents (Sisyphus/Prometheus). Also
+  engine-level deny.
+
+## Wiki links
+
+Notes connect with wiki links written `[[like this]]`. When agents write notes they link
+related concepts so the vault grows into a connected graph. Try following one:
+[[TODO Colonization workflow]]

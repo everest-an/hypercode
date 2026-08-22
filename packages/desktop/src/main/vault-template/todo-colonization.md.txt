@@ -1,0 +1,16 @@
+# TODO Colonization
+
+> 🔒 This file is **protected**: agents cannot modify it through Edit/Write tools.
+> It is your progress board — only you (the human) move items between sections.
+
+## Now
+
+- [ ] Explore the vault: open [[Welcome]] in `melting-asphalt/`
+
+## Next
+
+- [ ] Ask the AI to research a topic and write atomic notes into `melting-asphalt/`
+
+## Done
+
+- [x] Initialize this vault with the HyperCode vault template

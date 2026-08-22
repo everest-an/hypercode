@@ -1,0 +1,73 @@
+import { tool } from "@opencode-ai/plugin"
+import { mkdirSync, existsSync, writeFileSync } from "node:fs"
+import { dirname, isAbsolute, join, relative, resolve } from "node:path"
+
+const WRITABLE_DIR = "melting-asphalt"
+
+function sanitizeTitle(title: string): string {
+  // Obsidian-compatible filename: strip characters invalid on Windows/macOS and
+  // characters Obsidian itself rejects in note names (# ^ [ ] |).
+  return title
+    .replace(/[\\/:*?"<>|#^[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function resolveNotePath(vaultRoot: string, folder: string | undefined, filename: string): string {
+  const sub = folder ? join(WRITABLE_DIR, folder) : WRITABLE_DIR
+  const target = resolve(vaultRoot, sub, filename)
+  const rel = relative(resolve(vaultRoot, WRITABLE_DIR), target)
+  if (rel.startsWith("..") || isAbsolute(rel)) {
+    throw new Error(
+      `obsidian_write_note may only write inside ${WRITABLE_DIR}/ — refused path outside the writable directory: ${target}`,
+    )
+  }
+  return target
+}
+
+export default tool({
+  description: `Safely write an atomic Markdown note into the vault's ${WRITABLE_DIR}/ directory.
+
+This is the ONLY sanctioned way for agents to create or update knowledge notes in this vault.
+It enforces the vault's permission model:
+- Notes are written exclusively under ${WRITABLE_DIR}/ (optionally in a subfolder). Any path that
+  escapes that directory is rejected.
+- Protected files (TODO-Colonization.md, sisyphus/plans/**) can never be reached from this tool.
+- Output is plain Markdown on disk, fully compatible with Obsidian.
+
+Write atomic, evergreen notes. Prefer linking to related notes with [[wiki links]] so the vault
+forms a connected graph. Include a short opening paragraph stating what the note is about.`,
+  args: {
+    title: tool.schema.string().describe("Note title. Used as the filename (title.md) and should match the H1"),
+    content: tool.schema
+      .string()
+      .describe(
+        "Full Markdown body of the note. Use [[Other Note]] wiki links liberally to connect related notes. Do not include the H1 title line; it is added automatically",
+      ),
+    folder: tool.schema
+      .string()
+      .optional()
+      .describe(`Optional subfolder inside ${WRITABLE_DIR}/ to organize the note into, e.g. "concepts" or "people"`),
+    overwrite: tool.schema
+      .boolean()
+      .default(false)
+      .describe("Set true to replace an existing note with the same title. Defaults to false (refuse to clobber)"),
+  },
+  async execute(args, ctx) {
+    const title = sanitizeTitle(args.title)
+    if (!title) throw new Error("Note title is empty after sanitization")
+
+    const target = resolveNotePath(ctx.directory, args.folder, `${title}.md`)
+
+    if (existsSync(target) && !args.overwrite) {
+      return `A note named "${title}" already exists at ${relative(ctx.directory, target)}. Pass overwrite: true to replace it, or choose a different title.`
+    }
+
+    const body = `# ${title}\n\n${args.content.trim()}\n`
+    mkdirSync(dirname(target), { recursive: true })
+    writeFileSync(target, body, "utf8")
+
+    const relPath = relative(ctx.directory, target)
+    return `Note written: ${relPath} (${body.length} chars). Wiki links inside it will resolve in the vault graph.`
+  },
+})

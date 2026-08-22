@@ -1,0 +1,59 @@
+import type { Plugin } from "@opencode-ai/plugin"
+import { readFileSync } from "node:fs"
+import { isAbsolute, join, relative, resolve } from "node:path"
+
+// Vault write guard (hook-level enforcement, same mechanism as prometheus-md-only).
+//
+// Why a plugin and not only the "permission" block in opencode.jsonc:
+// permission rules are evaluated with last-match-wins, and agents defined by
+// plugins (e.g. oh-my-openagent's Sisyphus) append their own broad "allow"
+// rules AFTER the project config — silently overriding project-level denies.
+// A tool.execute.before hook cannot be overridden by any agent's permission
+// ruleset, so protected files stay protected for every agent.
+
+const WRITE_TOOLS = new Set(["edit", "write", "apply_patch"])
+const DEFAULT_PROTECTED = ["TODO-Colonization.md", "sisyphus/plans"]
+
+function loadProtected(directory: string): string[] {
+  try {
+    const raw = readFileSync(join(directory, ".opencode", "vault.json"), "utf8")
+    const parsed = JSON.parse(raw)
+    if (Array.isArray(parsed?.protected)) return parsed.protected.map(String)
+  } catch {
+    // vault.json missing or malformed — fall back to the template defaults
+  }
+  return DEFAULT_PROTECTED
+}
+
+function normalize(input: string): string {
+  return input.replace(/\\/g, "/").replace(/^\/+|\/+$/g, "").toLowerCase()
+}
+
+function isProtected(entries: string[], rel: string): boolean {
+  const target = normalize(rel)
+  if (!target || target.startsWith("..")) return false
+  return entries.some((entry) => {
+    const base = normalize(entry)
+    return base !== "" && (target === base || target.startsWith(base + "/"))
+  })
+}
+
+export const VaultGuard: Plugin = async (ctx) => {
+  const entries = loadProtected(ctx.directory)
+  return {
+    "tool.execute.before": async (input, output) => {
+      if (!WRITE_TOOLS.has(input.tool.toLowerCase())) return
+      const filePath = output.args?.filePath ?? output.args?.path ?? output.args?.file
+      if (typeof filePath !== "string" || !filePath) return
+      const resolved = resolve(ctx.directory, filePath)
+      const rel = relative(ctx.directory, resolved)
+      if (rel.startsWith("..") || isAbsolute(rel)) return
+      if (!isProtected(entries, rel)) return
+      throw new Error(
+        `[vault-guard/prometheus-md-only] "${rel}" is a protected vault file. ` +
+          `Agents cannot modify it with ${input.tool}; it must be edited manually. ` +
+          `AI notes belong in melting-asphalt/ via the obsidian_write_note tool.`,
+      )
+    },
+  }
+}

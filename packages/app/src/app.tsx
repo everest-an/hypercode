@@ -39,6 +39,7 @@ import {
 import { Dynamic } from "solid-js/web"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import { CommandProvider, useCommand, type CommandOption } from "@/context/command"
+import { useDirectoryPicker } from "@/components/directory-picker"
 import { CommentsProvider } from "@/context/comments"
 import { FileProvider } from "@/context/file"
 import { ServerSDKProvider } from "@/context/server-sdk"
@@ -70,6 +71,7 @@ import { NewHome } from "@/pages/home"
 import { LegacyHome } from "@/pages/home/legacy-home"
 
 const NewSession = lazy(() => import("@/pages/new-session"))
+const VaultRoute = lazy(() => import("@/pages/vault/vault-route"))
 
 const SessionRoute = () => {
   const settings = useSettings()
@@ -316,6 +318,7 @@ function SharedProviders(props: ParentProps) {
       <BodyDesignClass />
       <CommandProvider>
         <DesktopCommands />
+        <VaultCommands />
         <HighlightsProvider>{props.children}</HighlightsProvider>
       </CommandProvider>
     </>
@@ -341,6 +344,35 @@ function DesktopCommands() {
     }
     return commands
   })
+
+  return null
+}
+
+function VaultCommands() {
+  const command = useCommand()
+  const server = useServer()
+  const navigate = useNavigate()
+  const pickDirectory = useDirectoryPicker()
+
+  command.register("vault", () => [
+    {
+      id: "vault.open",
+      title: "Open Vault…",
+      onSelect: () => {
+        const current = server.current
+        if (!current) return
+        pickDirectory({
+          server: current,
+          title: "Open Vault",
+          onSelect: (result) => {
+            const directory = Array.isArray(result) ? result[0] : result
+            if (!directory) return
+            navigate(`/vault/${base64Encode(directory)}`)
+          },
+        })
+      },
+    },
+  ])
 
   return null
 }
@@ -637,6 +669,7 @@ function Routes(props: { serverScoped?: JSX.Element }) {
       </Route>
       <Show when={settings.general.newLayoutDesigns()}>
         <Route path="/" component={NewHome} />
+        <Route path="/vault/:dir" component={VaultRoute} />
         <Route path="/:dir/session/:id" component={NewLayoutLegacySessionRedirect} />
         <Route path="/server/:serverKey/session/:id" component={TargetSessionRoute} />
       </Show>

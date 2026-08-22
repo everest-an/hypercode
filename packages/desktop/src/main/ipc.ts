@@ -24,6 +24,7 @@ import type { UpdaterController } from "./updater-controller"
 import { createUpdaterSubscriptions } from "./updater-subscriptions"
 import { createDesktopDraftStore } from "./draft-store"
 import { nativeT } from "./native-translations"
+import { scaffoldVault } from "./vault-template/scaffold"
 
 const pickerFilters = (ext?: string[]) => {
   if (!ext || ext.length === 0) return undefined
@@ -233,6 +234,15 @@ export function registerIpcHandlers(deps: Deps) {
     if (!exists) return false
     shell.showItemInFolder(path)
     return true
+  })
+
+  ipcMain.handle("vault-init", (_event: IpcMainInvokeEvent, root: string) => {
+    try {
+      const { created, skipped } = scaffoldVault(root)
+      return { ok: true as const, created, skipped }
+    } catch (error) {
+      return { ok: false as const, error: error instanceof Error ? error.message : String(error) }
+    }
   })
 
   ipcMain.handle("read-clipboard-image", () => {
