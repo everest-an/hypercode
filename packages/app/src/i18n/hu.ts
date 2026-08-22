@@ -229,11 +229,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API kulcs",
   "provider.connect.apiKey.required": "API kulcs szükséges",
   "provider.connect.opencodeZen.line1":
-    "A OpenCode Zen hozzáférést biztosít a kódoló ügynökök számára megbízható, optimalizált modellek válogatott készletéhez.",
+    "A HyperCode hozzáférést biztosít a kódoló ügynökök számára megbízható, optimalizált modellek válogatott készletéhez.",
   "provider.connect.opencodeZen.line2":
     "Egyetlen API kulccsal hozzáférhet olyan modellekhez, mint a Claude, GPT, Gemini, GLM és még sok más.",
   "provider.connect.opencodeZen.visit.prefix": "Látogatás",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "hogy átvegye a API kulcsát.",
   "provider.connect.oauth.code.visit.prefix": "Látogatás",
   "provider.connect.oauth.code.visit.link": "ezt a linket",
@@ -397,7 +397,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}}/{{total}} engedélyezve",
   "dialog.mcp.empty": "Nincs konfigurálva MCP",
   "dialog.lsp.empty": "A LSP automatikusan felismerhető a fájltípusokból",
-  "dialog.plugins.empty": "Az opencode.json fájlban konfigurált beépülő modulok",
+  "dialog.plugins.empty": "Az hypercode.json fájlban konfigurált beépülő modulok",
   "mcp.status.connected": "csatlakoztatva",
   "mcp.status.failed": "sikertelen",
   "mcp.status.needs_auth": "hitelesítést igényel",
@@ -665,7 +665,7 @@ export const dict = {
   "error.chain.responseBody": "Válasz törzse:\n{{body}}",
   "error.chain.didYouMean": "Erre gondolt: {{suggestions}}?",
   "error.chain.modelNotFound": "A modell nem található: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Ellenőrizze a konfigurációs (opencode.json) szolgáltató/modell nevét",
+  "error.chain.checkConfig": "Ellenőrizze a konfigurációs (hypercode.json) szolgáltató/modell nevét",
   "error.chain.mcpFailed":
     'A "{{name}}" MCP szerver meghibásodott. Megjegyzés: a OpenCode még nem támogatja a MCP hitelesítést.',
   "error.chain.providerAuthFailed": "A szolgáltató hitelesítése nem sikerült ({{provider}}): {{message}}",

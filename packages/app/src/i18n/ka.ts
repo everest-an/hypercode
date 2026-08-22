@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API გასაღები",
   "provider.connect.apiKey.required": "API გასაღები საჭიროა",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen გაძლევთ წვდომას კოდირების აგენტებისთვის საიმედო ოპტიმიზირებული მოდელების კურირებულ კომპლექტზე.",
+    "HyperCode გაძლევთ წვდომას კოდირების აგენტებისთვის საიმედო ოპტიმიზირებული მოდელების კურირებულ კომპლექტზე.",
   "provider.connect.opencodeZen.line2":
     "ერთი API გასაღებით თქვენ მიიღებთ წვდომას ისეთ მოდელებზე, როგორიცაა Claude, GPT, Gemini, GLM და სხვა.",
   "provider.connect.opencodeZen.visit.prefix": "ეწვიეთ ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " თქვენი API გასაღების შესაგროვებლად.",
   "provider.connect.oauth.code.visit.prefix": "ეწვიეთ ",
   "provider.connect.oauth.code.visit.link": "ეს ბმული",
@@ -393,7 +393,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} / {{total}}-დან ჩართულია",
   "dialog.mcp.empty": "არა MCPs კონფიგურირებული",
   "dialog.lsp.empty": "LSPs ავტომატურად გამოვლენილია ფაილის ტიპებიდან",
-  "dialog.plugins.empty": "პლაგინები კონფიგურირებულია opencode.json-ში",
+  "dialog.plugins.empty": "პლაგინები კონფიგურირებულია hypercode.json-ში",
   "mcp.status.connected": "დაკავშირებულია",
   "mcp.status.failed": "ვერ მოხერხდა",
   "mcp.status.needs_auth": "საჭიროა ავტორიზაცია",
@@ -660,7 +660,7 @@ export const dict = {
   "error.chain.responseBody": "პასუხის სხეული:\n{{body}}",
   "error.chain.didYouMean": "იგულისხმეთ: {{suggestions}}",
   "error.chain.modelNotFound": "მოდელი ვერ მოიძებნა: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "შეამოწმეთ თქვენი კონფიგურაცია (opencode.json) პროვაიდერის/მოდელების სახელები",
+  "error.chain.checkConfig": "შეამოწმეთ თქვენი კონფიგურაცია (hypercode.json) პროვაიდერის/მოდელების სახელები",
   "error.chain.mcpFailed":
     'MCP სერვერი "{{name}}" ვერ მოხერხდა. შენიშვნა, OpenCode ჯერ არ უჭერს მხარს MCP ავთენტიფიკაციას.',
   "error.chain.providerAuthFailed": "პროვაიდერის ავთენტიფიკაცია ვერ მოხერხდა ({{provider}}): {{message}}",

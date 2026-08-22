@@ -246,11 +246,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Kunci API",
   "provider.connect.apiKey.required": "Kunci API diperlukan",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen memberi Anda akses ke serangkaian model andal yang dioptimalkan untuk agen pengodean.",
+    "HyperCode memberi Anda akses ke serangkaian model andal yang dioptimalkan untuk agen pengodean.",
   "provider.connect.opencodeZen.line2":
     "Dengan satu kunci API, Anda akan mendapatkan akses ke model seperti Claude, GPT, Gemini, GLM dan lainnya.",
   "provider.connect.opencodeZen.visit.prefix": "Kunjungi ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " untuk mendapatkan kunci API Anda.",
   "provider.connect.oauth.code.visit.prefix": "Kunjungi ",
   "provider.connect.oauth.code.visit.link": "tautan ini",
@@ -423,7 +423,7 @@ export const dict = {
   "dialog.mcp.empty": "Tidak ada MCP yang dikonfigurasi",
 
   "dialog.lsp.empty": "LSP terdeteksi otomatis dari jenis berkas",
-  "dialog.plugins.empty": "Plugin dikonfigurasi di opencode.json",
+  "dialog.plugins.empty": "Plugin dikonfigurasi di hypercode.json",
 
   "mcp.status.connected": "terhubung",
   "mcp.status.failed": "gagal",
@@ -721,7 +721,7 @@ export const dict = {
   "error.chain.responseBody": "Isi respons:\n{{body}}",
   "error.chain.didYouMean": "Maksud Anda: {{suggestions}}",
   "error.chain.modelNotFound": "Model tidak ditemukan: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Periksa nama penyedia/model di konfigurasi Anda (opencode.json)",
+  "error.chain.checkConfig": "Periksa nama penyedia/model di konfigurasi Anda (hypercode.json)",
   "error.chain.mcpFailed": 'Server MCP "{{name}}" gagal. Catatan: OpenCode belum mendukung autentikasi MCP.',
   "error.chain.providerAuthFailed": "Autentikasi penyedia gagal ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

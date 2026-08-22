@@ -226,11 +226,11 @@ export const dict: Record<string, string> = {
   "provider.connect.apiKey.placeholder": "API কী",
   "provider.connect.apiKey.required": "API কী প্রয়োজন",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen আপনাকে কোডিং এজেন্টের জন্য নির্ভরযোগ্য অপ্টিমাইজ করা মডেলের একটি কিউরেটেড সেটে অ্যাক্সেস দেয়।",
+    "HyperCode আপনাকে কোডিং এজেন্টের জন্য নির্ভরযোগ্য অপ্টিমাইজ করা মডেলের একটি কিউরেটেড সেটে অ্যাক্সেস দেয়।",
   "provider.connect.opencodeZen.line2":
     "একটি API কী দিয়ে আপনি Claude, GPT, Gemini, GLM এবং আরও অনেক কিছুর মতো মডেলগুলিতে অ্যাক্সেস পাবেন৷",
   "provider.connect.opencodeZen.visit.prefix": "ভিজিট করুন",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "আপনার API কী সংগ্রহ করতে।",
   "provider.connect.oauth.code.visit.prefix": "ভিজিট করুন",
   "provider.connect.oauth.code.visit.link": "এই লিঙ্ক",
@@ -393,7 +393,7 @@ export const dict: Record<string, string> = {
   "dialog.mcp.description": "{{total}} এর {{enabled}} সক্ষম",
   "dialog.mcp.empty": "কোনো MCPs কনফিগার করা নেই",
   "dialog.lsp.empty": "LSPs ফাইলের ধরন থেকে স্বয়ংক্রিয়ভাবে সনাক্ত করা হয়েছে",
-  "dialog.plugins.empty": "opencode.json এ কনফিগার করা প্লাগইন",
+  "dialog.plugins.empty": "hypercode.json এ কনফিগার করা প্লাগইন",
   "mcp.status.connected": "সংযুক্ত",
   "mcp.status.failed": "ব্যর্থ",
   "mcp.status.needs_auth": "প্রমাণ প্রয়োজন",
@@ -660,7 +660,7 @@ export const dict: Record<string, string> = {
   "error.chain.responseBody": "প্রতিক্রিয়ার অংশ:\n{{body}}৷",
   "error.chain.didYouMean": "আপনি কি বলতে চাইছেন: {{suggestions}}",
   "error.chain.modelNotFound": "মডেল পাওয়া যায়নি: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "আপনার কনফিগারেশন (opencode.json) প্রদানকারী/মডেলের নাম পরীক্ষা করুন",
+  "error.chain.checkConfig": "আপনার কনফিগারেশন (hypercode.json) প্রদানকারী/মডেলের নাম পরীক্ষা করুন",
   "error.chain.mcpFailed":
     'MCP সার্ভার "{{name}}" ব্যর্থ হয়েছে৷ মনে রাখবেন, OpenCode এখনও MCP প্রমাণীকরণ সমর্থন করে না।',
   "error.chain.providerAuthFailed": "প্রদানকারীর প্রমাণীকরণ ব্যর্থ হয়েছে ({{provider}}): {{message}}",

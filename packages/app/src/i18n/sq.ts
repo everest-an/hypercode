@@ -226,11 +226,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Tasti API",
   "provider.connect.apiKey.required": "Kërkohet çelësi API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ju jep akses në një grup të kuruar modelesh të optimizuara të besueshme për agjentët e kodimit.",
+    "HyperCode ju jep akses në një grup të kuruar modelesh të optimizuara të besueshme për agjentët e kodimit.",
   "provider.connect.opencodeZen.line2":
     "Me një çelës të vetëm API do të keni akses në modele të tilla si Claude, GPT, Gemini, GLM dhe më shumë.",
   "provider.connect.opencodeZen.visit.prefix": "Vizitoni ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " për të mbledhur çelësin tuaj API.",
   "provider.connect.oauth.code.visit.prefix": "Vizitoni ",
   "provider.connect.oauth.code.visit.link": "kjo lidhje",
@@ -394,7 +394,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} nga {{total}} është aktivizuar",
   "dialog.mcp.empty": "Asnjë MCP nuk është konfiguruar",
   "dialog.lsp.empty": "LSP-të zbulohen automatikisht nga llojet e skedarëve",
-  "dialog.plugins.empty": "Shtojcat e konfiguruara në opencode.json",
+  "dialog.plugins.empty": "Shtojcat e konfiguruara në hypercode.json",
   "mcp.status.connected": "lidhur",
   "mcp.status.failed": "dështoi",
   "mcp.status.needs_auth": "nevojiten auth",
@@ -663,7 +663,7 @@ export const dict = {
   "error.chain.responseBody": "Trupi i përgjigjes:\n{{body}}",
   "error.chain.didYouMean": "A do të thuash: {{suggestions}}",
   "error.chain.modelNotFound": "Modeli nuk u gjet: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Kontrolloni emrat e ofruesit/modelit tuaj të konfigurimit (opencode.json).",
+  "error.chain.checkConfig": "Kontrolloni emrat e ofruesit/modelit tuaj të konfigurimit (hypercode.json).",
   "error.chain.mcpFailed": 'Serveri MCP "{{name}}" dështoi. Shënim, OpenCode nuk e mbështet ende vërtetimin MCP.',
   "error.chain.providerAuthFailed": "Autentifikimi i ofruesit dështoi ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

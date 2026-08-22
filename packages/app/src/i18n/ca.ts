@@ -227,11 +227,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "tecla API.",
   "provider.connect.apiKey.required": "La clau API és necessària",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen us ofereix accés a un conjunt seleccionat de models optimitzats fiables per a agents de codificació.",
+    "HyperCode us ofereix accés a un conjunt seleccionat de models optimitzats fiables per a agents de codificació.",
   "provider.connect.opencodeZen.line2":
     "Amb una sola tecla API tindreu accés a models com ara Claude, GPT, Gemini, GLM i més.",
   "provider.connect.opencodeZen.visit.prefix": "Visita ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " per recollir la teva clau API.",
   "provider.connect.oauth.code.visit.prefix": "Visita ",
   "provider.connect.oauth.code.visit.link": "aquest enllaç",
@@ -395,7 +395,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} de {{total}} activat",
   "dialog.mcp.empty": "No s'ha configurat cap MCP",
   "dialog.lsp.empty": "Els LSP s'han detectat automàticament a partir dels tipus de fitxers",
-  "dialog.plugins.empty": "Connectors configurats a opencode.json",
+  "dialog.plugins.empty": "Connectors configurats a hypercode.json",
   "mcp.status.connected": "connectat",
   "mcp.status.failed": "fracassat",
   "mcp.status.needs_auth": "necessita autenticació",
@@ -665,7 +665,7 @@ export const dict = {
   "error.chain.responseBody": "Òrgan de resposta:\n{{body}}",
   "error.chain.didYouMean": "Volíeu dir: {{suggestions}}",
   "error.chain.modelNotFound": "No s'ha trobat el model: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Comproveu els noms del vostre proveïdor/model de configuració (opencode.json).",
+  "error.chain.checkConfig": "Comproveu els noms del vostre proveïdor/model de configuració (hypercode.json).",
   "error.chain.mcpFailed":
     'El servidor MCP "{{name}}" ha fallat. Tingueu en compte que OpenCode encara no admet l\'autenticació MCP.',
   "error.chain.providerAuthFailed": "L'autenticació del proveïdor ha fallat ({{provider}}): {{message}}",

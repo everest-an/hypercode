@@ -230,7 +230,7 @@ export const dict = {
   "provider.connect.opencodeZen.line2":
     "Με ένα μόνο κλειδί API θα έχετε πρόσβαση σε μοντέλα όπως Claude, GPT, Gemini, GLM και άλλα.",
   "provider.connect.opencodeZen.visit.prefix": "Επίσκεψη ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " για τη συλλογή του κλειδιού σας API.",
   "provider.connect.oauth.code.visit.prefix": "Επίσκεψη ",
   "provider.connect.oauth.code.visit.link": "αυτός ο σύνδεσμος",
@@ -395,7 +395,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} από {{total}} ενεργοποιημένα",
   "dialog.mcp.empty": "Δεν έχει διαμορφωθεί το MCPs",
   "dialog.lsp.empty": "LSPs ανιχνεύεται αυτόματα από τύπους αρχείων",
-  "dialog.plugins.empty": "Προσθήκες ρυθμισμένες στο opencode.json",
+  "dialog.plugins.empty": "Προσθήκες ρυθμισμένες στο hypercode.json",
   "mcp.status.connected": "συνδεδεμένος",
   "mcp.status.failed": "απέτυχε",
   "mcp.status.needs_auth": "χρειάζεται εξουσιοδότηση",
@@ -665,7 +665,7 @@ export const dict = {
   "error.chain.responseBody": "Σώμα απόκρισης:\n{{body}}",
   "error.chain.didYouMean": "Μήπως εννοείτε: {{suggestions}}",
   "error.chain.modelNotFound": "Το μοντέλο δεν βρέθηκε: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Ελέγξτε τη διαμόρφωση (opencode.json) ονόματα παρόχου/μοντέλων",
+  "error.chain.checkConfig": "Ελέγξτε τη διαμόρφωση (hypercode.json) ονόματα παρόχου/μοντέλων",
   "error.chain.mcpFailed":
     'MCP διακομιστής "{{name}}" απέτυχε. Σημείωση, το OpenCode δεν υποστηρίζει ακόμη έλεγχο ταυτότητας MCP.',
   "error.chain.providerAuthFailed": "Ο έλεγχος ταυτότητας παρόχου απέτυχε ({{provider}}): {{message}}",

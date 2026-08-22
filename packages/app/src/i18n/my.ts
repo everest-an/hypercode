@@ -227,11 +227,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API သော့",
   "provider.connect.apiKey.required": "API ကီး လိုအပ်သည်။",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen သည် သင့်အား coding အေးဂျင့်များအတွက် ယုံကြည်စိတ်ချရသော အကောင်းဆုံးပုံစံများဖြင့် စုစည်းထားသော မော်ဒယ်များကို ဝင်ရောက်ခွင့်ပေးသည်။",
+    "HyperCode သည် သင့်အား coding အေးဂျင့်များအတွက် ယုံကြည်စိတ်ချရသော အကောင်းဆုံးပုံစံများဖြင့် စုစည်းထားသော မော်ဒယ်များကို ဝင်ရောက်ခွင့်ပေးသည်။",
   "provider.connect.opencodeZen.line2":
     "API သော့တစ်ခုတည်းဖြင့် သင်သည် Claude၊ GPT၊ Gemini၊ GLM နှင့် အခြားအရာများကဲ့သို့သော မော်ဒယ်များသို့ ဝင်ရောက်ခွင့်ရရှိမည်ဖြစ်သည်။",
   "provider.connect.opencodeZen.visit.prefix": "လည်ပတ်ပါ။ \nသင်၏ API သော့ကိုစုဆောင်းရန်",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " သို့သွား၍ သင်၏ API key ကို ရယူပါ။",
   "provider.connect.oauth.code.visit.prefix": "လည်ပတ်ပါ။",
   "provider.connect.oauth.code.visit.link": "ဤလင့်ခ်",
@@ -397,7 +397,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} ၏ {{total}} ဖွင့်ထားသည်။",
   "dialog.mcp.empty": "MCP များကို ပြင်ဆင်သတ်မှတ်ထားခြင်းမရှိပါ။",
   "dialog.lsp.empty": "ဖိုင်အမျိုးအစားများမှ LSP များကို အလိုအလျောက်တွေ့ရှိသည်။",
-  "dialog.plugins.empty": "opencode.json တွင် ပြင်ဆင်ထားသော ပလပ်အင်များ",
+  "dialog.plugins.empty": "hypercode.json တွင် ပြင်ဆင်ထားသော ပလပ်အင်များ",
   "mcp.status.connected": "ချိတ်ဆက်ထားသည်။",
   "mcp.status.failed": "မအောင်မြင်ပါ။",
   "mcp.status.needs_auth": "အထောက်အထား လိုအပ်သည်။",
@@ -666,7 +666,7 @@ export const dict = {
   "error.chain.responseBody": "တုံ့ပြန်မှုကိုယ်ထည်-\n{{body}}",
   "error.chain.didYouMean": "ဆိုလိုတာက {{suggestions}}",
   "error.chain.modelNotFound": "မော်ဒယ်ကို ရှာမတွေ့ပါ- {{provider}}/{{model}}",
-  "error.chain.checkConfig": "သင်၏ config (opencode.json) ဝန်ဆောင်မှုပေးသူ/မော်ဒယ်အမည်များကို စစ်ဆေးပါ။",
+  "error.chain.checkConfig": "သင်၏ config (hypercode.json) ဝန်ဆောင်မှုပေးသူ/မော်ဒယ်အမည်များကို စစ်ဆေးပါ။",
   "error.chain.mcpFailed":
     'MCP ဆာဗာ "{{name}}" မအောင်မြင်ပါ။ မှတ်ချက်၊ OpenCode သည် MCP စစ်မှန်ကြောင်းအထောက်အထားမခိုင်လုံသေးပါ။',
   "error.chain.providerAuthFailed": "ပံ့ပိုးသူ စစ်မှန်ကြောင်း အထောက်အထား မအောင်မြင်ပါ ({{provider}}): {{message}}",

@@ -233,11 +233,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Klucz API",
   "provider.connect.apiKey.required": "Klucz API jest wymagany",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen daje dostęp do wybranego zestawu niezawodnych, zoptymalizowanych modeli dla agentów programistycznych.",
+    "HyperCode daje dostęp do wybranego zestawu niezawodnych, zoptymalizowanych modeli dla agentów programistycznych.",
   "provider.connect.opencodeZen.line2":
     "Za pomocą jednego klucza API uzyskasz dostęp do modeli takich jak Claude, GPT, Gemini i GLM, a także wielu innych.",
   "provider.connect.opencodeZen.visit.prefix": "Odwiedź ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": ", aby odebrać swój klucz API.",
   "provider.connect.oauth.code.visit.prefix": "Odwiedź ",
   "provider.connect.oauth.code.visit.link": "ten link",
@@ -400,7 +400,7 @@ export const dict = {
   "dialog.mcp.description": "Włączone: {{enabled}} z {{total}}",
   "dialog.mcp.empty": "Brak skonfigurowanych MCP",
   "dialog.lsp.empty": "Serwery LSP są wykrywane automatycznie na podstawie typów plików",
-  "dialog.plugins.empty": "Wtyczki są skonfigurowane w pliku opencode.json",
+  "dialog.plugins.empty": "Wtyczki są skonfigurowane w pliku hypercode.json",
   "mcp.status.connected": "połączono",
   "mcp.status.failed": "błąd",
   "mcp.status.needs_auth": "wymaga autoryzacji",
@@ -653,7 +653,7 @@ export const dict = {
   "error.chain.responseBody": "Treść odpowiedzi:\n{{body}}",
   "error.chain.didYouMean": "Czy miałeś na myśli: {{suggestions}}",
   "error.chain.modelNotFound": "Model nie znaleziony: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Sprawdź nazwy dostawców i modeli w konfiguracji (opencode.json)",
+  "error.chain.checkConfig": "Sprawdź nazwy dostawców i modeli w konfiguracji (hypercode.json)",
   "error.chain.mcpFailed":
     "Serwer MCP „{{name}}” nie uruchomił się. Uwaga: OpenCode nie obsługuje jeszcze uwierzytelniania MCP.",
   "error.chain.providerAuthFailed": "Uwierzytelnianie dostawcy nie powiodło się ({{provider}}): {{message}}",

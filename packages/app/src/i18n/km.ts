@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "សោ API",
   "provider.connect.apiKey.required": "ត្រូវការសោ API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ផ្តល់ឱ្យអ្នកនូវម៉ូដែលដែលបានជ្រើសរើស និងកែលម្អសម្រាប់ភ្នាក់ងារសរសេរកូដ។",
+    "HyperCode ផ្តល់ឱ្យអ្នកនូវម៉ូដែលដែលបានជ្រើសរើស និងកែលម្អសម្រាប់ភ្នាក់ងារសរសេរកូដ។",
   "provider.connect.opencodeZen.line2":
     "ជាមួយនឹងសោ API តែមួយ អ្នកនឹងទទួលបានការចូលប្រើម៉ូដែលដូចជា Claude, GPT, Gemini, GLM និងច្រើនទៀត។",
   "provider.connect.opencodeZen.visit.prefix": "ទស្សនា",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "ដើម្បីប្រមូលសោ API របស់អ្នក។",
   "provider.connect.oauth.code.visit.prefix": "ទស្សនា",
   "provider.connect.oauth.code.visit.link": "តំណនេះ។",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} នៃ {{total}} ត្រូវបានបើក",
   "dialog.mcp.empty": "មិនបានកំណត់រចនាសម្ព័ន្ធ MCPs ទេ។",
   "dialog.lsp.empty": "LSPs រកឃើញដោយស្វ័យប្រវត្តិពីប្រភេទឯកសារ",
-  "dialog.plugins.empty": "កម្មវិធីជំនួយដែលបានកំណត់រចនាសម្ព័ន្ធនៅក្នុង opencode.json",
+  "dialog.plugins.empty": "កម្មវិធីជំនួយដែលបានកំណត់រចនាសម្ព័ន្ធនៅក្នុង hypercode.json",
   "mcp.status.connected": "បានភ្ជាប់",
   "mcp.status.failed": "បរាជ័យ",
   "mcp.status.needs_auth": "ត្រូវការសិទ្ធិ",
@@ -659,7 +659,7 @@ export const dict = {
   "error.chain.responseBody": "តួការឆ្លើយតប៖\n{{body}}",
   "error.chain.didYouMean": "តើអ្នកមានន័យថា៖ {{suggestions}}",
   "error.chain.modelNotFound": "រកមិនឃើញម៉ូដែល៖ {{provider}}/{{model}}",
-  "error.chain.checkConfig": "ពិនិត្យការកំណត់រចនាសម្ព័ន្ធរបស់អ្នក (opencode.json) អ្នកផ្តល់សេវា/ឈ្មោះម៉ូដែល",
+  "error.chain.checkConfig": "ពិនិត្យការកំណត់រចនាសម្ព័ន្ធរបស់អ្នក (hypercode.json) អ្នកផ្តល់សេវា/ឈ្មោះម៉ូដែល",
   "error.chain.mcpFailed": 'ម៉ាស៊ីនមេ MCP "{{name}}" បានបរាជ័យ។ ចំណាំ OpenCode មិនគាំទ្រការផ្ទៀងផ្ទាត់ MCP នៅឡើយទេ។',
   "error.chain.providerAuthFailed": "ការផ្ទៀងផ្ទាត់អ្នកផ្តល់សេវាបានបរាជ័យ ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

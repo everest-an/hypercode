@@ -228,11 +228,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API түлхүүр",
   "provider.connect.apiKey.required": "API түлхүүр шаардлагатай",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen нь танд кодлох агентуудад зориулсан найдвартай оновчтой загваруудын цуглуулгад хандах боломжийг олгоно.",
+    "HyperCode нь танд кодлох агентуудад зориулсан найдвартай оновчтой загваруудын цуглуулгад хандах боломжийг олгоно.",
   "provider.connect.opencodeZen.line2":
     "Ганц API товчлуураар та Claude, GPT, Gemini, GLM болон бусад загваруудад хандах боломжтой болно.",
   "provider.connect.opencodeZen.visit.prefix": "зочилно уу",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "API түлхүүрээ авахын тулд.",
   "provider.connect.oauth.code.visit.prefix": "зочилно уу",
   "provider.connect.oauth.code.visit.link": "энэ холбоос",
@@ -396,7 +396,7 @@ export const dict = {
   "dialog.mcp.description": "{{total}}-ийн {{enabled}}-г идэвхжүүлсэн",
   "dialog.mcp.empty": "Тохируулсан MCPс байхгүй",
   "dialog.lsp.empty": "LSPс файлын төрлөөс автоматаар илэрсэн",
-  "dialog.plugins.empty": "opencode.json-д тохируулсан залгаасууд",
+  "dialog.plugins.empty": "hypercode.json-д тохируулсан залгаасууд",
   "mcp.status.connected": "холбогдсон",
   "mcp.status.failed": "амжилтгүй болсон",
   "mcp.status.needs_auth": "auth хэрэгтэй",
@@ -664,7 +664,7 @@ export const dict = {
   "error.chain.responseBody": "Хариу өгөх байгууллага:\n{{body}}",
   "error.chain.didYouMean": "Та: {{suggestions}} гэсэн үг үү",
   "error.chain.modelNotFound": "Загвар олдсонгүй: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Өөрийн тохиргооны (opencode.json) үйлчилгээ үзүүлэгч/загварын нэрийг шалгана уу",
+  "error.chain.checkConfig": "Өөрийн тохиргооны (hypercode.json) үйлчилгээ үзүүлэгч/загварын нэрийг шалгана уу",
   "error.chain.mcpFailed":
     'MCP сервер "{{name}}" амжилтгүй боллоо. OpenCode нь MCP баталгаажуулалтыг хараахан дэмждэггүйг анхаарна уу.',
   "error.chain.providerAuthFailed":

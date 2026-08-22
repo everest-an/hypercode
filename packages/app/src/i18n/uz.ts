@@ -227,11 +227,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API kaliti",
   "provider.connect.apiKey.required": "API kaliti talab qilinadi",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen sizga kodlash agentlari uchun ishonchli optimallashtirilgan modellar to'plamiga kirish imkonini beradi.",
+    "HyperCode sizga kodlash agentlari uchun ishonchli optimallashtirilgan modellar to'plamiga kirish imkonini beradi.",
   "provider.connect.opencodeZen.line2":
     "Bitta API kaliti bilan siz Claude, GPT, Gemini, GLM va boshqalar kabi modellarga kirishingiz mumkin.",
   "provider.connect.opencodeZen.visit.prefix": "Tashrif buyuring ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " API kalitingizni olish uchun.",
   "provider.connect.oauth.code.visit.prefix": "Tashrif buyuring ",
   "provider.connect.oauth.code.visit.link": "bu havola",
@@ -395,7 +395,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}}, {{total}} yoqilgan",
   "dialog.mcp.empty": "Hech qanday MCP sozlanmagan",
   "dialog.lsp.empty": "LSP'lar fayl turlaridan avtomatik ravishda aniqlanadi",
-  "dialog.plugins.empty": "opencode.json da sozlangan plaginlar",
+  "dialog.plugins.empty": "hypercode.json da sozlangan plaginlar",
   "mcp.status.connected": "ulangan",
   "mcp.status.failed": "muvaffaqiyatsiz",
   "mcp.status.needs_auth": "avtorizatsiya kerak",
@@ -663,7 +663,7 @@ export const dict = {
   "error.chain.responseBody": "Javob organi:\n{{body}}",
   "error.chain.didYouMean": "Buni nazarda tutdingizmi: {{suggestions}}",
   "error.chain.modelNotFound": "Model topilmadi: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Konfiguratsiya (opencode.json) provayder/model nomlarini tekshiring",
+  "error.chain.checkConfig": "Konfiguratsiya (hypercode.json) provayder/model nomlarini tekshiring",
   "error.chain.mcpFailed":
     "MCP \"{{name}}\" serveri muvaffaqiyatsiz tugadi. E'tibor bering, OpenCode hali MCP autentifikatsiyasini qo'llab-quvvatlamaydi.",
   "error.chain.providerAuthFailed": "Provayder autentifikatsiyasi amalga oshmadi ({{provider}}): {{message}}",

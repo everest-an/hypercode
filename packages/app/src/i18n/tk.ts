@@ -226,11 +226,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API açary",
   "provider.connect.apiKey.required": "API açary talap edilýär",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen kodlaşdyrmak serişdeleri üçin ygtybarly optimallaşdyrylan modelleriň toplumyna girmäge mümkinçilik berýär.",
+    "HyperCode kodlaşdyrmak serişdeleri üçin ygtybarly optimallaşdyrylan modelleriň toplumyna girmäge mümkinçilik berýär.",
   "provider.connect.opencodeZen.line2":
     "Zekeje API açary bilen Claude, GPT, Gemini, GLM we başgalar ýaly modellere girip bilersiňiz.",
   "provider.connect.opencodeZen.visit.prefix": "Sapar ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " API açaryňyzy ýygnamak.",
   "provider.connect.oauth.code.visit.prefix": "Sapar ",
   "provider.connect.oauth.code.visit.link": "Bu baglanyşyk",
@@ -393,7 +393,7 @@ export const dict = {
   "dialog.mcp.description": "{{total}}-iň {{enabled}} açyk",
   "dialog.mcp.empty": "Hiç hili MCP düzülmedi",
   "dialog.lsp.empty": "LSP-ler faýl görnüşlerinden awtomatiki usulda tapyldy",
-  "dialog.plugins.empty": "opencode.json-de düzülen pluginler",
+  "dialog.plugins.empty": "hypercode.json-de düzülen pluginler",
   "mcp.status.connected": "birikdirildi",
   "mcp.status.failed": "şowsuz",
   "mcp.status.needs_auth": "auth gerek",
@@ -661,7 +661,7 @@ export const dict = {
   "error.chain.responseBody": "Jogap beriji organ:\n{{body}}",
   "error.chain.didYouMean": "Diýjek bolduňmy: {{suggestions}}",
   "error.chain.modelNotFound": "Model tapylmady: {{provider}} / {{model}}",
-  "error.chain.checkConfig": "Konfigurasiýaňyzy (opencode.json) üpjün edijiniň / model atlaryny barlaň",
+  "error.chain.checkConfig": "Konfigurasiýaňyzy (hypercode.json) üpjün edijiniň / model atlaryny barlaň",
   "error.chain.mcpFailed": 'MCP serweri "{{name}}" şowsuz. Üns beriň, OpenCode entek MCP tassyklamasyny goldamaýar.',
   "error.chain.providerAuthFailed": "Prowaýderiň tassyklamasy şowsuz ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

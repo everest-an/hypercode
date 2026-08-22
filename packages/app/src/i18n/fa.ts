@@ -226,11 +226,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "کلید API",
   "provider.connect.apiKey.required": "کلید API مورد نیاز است",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen به شما امکان دسترسی به مجموعه‌ای از مدل‌های بهینه‌شده قابل اعتماد را برای عوامل کدنویسی می‌دهد.",
+    "HyperCode به شما امکان دسترسی به مجموعه‌ای از مدل‌های بهینه‌شده قابل اعتماد را برای عوامل کدنویسی می‌دهد.",
   "provider.connect.opencodeZen.line2":
     "با یک کلید API به مدل هایی مانند Claude، GPT، Gemini، GLM و موارد دیگر دسترسی خواهید داشت.",
   "provider.connect.opencodeZen.visit.prefix": "بازدید کنید ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " برای جمع آوری کلید API.",
   "provider.connect.oauth.code.visit.prefix": "بازدید کنید ",
   "provider.connect.oauth.code.visit.link": "این لینک",
@@ -393,7 +393,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} از {{total}} فعال است",
   "dialog.mcp.empty": "MCPs پیکربندی نشده است",
   "dialog.lsp.empty": "LSPs به طور خودکار از انواع فایل شناسایی می شود",
-  "dialog.plugins.empty": "پلاگین های پیکربندی شده در opencode.json",
+  "dialog.plugins.empty": "پلاگین های پیکربندی شده در hypercode.json",
   "mcp.status.connected": "متصل است",
   "mcp.status.failed": "شکست خورد",
   "mcp.status.needs_auth": "نیاز به احراز هویت",
@@ -660,7 +660,7 @@ export const dict = {
   "error.chain.responseBody": "بدنه پاسخگویی:\n{{body}}",
   "error.chain.didYouMean": "آیا منظورتان این بود: {{suggestions}}",
   "error.chain.modelNotFound": "مدل پیدا نشد: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "نام ارائه دهنده/مدل پیکربندی (opencode.json) خود را بررسی کنید",
+  "error.chain.checkConfig": "نام ارائه دهنده/مدل پیکربندی (hypercode.json) خود را بررسی کنید",
   "error.chain.mcpFailed":
     'سرور MCP "{{name}}" ناموفق بود. توجه داشته باشید، OpenCode هنوز از احراز هویت MCP پشتیبانی نمی کند.',
   "error.chain.providerAuthFailed": "احراز هویت ارائه دهنده ناموفق بود ({{provider}}): {{message}}",

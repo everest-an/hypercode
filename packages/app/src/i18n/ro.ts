@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Cheie API",
   "provider.connect.apiKey.required": "Cheia API este obligatorie",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen îți oferă acces la un set selectat de modele optimizate și fiabile pentru agenți de programare.",
+    "HyperCode îți oferă acces la un set selectat de modele optimizate și fiabile pentru agenți de programare.",
   "provider.connect.opencodeZen.line2":
     "Cu o singură cheie API ai acces la modele precum Claude, GPT, Gemini, GLM și altele.",
   "provider.connect.opencodeZen.visit.prefix": "Vizitează",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "pentru a obține cheia ta API.",
   "provider.connect.oauth.code.visit.prefix": "Vizitează",
   "provider.connect.oauth.code.visit.link": "acest link",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} din {{total}} activate",
   "dialog.mcp.empty": "Niciun MCP configurat",
   "dialog.lsp.empty": "LSP-uri detectate automat din tipurile de fișiere",
-  "dialog.plugins.empty": "Pluginuri configurate în opencode.json",
+  "dialog.plugins.empty": "Pluginuri configurate în hypercode.json",
   "mcp.status.connected": "conectat",
   "mcp.status.failed": "eșuat",
   "mcp.status.needs_auth": "necesită autentificare",
@@ -660,7 +660,7 @@ export const dict = {
   "error.chain.responseBody": "Răspuns:\n{{body}}",
   "error.chain.didYouMean": "Ai vrut să scrii: {{suggestions}}",
   "error.chain.modelNotFound": "Modelul nu a fost găsit: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Verifică numele provider/model în config (opencode.json)",
+  "error.chain.checkConfig": "Verifică numele provider/model în config (hypercode.json)",
   "error.chain.mcpFailed": 'Serverul MCP "{{name}}" a eșuat. Atenție, OpenCode nu suportă încă autentificarea MCP.',
   "error.chain.providerAuthFailed": "Autentificarea providerului a eșuat ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

@@ -226,11 +226,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "клуч API",
   "provider.connect.apiKey.required": "Потребен е клуч API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ви дава пристап до куриран сет на сигурни оптимизирани модели за агенти за кодирање.",
+    "HyperCode ви дава пристап до куриран сет на сигурни оптимизирани модели за агенти за кодирање.",
   "provider.connect.opencodeZen.line2":
     "Со еден клуч API ќе добиете пристап до модели како што се Claude, GPT, Gemini, GLM и повеќе.",
   "provider.connect.opencodeZen.visit.prefix": "Посетете",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "да го соберете вашиот клуч API.",
   "provider.connect.oauth.code.visit.prefix": "Посетете",
   "provider.connect.oauth.code.visit.link": "оваа врска",
@@ -394,7 +394,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} од {{total}} е овозможено",
   "dialog.mcp.empty": "Не се конфигурирани MCPs",
   "dialog.lsp.empty": "LSPs автоматски се открива од типовите на датотеки",
-  "dialog.plugins.empty": "Приклучоци конфигурирани во opencode.json",
+  "dialog.plugins.empty": "Приклучоци конфигурирани во hypercode.json",
   "mcp.status.connected": "поврзани",
   "mcp.status.failed": "не успеа",
   "mcp.status.needs_auth": "треба авт",
@@ -663,7 +663,7 @@ export const dict = {
   "error.chain.responseBody": "Тело за одговор:\n{{body}}",
   "error.chain.didYouMean": "Дали сакаше да каже: {{suggestions}}",
   "error.chain.modelNotFound": "Моделот не е пронајден: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Проверете ги имињата на давателот/моделот за конфигурација (opencode.json).",
+  "error.chain.checkConfig": "Проверете ги имињата на давателот/моделот за конфигурација (hypercode.json).",
   "error.chain.mcpFailed":
     "MCP серверот „{{name}}“ не успеа. Забелешка, OpenCode сè уште не поддржува автентикација MCP.",
   "error.chain.providerAuthFailed": "Неуспешна автентикација на провајдерот ({{provider}}): {{message}}",

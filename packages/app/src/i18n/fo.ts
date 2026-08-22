@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API lykil",
   "provider.connect.apiKey.required": "API lykilin er kravdur",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen gevur tær atgongd til eitt kuraterað sett av álítandi optimeraðum modellum til kodingaragentar.",
+    "HyperCode gevur tær atgongd til eitt kuraterað sett av álítandi optimeraðum modellum til kodingaragentar.",
   "provider.connect.opencodeZen.line2":
     "Við einum API lykli fært tú atgongd til modellir sum Claude, GPT, Gemini, GLM og fleiri.",
   "provider.connect.opencodeZen.visit.prefix": "Vitja ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " fyri at savna tín API lykil.",
   "provider.connect.oauth.code.visit.prefix": "Vitja ",
   "provider.connect.oauth.code.visit.link": "hesa leinkjuna",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} av {{total}} virkið",
   "dialog.mcp.empty": "Ongin MCP uppsettur",
   "dialog.lsp.empty": "LSPs sjálvvirkandi uppdagað frá fílusløgum",
-  "dialog.plugins.empty": "Tilskot uppsett í opencode.json",
+  "dialog.plugins.empty": "Tilskot uppsett í hypercode.json",
   "mcp.status.connected": "tengt",
   "mcp.status.failed": "miseydnaðist",
   "mcp.status.needs_auth": "hevur brúk fyri auth",
@@ -661,7 +661,7 @@ export const dict = {
   "error.chain.responseBody": "Svarstovnur:\n{{body}}",
   "error.chain.didYouMean": "Meinti tú: {{suggestions}}",
   "error.chain.modelNotFound": "Fyrimynd ikki funnið: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Kanna tíni uppseting (opencode.json) veitara/modell nøvn",
+  "error.chain.checkConfig": "Kanna tíni uppseting (hypercode.json) veitara/modell nøvn",
   "error.chain.mcpFailed": 'MCP ambætarin "{{name}}" miseydnaðist. Viðmæli, OpenCode stuðlar ikki MCP sannroynd enn.',
   "error.chain.providerAuthFailed": "Veitaragóðkenning miseydnaðist ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

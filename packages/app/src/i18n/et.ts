@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API klahv",
   "provider.connect.apiKey.required": "Klahv API on nõutav",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen annab teile juurdepääsu kodeerimisagentide usaldusväärsete optimeeritud mudelite kureeritud komplektile.",
+    "HyperCode annab teile juurdepääsu kodeerimisagentide usaldusväärsete optimeeritud mudelite kureeritud komplektile.",
   "provider.connect.opencodeZen.line2":
     "Ühe klahviga API pääsete juurde sellistele mudelitele nagu Claude, GPT, Gemini, GLM ja palju muud.",
   "provider.connect.opencodeZen.visit.prefix": "Külastage ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " API võtme kättesaamiseks.",
   "provider.connect.oauth.code.visit.prefix": "Külastage ",
   "provider.connect.oauth.code.visit.link": "see link",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} / {{total}} on lubatud",
   "dialog.mcp.empty": "MCP-sid pole konfigureeritud",
   "dialog.lsp.empty": "LSP-d tuvastatakse failitüüpide järgi automaatselt",
-  "dialog.plugins.empty": "Pluginad on konfigureeritud failis opencode.json",
+  "dialog.plugins.empty": "Pluginad on konfigureeritud failis hypercode.json",
   "mcp.status.connected": "ühendatud",
   "mcp.status.failed": "ebaõnnestunud",
   "mcp.status.needs_auth": "vajab autentimist",
@@ -657,7 +657,7 @@ export const dict = {
   "error.chain.responseBody": "Vastuse keha:\n{{body}}",
   "error.chain.didYouMean": "Kas mõtlesite: {{suggestions}}",
   "error.chain.modelNotFound": "Mudelit ei leitud: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Kontrollige oma konfiguratsiooni (opencode.json) pakkuja/mudeli nimesid",
+  "error.chain.checkConfig": "Kontrollige oma konfiguratsiooni (hypercode.json) pakkuja/mudeli nimesid",
   "error.chain.mcpFailed": 'MCP server "{{name}}" ebaõnnestus. Pange tähele, OpenCode ei toeta veel MCP autentimist.',
   "error.chain.providerAuthFailed": "Pakkuja autentimine ebaõnnestus ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

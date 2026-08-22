@@ -229,11 +229,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API ކީ އެވެ",
   "provider.connect.apiKey.required": "API ކީ ބޭނުންވެއެވެ",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen އިން ކޯޑިންގ އޭޖެންޓުންނަށް އިތުބާރު ހުރި އޮޕްޓިމައިޒްޑް މޮޑެލްތަކުގެ ކިއުރެޓެޑް ސެޓަކަށް އެކްސެސް ލިބިގެންދެއެވެ.",
+    "HyperCode އިން ކޯޑިންގ އޭޖެންޓުންނަށް އިތުބާރު ހުރި އޮޕްޓިމައިޒްޑް މޮޑެލްތަކުގެ ކިއުރެޓެޑް ސެޓަކަށް އެކްސެސް ލިބިގެންދެއެވެ.",
   "provider.connect.opencodeZen.line2":
     "އެއް API ކީ އާއެކު Claude، GPT، Gemini، GLM އަދި އެހެނިހެން މޮޑެލްތަކަށް އެކްސެސް ލިބިގެންދާނެއެވެ.",
   "provider.connect.opencodeZen.visit.prefix": "ޒިޔާރަތްކުރުން ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen އެވެ",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai އެވެ",
   "provider.connect.opencodeZen.visit.suffix": " ތިބާގެ API ކީ އެއްކުރުމަށްޓަކައެވެ.",
   "provider.connect.oauth.code.visit.prefix": "ޒިޔާރަތްކުރުން ",
   "provider.connect.oauth.code.visit.link": "މި ލިންކެވެ",
@@ -399,7 +399,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} ގެ {{total}} އެނެބަލްކޮށްފައިވެއެވެ",
   "dialog.mcp.empty": "އެއްވެސް MCPs ކޮންފިގްރޭޓް ކުރެވިފައެއް ނުވެއެވެ",
   "dialog.lsp.empty": "LSPs ފައިލް ވައްތަރުތަކުން އޮޓޯ ޑިޓެކްޓް ކުރެވިފައިވެއެވެ",
-  "dialog.plugins.empty": "opencode.json ގައި ކޮންފިގްރޭޓް ކުރެވިފައިވާ ޕްލަގިންސް",
+  "dialog.plugins.empty": "hypercode.json ގައި ކޮންފިގްރޭޓް ކުރެވިފައިވާ ޕްލަގިންސް",
   "mcp.status.connected": "ގުޅިއްޖެއެވެ",
   "mcp.status.failed": "ފެއިލްވުން",
   "mcp.status.needs_auth": "ބޭނުންވަނީ އޮތޯއެވެ",
@@ -670,7 +670,7 @@ export const dict = {
   "error.chain.responseBody": "ޖަވާބުދާރީވާ ހަށިގަނޑު:\n{{body}} އެވެ",
   "error.chain.didYouMean": "ތިޔަ މާނަކުރީ: {{suggestions}} ހެއްޔެވެ",
   "error.chain.modelNotFound": "މޮޑެލް ނުފެނޭ: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "ތިބާގެ ކޮންފިގް (opencode.json) ޕްރޮވައިޑަރ/މޮޑެލް ނަންތައް ޗެކްކުރުން",
+  "error.chain.checkConfig": "ތިބާގެ ކޮންފިގް (hypercode.json) ޕްރޮވައިޑަރ/މޮޑެލް ނަންތައް ޗެކްކުރުން",
   "error.chain.mcpFailed":
     'MCP ސަރވަރ "{{name}}" ފޭލްވެއްޖެއެވެ. ނޯޓް، OpenCode އިން އަދި MCP އޮތެންޓިކޭޝަން އަށް ސަޕޯޓް ނުކުރެއެވެ.',
   "error.chain.providerAuthFailed": "ޕްރޮވައިޑަރ އޮތެންޓިކޭޝަން ފެއިލްވެއްޖެ ({{provider}}): {{message}}",

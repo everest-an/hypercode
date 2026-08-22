@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API klíč",
   "provider.connect.apiKey.required": "Je vyžadováno tlačítko API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen vám poskytuje přístup k upravené sadě spolehlivých optimalizovaných modelů pro kódovací agenty.",
+    "HyperCode vám poskytuje přístup k upravené sadě spolehlivých optimalizovaných modelů pro kódovací agenty.",
   "provider.connect.opencodeZen.line2":
     "Pomocí jediného tlačítka API získáte přístup k modelům jako Claude, GPT, Gemini, GLM a dalším.",
   "provider.connect.opencodeZen.visit.prefix": "Návštěva ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " vyzvedněte svůj klíč API.",
   "provider.connect.oauth.code.visit.prefix": "Návštěva ",
   "provider.connect.oauth.code.visit.link": "tento odkaz",
@@ -393,7 +393,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} z {{total}} povoleno",
   "dialog.mcp.empty": "Nejsou nakonfigurovány žádné MCP",
   "dialog.lsp.empty": "LSP automaticky detekovány z typů souborů",
-  "dialog.plugins.empty": "Pluginy nakonfigurované v opencode.json",
+  "dialog.plugins.empty": "Pluginy nakonfigurované v hypercode.json",
   "mcp.status.connected": "připojeno",
   "mcp.status.failed": "nepodařilo",
   "mcp.status.needs_auth": "potřebuje autentizaci",
@@ -661,7 +661,7 @@ export const dict = {
   "error.chain.responseBody": "Tělo odpovědi:\n{{body}}",
   "error.chain.didYouMean": "Měli jste na mysli: {{suggestions}}",
   "error.chain.modelNotFound": "Model nenalezen: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Zkontrolujte název poskytovatele/modelu konfigurace (opencode.json).",
+  "error.chain.checkConfig": "Zkontrolujte název poskytovatele/modelu konfigurace (hypercode.json).",
   "error.chain.mcpFailed": 'MCP server "{{name}}" selhal. Poznámka: OpenCode zatím nepodporuje ověřování MCP.',
   "error.chain.providerAuthFailed": "Ověření poskytovatele se nezdařilo ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

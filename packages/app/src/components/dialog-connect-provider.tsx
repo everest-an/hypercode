@@ -205,13 +205,13 @@ function ProviderPicker(props: {
         <div class="px-1.25 w-full flex items-center gap-x-3">
           <ProviderIcon data-slot="list-item-extra-icon" id={i.id} />
           <span>{i.name}</span>
-          <Show when={i.id === "opencode"}>
+          <Show when={false}>
             <div class="text-14-regular text-text-weak">{language.t("dialog.provider.opencode.tagline")}</div>
           </Show>
           <Show when={i.id === CUSTOM_ID}>
             <Tag>{language.t("settings.providers.tag.custom")}</Tag>
           </Show>
-          <Show when={i.id === "opencode"}>
+          <Show when={false}>
             <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
           </Show>
           <Show when={note(i.id)}>{(value) => <div class="text-14-regular text-text-weak">{value()}</div>}</Show>
@@ -236,7 +236,7 @@ function ProviderPickerV2(props: {
     active: undefined as string | undefined,
     connecting: undefined as string | undefined,
   })
-  const featured = ["opencode", "opencode-go", "anthropic", "openai", "google", "openrouter", "vercel"]
+  const featured = ["anthropic", "openai", "google", "openrouter", "vercel"]
   const custom = () => ({ id: CUSTOM_ID, name: language.t("dialog.provider.custom.label") })
   const all = createMemo(() => {
     language.locale()
@@ -333,7 +333,7 @@ function ProviderPickerV2(props: {
                       >
                         <ProviderIcon id={provider.id} class="size-4 shrink-0 text-v2-icon-icon-base" />
                         <span class="min-w-0 truncate font-[530] text-v2-text-text-base">{provider.name}</span>
-                        <Show when={provider.id === "opencode" || provider.id === "opencode-go"}>
+                        <Show when={false}>
                           <span class="min-w-0 truncate font-[440] text-v2-text-text-muted">
                             {language.t(
                               provider.id === "opencode"
@@ -833,7 +833,7 @@ function ProviderConnection(props: {
       return (
         <div class="flex flex-col gap-5 px-3 text-[13px] font-[440] leading-5 tracking-[-0.04px] text-v2-text-text-muted">
           <Show
-            when={provider().id === "opencode"}
+            when={false}
             fallback={language.t("provider.connect.apiKey.description", { provider: provider().name })}
           >
             <div class="flex flex-col gap-5">
@@ -842,7 +842,7 @@ function ProviderConnection(props: {
               <div>
                 {language.t("provider.connect.opencodeZen.visit.prefix")}
                 <ExternalLink
-                  href="https://opencode.ai/zen"
+                  href="https://awareliquid.ai"
                   class="text-v2-text-text-base focus-visible:rounded-xs focus-visible:outline-2 focus-visible:outline-v2-border-border-focus"
                 >
                   {language.t("provider.connect.opencodeZen.visit.link")}
@@ -885,13 +885,13 @@ function ProviderConnection(props: {
     return (
       <div class="flex flex-col gap-6">
         <Switch>
-          <Match when={provider().id === "opencode"}>
+          <Match when={false}>
             <div class="flex flex-col gap-4">
               <div class="text-14-regular text-text-base">{language.t("provider.connect.opencodeZen.line1")}</div>
               <div class="text-14-regular text-text-base">{language.t("provider.connect.opencodeZen.line2")}</div>
               <div class="text-14-regular text-text-base">
                 {language.t("provider.connect.opencodeZen.visit.prefix")}
-                <ExternalLink href="https://opencode.ai/zen" tabIndex={-1}>
+                <ExternalLink href="https://awareliquid.ai" tabIndex={-1}>
                   {language.t("provider.connect.opencodeZen.visit.link")}
                 </ExternalLink>
                 {language.t("provider.connect.opencodeZen.visit.suffix")}

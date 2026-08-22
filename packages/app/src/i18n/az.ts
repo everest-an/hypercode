@@ -228,11 +228,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API açarı",
   "provider.connect.apiKey.required": "API açarı tələb olunur",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen sizə kodlaşdırma agentləri üçün etibarlı optimallaşdırılmış seçilmiş modellər dəstinə giriş verir.",
+    "HyperCode sizə kodlaşdırma agentləri üçün etibarlı optimallaşdırılmış seçilmiş modellər dəstinə giriş verir.",
   "provider.connect.opencodeZen.line2":
     "Tək bir API açarı ilə Claude, GPT, Gemini, GLM və daha çox modellərə giriş əldə edəcəksiniz.",
   "provider.connect.opencodeZen.visit.prefix": "",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " səhifəsinə daxil olub API açarınızı əldə edin.",
   "provider.connect.oauth.code.visit.prefix": "",
   "provider.connect.oauth.code.visit.link": "Bu linkə",
@@ -396,7 +396,7 @@ export const dict = {
   "dialog.mcp.description": "{{total}}-dən {{enabled}} aktiv",
   "dialog.mcp.empty": "MCP konfiqurasiya edilməyib",
   "dialog.lsp.empty": "LSP-lər fayl növlərindən avtomatik aşkarlanır",
-  "dialog.plugins.empty": "Plaginlər opencode.json-da konfiqurasiya edilib",
+  "dialog.plugins.empty": "Plaginlər hypercode.json-da konfiqurasiya edilib",
   "mcp.status.connected": "qoşulub",
   "mcp.status.failed": "uğursuz",
   "mcp.status.needs_auth": "avtorizasiya lazımdır",
@@ -668,7 +668,7 @@ export const dict = {
   "error.chain.responseBody": "Cavab gövdəsi:\n{{body}}",
   "error.chain.didYouMean": "Bunu nəzərdə tuturdunuz: {{suggestions}}",
   "error.chain.modelNotFound": "Model tapılmadı: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Konfiqurasiyanızdakı (opencode.json) provayder/model adlarını yoxlayın",
+  "error.chain.checkConfig": "Konfiqurasiyanızdakı (hypercode.json) provayder/model adlarını yoxlayın",
   "error.chain.mcpFailed":
     'MCP server "{{name}}" uğursuz oldu. Qeyd: OpenCode hələ MCP autentifikasiyasını dəstəkləmir.',
   "error.chain.providerAuthFailed": "Provayder autentifikasiyası uğursuz oldu ({{provider}}): {{message}}",

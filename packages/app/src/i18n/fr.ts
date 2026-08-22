@@ -234,11 +234,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Clé API",
   "provider.connect.apiKey.required": "La clé API est requise",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen vous donne accès à un ensemble sélectionné de modèles fiables et optimisés pour les agents de codage.",
+    "HyperCode vous donne accès à un ensemble sélectionné de modèles fiables et optimisés pour les agents de codage.",
   "provider.connect.opencodeZen.line2":
     "Avec une seule clé API, vous aurez accès à des modèles tels que Claude, GPT, Gemini, GLM et plus encore.",
   "provider.connect.opencodeZen.visit.prefix": "Visitez ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " pour récupérer votre clé API.",
   "provider.connect.oauth.code.visit.prefix": "Visitez ",
   "provider.connect.oauth.code.visit.link": "ce lien",
@@ -404,7 +404,7 @@ export const dict = {
   "dialog.mcp.description": "MCP actifs : {{enabled}} sur {{total}}",
   "dialog.mcp.empty": "Aucun MCP configuré",
   "dialog.lsp.empty": "Serveurs LSP détectés automatiquement selon le type de fichier",
-  "dialog.plugins.empty": "Extensions configurées dans opencode.json",
+  "dialog.plugins.empty": "Extensions configurées dans hypercode.json",
   "mcp.status.connected": "connecté",
   "mcp.status.failed": "en échec",
   "mcp.status.needs_auth": "authentification requise",
@@ -662,7 +662,7 @@ export const dict = {
   "error.chain.responseBody": "Corps de la réponse :\n{{body}}",
   "error.chain.didYouMean": "Vouliez-vous dire : {{suggestions}}",
   "error.chain.modelNotFound": "Modèle introuvable : {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Vérifiez les noms de fournisseur et de modèle dans votre configuration (opencode.json)",
+  "error.chain.checkConfig": "Vérifiez les noms de fournisseur et de modèle dans votre configuration (hypercode.json)",
   "error.chain.mcpFailed":
     "Le serveur MCP \"{{name}}\" a échoué. Notez qu'OpenCode ne prend pas encore en charge l'authentification MCP.",
   "error.chain.providerAuthFailed": "Échec de l'authentification du fournisseur ({{provider}}) : {{message}}",

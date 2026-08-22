@@ -227,11 +227,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API-nyckel",
   "provider.connect.apiKey.required": "API-nyckel krävs",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ger dig tillgång till en utvald uppsättning pålitliga optimerade modeller för kodningsagenter.",
+    "HyperCode ger dig tillgång till en utvald uppsättning pålitliga optimerade modeller för kodningsagenter.",
   "provider.connect.opencodeZen.line2":
     "Med en enda API-nyckel får du tillgång till modeller som Claude, GPT, Gemini, GLM och mer.",
   "provider.connect.opencodeZen.visit.prefix": "Besök ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " för att hämta din API-nyckel.",
   "provider.connect.oauth.code.visit.prefix": "Besök ",
   "provider.connect.oauth.code.visit.link": "denna länk",
@@ -394,7 +394,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} av {{total}} aktiverade",
   "dialog.mcp.empty": "Inga MCP:er konfigurerade",
   "dialog.lsp.empty": "LSP:er detekteras automatiskt från filtyper",
-  "dialog.plugins.empty": "Insticksprogram konfigurerade i opencode.json",
+  "dialog.plugins.empty": "Insticksprogram konfigurerade i hypercode.json",
   "mcp.status.connected": "ansluten",
   "mcp.status.failed": "misslyckades",
   "mcp.status.needs_auth": "behöver autentisering",
@@ -666,7 +666,7 @@ export const dict = {
   "error.chain.responseBody": "Svarstext:\n{{body}}",
   "error.chain.didYouMean": "Menade du: {{suggestions}}",
   "error.chain.modelNotFound": "Modellen hittades inte: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Kontrollera leverantörs- och modellnamnen i konfigurationen (opencode.json)",
+  "error.chain.checkConfig": "Kontrollera leverantörs- och modellnamnen i konfigurationen (hypercode.json)",
   "error.chain.mcpFailed": 'MCP-servern "{{name}}" misslyckades. Obs, OpenCode stöder inte MCP-autentisering ännu.',
   "error.chain.providerAuthFailed": "Leverantörsautentisering misslyckades ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

@@ -225,11 +225,11 @@ export const dict: Record<string, string> = {
   "provider.connect.apiKey.placeholder": "API යතුර",
   "provider.connect.apiKey.required": "API යතුර අවශ්‍යයි",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ඔබට කේතීකරණ නියෝජිතයන් සඳහා විශ්වාසදායක ප්‍රශස්ත මාදිලි සමූහයකට ප්‍රවේශය ලබා දෙයි.",
+    "HyperCode ඔබට කේතීකරණ නියෝජිතයන් සඳහා විශ්වාසදායක ප්‍රශස්ත මාදිලි සමූහයකට ප්‍රවේශය ලබා දෙයි.",
   "provider.connect.opencodeZen.line2":
     "තනි API යතුරක් සමඟින් ඔබට Claude, GPT, Gemini, GLM සහ තවත් ආකෘති වෙත ප්‍රවේශය ලැබෙනු ඇත.",
   "provider.connect.opencodeZen.visit.prefix": "පිවිසෙන්න",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "ඔබගේ API යතුර එකතු කිරීමට.",
   "provider.connect.oauth.code.visit.prefix": "පිවිසෙන්න",
   "provider.connect.oauth.code.visit.link": "මෙම සබැඳිය",
@@ -392,7 +392,7 @@ export const dict: Record<string, string> = {
   "dialog.mcp.description": "{{total}} න් {{enabled}} සබලයි",
   "dialog.mcp.empty": "MCPs වින්‍යාස කර නැත",
   "dialog.lsp.empty": "LSPs ගොනු වර්ග වලින් ස්වයංක්‍රීයව අනාවරණය කර ඇත",
-  "dialog.plugins.empty": "ප්ලගීන opencode.json හි වින්‍යාස කර ඇත",
+  "dialog.plugins.empty": "ප්ලගීන hypercode.json හි වින්‍යාස කර ඇත",
   "mcp.status.connected": "සම්බන්ධයි",
   "mcp.status.failed": "අසාර්ථක විය",
   "mcp.status.needs_auth": "auth අවශ්‍යයි",
@@ -659,7 +659,7 @@ export const dict: Record<string, string> = {
   "error.chain.responseBody": "ප්‍රතිචාර අන්තර්ගතය:\n{{body}}",
   "error.chain.didYouMean": "ඔබ අදහස් කළේ: {{suggestions}}",
   "error.chain.modelNotFound": "ආකෘතිය හමු නොවීය: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "ඔබගේ වින්‍යාසය (opencode.json) සපයන්නා/ආදර්ශ නම් පරීක්ෂා කරන්න",
+  "error.chain.checkConfig": "ඔබගේ වින්‍යාසය (hypercode.json) සපයන්නා/ආදර්ශ නම් පරීක්ෂා කරන්න",
   "error.chain.mcpFailed": 'MCP සේවාදායකය "{{name}}" අසාර්ථක විය. සටහන, OpenCode තවමත් MCP සත්‍යාපනයට සහය නොදක්වයි.',
   "error.chain.providerAuthFailed": "සැපයුම්කරු සත්‍යාපනය අසාර්ථක විය ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

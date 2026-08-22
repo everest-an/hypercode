@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API atslēga",
   "provider.connect.apiKey.required": "Nepieciešama API atslēga",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen nodrošina piekļuvi atlasītiem uzticamiem optimizētiem modeļiem kodēšanas aģentiem.",
+    "HyperCode nodrošina piekļuvi atlasītiem uzticamiem optimizētiem modeļiem kodēšanas aģentiem.",
   "provider.connect.opencodeZen.line2":
     "Ar vienu API atslēgu iegūsiet piekļuvi tādiem modeļiem kā Claude, GPT, Gemini, GLM un citiem.",
   "provider.connect.opencodeZen.visit.prefix": "Apmeklējiet",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": ", lai saņemtu savu API atslēgu.",
   "provider.connect.oauth.code.visit.prefix": "Apmeklējiet",
   "provider.connect.oauth.code.visit.link": "šo saiti",
@@ -393,7 +393,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} no {{total}} ieslēgti",
   "dialog.mcp.empty": "Nav konfigurētu MCP",
   "dialog.lsp.empty": "LSP automātiski noteikti pēc failu tipiem",
-  "dialog.plugins.empty": "Spraudņi konfigurēti opencode.json",
+  "dialog.plugins.empty": "Spraudņi konfigurēti hypercode.json",
   "mcp.status.connected": "savienots",
   "mcp.status.failed": "neizdevās",
   "mcp.status.needs_auth": "nepieciešama autorizācija",
@@ -661,7 +661,7 @@ export const dict = {
   "error.chain.responseBody": "Atbildes saturs:\n{{body}}",
   "error.chain.didYouMean": "Vai domājāt: {{suggestions}}",
   "error.chain.modelNotFound": "Modelis nav atrasts: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Pārbaudiet konfigurāciju (opencode.json) pakalpojuma/modela nosaukumus",
+  "error.chain.checkConfig": "Pārbaudiet konfigurāciju (hypercode.json) pakalpojuma/modela nosaukumus",
   "error.chain.mcpFailed":
     'MCP serveris "{{name}}" neizdevās. Ņemiet vērā, OpenCode vēl neatbalsta MCP autentifikāciju.',
   "error.chain.providerAuthFailed": "Pakalpojuma autentifikācija neizdevās ({{provider}}): {{message}}",

@@ -23,32 +23,10 @@ else
   echo "[bake] engine config exists, skipping (user file preserved)"
 fi
 
-# ---- 3. omo 受管块:标记间替换(幂等;块外用户编辑原样保留) ----
-mkdir -p "$OMO_DIR"
-OMO_CFG="$OMO_DIR/omo.jsonc"
-MANAGED="$(cat "$TEMPLATES/omo-managed.jsonc")"
-BEGIN="// === HYPERCODE MANAGED BEGIN ==="
-END="// === HYPERCODE MANAGED END ==="
-
-if [ -f "$OMO_CFG" ]; then
-  if grep -qF "$BEGIN" "$OMO_CFG" && grep -qF "$END" "$OMO_CFG"; then
-    # 用 awk 替换 BEGIN..END 之间内容(含标记)
-    awk -v begin="$BEGIN" -v end="$END" -v managed="$MANAGED" '
-      BEGIN { printing = 1 }
-      index($0, begin) { printf "%s\n", managed; printing = 0; next }
-      index($0, end)   { printing = 1; next }
-      printing { print }
-    ' "$OMO_CFG" > "$OMO_CFG.tmp" && mv "$OMO_CFG.tmp" "$OMO_CFG"
-    echo "[bake] managed block updated: $OMO_CFG"
-  else
-    # 标记缺失:追加到末尾
-    printf '\n\n%s\n' "$MANAGED" >> "$OMO_CFG"
-    echo "[bake] managed block appended: $OMO_CFG"
-  fi
-else
-  printf '%s\n' "$MANAGED" > "$OMO_CFG"
-  echo "[bake] wrote omo config: $OMO_CFG"
-fi
+# ---- 3. omo 配置:⚠️ 隔离原则 —— 绝不写共享的 ~/.omo/omo.jsonc ----
+# 原因:该文件被所有 omo 宿主(OpenCode/Codex/Claude Code)共用,写入会弄坏用户的其他工具(2026-08-23 事故)。
+# HyperCode 的 omo 品牌覆盖待"OMO_CONFIG_HOME 隔离补丁"实现(见 docs/OMO内置与升级兼容方案.md),当前跳过。
+echo "[bake] omo shared config skipped (isolation rule: never touch ~/.omo/omo.jsonc)"
 
 # ---- 3.5 内置技能(系统区整体替换;用户自建技能在 skills/ 其他目录,永不覆盖) ----
 SKILLS_SRC="$(cd "$(dirname "$0")" && pwd)/skills"

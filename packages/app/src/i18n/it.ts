@@ -134,11 +134,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Chiave API",
   "provider.connect.apiKey.required": "È richiesta la chiave API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen offre l'accesso a una selezione di modelli affidabili e ottimizzati per gli agenti di programmazione.",
+    "HyperCode offre l'accesso a una selezione di modelli affidabili e ottimizzati per gli agenti di programmazione.",
   "provider.connect.opencodeZen.line2":
     "Con una sola chiave API avrai accesso a modelli come Claude, GPT, Gemini, GLM e altri.",
   "provider.connect.opencodeZen.visit.prefix": "Visita ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " per ottenere la tua chiave API.",
   "provider.connect.oauth.code.visit.prefix": "Visita ",
   "provider.connect.oauth.code.visit.link": "questo collegamento",
@@ -302,7 +302,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} di {{total}} abilitati",
   "dialog.mcp.empty": "Nessun MCP configurato",
   "dialog.lsp.empty": "LSP rilevati automaticamente in base ai tipi di file",
-  "dialog.plugins.empty": "Plugin configurati in opencode.json",
+  "dialog.plugins.empty": "Plugin configurati in hypercode.json",
   "mcp.status.connected": "collegato",
   "mcp.status.failed": "fallito",
   "mcp.status.needs_auth": "richiede l'autenticazione",
@@ -576,7 +576,7 @@ export const dict = {
   "error.chain.responseBody": "Corpo della risposta:\n{{body}}",
   "error.chain.didYouMean": "Forse intendi: {{suggestions}}",
   "error.chain.modelNotFound": "Modello non trovato: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Controlla i nomi di provider e modelli nella configurazione (opencode.json)",
+  "error.chain.checkConfig": "Controlla i nomi di provider e modelli nella configurazione (hypercode.json)",
   "error.chain.mcpFailed":
     'Il server MCP "{{name}}" non ha funzionato. Nota: OpenCode non supporta ancora l\'autenticazione MCP.',
   "error.chain.providerAuthFailed": "Autenticazione del provider non riuscita ({{provider}}): {{message}}",

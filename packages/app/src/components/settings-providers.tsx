@@ -52,7 +52,7 @@ const SettingsProvidersContent: Component<{ onBack?: () => void }> = (props) => 
   const connected = createMemo(() => {
     return providers
       .connected()
-      .filter((p) => p.id !== "opencode" || Object.values(p.models).find((m) => m.cost?.input))
+      .filter((p) => p.id !== "opencode" && p.id !== "opencode-go")
   })
 
   const popular = createMemo(() => {
@@ -203,7 +203,7 @@ const SettingsProvidersContent: Component<{ onBack?: () => void }> = (props) => 
                     <div class="flex items-center gap-x-3">
                       <ProviderIcon id={item.id} class="size-5 shrink-0 icon-strong-base" />
                       <span class="text-14-medium text-text-strong">{item.name}</span>
-                      <Show when={item.id === "opencode"}>
+                      <Show when={false}>
                         <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
                       </Show>
                       <Show when={item.id === "opencode-go"}>

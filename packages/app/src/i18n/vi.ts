@@ -233,11 +233,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "khóa API",
   "provider.connect.apiKey.required": "Cần có khóa API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen cho phép bạn truy cập một bộ mô hình được tuyển chọn, tối ưu hóa và đáng tin cậy dành cho tác nhân lập trình.",
+    "HyperCode cho phép bạn truy cập một bộ mô hình được tuyển chọn, tối ưu hóa và đáng tin cậy dành cho tác nhân lập trình.",
   "provider.connect.opencodeZen.line2":
     "Chỉ với một khóa API, bạn sẽ có quyền truy cập vào các mô hình như Claude, GPT, Gemini, GLM và hơn thế nữa.",
   "provider.connect.opencodeZen.visit.prefix": "Truy cập ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " để lấy khóa API của bạn.",
   "provider.connect.oauth.code.visit.prefix": "Truy cập ",
   "provider.connect.oauth.code.visit.link": "liên kết này",
@@ -400,7 +400,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} trong số {{total}} đã bật",
   "dialog.mcp.empty": "Không có MCP nào được định cấu hình",
   "dialog.lsp.empty": "LSP được tự động phát hiện từ các loại tệp",
-  "dialog.plugins.empty": "Các plugin được định cấu hình trong opencode.json",
+  "dialog.plugins.empty": "Các plugin được định cấu hình trong hypercode.json",
   "mcp.status.connected": "đã kết nối",
   "mcp.status.failed": "thất bại",
   "mcp.status.needs_auth": "cần xác thực",
@@ -671,7 +671,7 @@ export const dict = {
   "error.chain.responseBody": "Nội dung phản hồi:\n{{body}}",
   "error.chain.didYouMean": "Có phải ý bạn là: {{suggestions}}",
   "error.chain.modelNotFound": "Không tìm thấy mô hình: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Kiểm tra tên nhà cung cấp/mô hình cấu hình (opencode.json) của bạn",
+  "error.chain.checkConfig": "Kiểm tra tên nhà cung cấp/mô hình cấu hình (hypercode.json) của bạn",
   "error.chain.mcpFailed": 'Máy chủ MCP "{{name}}" gặp lỗi. Lưu ý: OpenCode chưa hỗ trợ xác thực MCP.',
   "error.chain.providerAuthFailed": "Không xác thực được nhà cung cấp ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

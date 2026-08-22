@@ -133,11 +133,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API-avain",
   "provider.connect.apiKey.required": "API-avain vaaditaan",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen antaa sinulle pääsyn kuratoituun joukkoon luotettavia optimoituja malleja koodausagenteille.",
+    "HyperCode antaa sinulle pääsyn kuratoituun joukkoon luotettavia optimoituja malleja koodausagenteille.",
   "provider.connect.opencodeZen.line2":
     "Yhdellä API-avaimella pääset käyttämään malleja, kuten Claude, GPT, Gemini, GLM ja paljon muuta.",
   "provider.connect.opencodeZen.visit.prefix": "Avaa ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " ja hae API-avaimesi.",
   "provider.connect.oauth.code.visit.prefix": "Avaa ",
   "provider.connect.oauth.code.visit.link": "tämä linkki",
@@ -300,7 +300,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}}/{{total}} käytössä",
   "dialog.mcp.empty": "MCP:tä ei ole määritetty",
   "dialog.lsp.empty": "LSP:t tunnistetaan automaattisesti tiedostotyypeistä",
-  "dialog.plugins.empty": "Laajennukset määritetään opencode.json-tiedostossa",
+  "dialog.plugins.empty": "Laajennukset määritetään hypercode.json-tiedostossa",
   "mcp.status.connected": "yhdistetty",
   "mcp.status.failed": "epäonnistunut",
   "mcp.status.needs_auth": "tarvitsee todennusta",
@@ -558,7 +558,7 @@ export const dict = {
   "error.chain.responseBody": "Vastausteksti:\n{{body}}",
   "error.chain.didYouMean": "Tarkoititko: {{suggestions}}",
   "error.chain.modelNotFound": "Mallia ei löydy: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Tarkista määritysten (opencode.json) palveluntarjoajien ja mallien nimet",
+  "error.chain.checkConfig": "Tarkista määritysten (hypercode.json) palveluntarjoajien ja mallien nimet",
   "error.chain.mcpFailed": 'MCP-palvelin "{{name}}" epäonnistui. Huomaa, että OpenCode ei vielä tue MCP-todennusta.',
   "error.chain.providerAuthFailed": "Palveluntarjoajan todennus epäonnistui ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

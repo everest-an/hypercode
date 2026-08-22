@@ -18,32 +18,10 @@ if (-not (Test-Path -LiteralPath $engineCfg)) {
     Write-Output "[bake] engine config exists, skipping (user file preserved)"
 }
 
-# ---- 3. omo 受管块:标记间替换(幂等;块外用户编辑原样保留) ----
-$omoCfg = Join-Path $omoDir "omo.jsonc"
-$managed = Get-Content -LiteralPath (Join-Path $templates "omo-managed.jsonc") -Raw
-$begin = "// === HYPERCODE MANAGED BEGIN ==="
-$end = "// === HYPERCODE MANAGED END ==="
-New-Item -ItemType Directory -Force -Path $omoDir | Out-Null
-
-if (Test-Path -LiteralPath $omoCfg) {
-    $existing = [System.IO.File]::ReadAllText($omoCfg)
-    if ($existing.Contains($begin) -and $existing.Contains($end)) {
-        # 替换 BEGIN..END 之间内容(含标记)
-        $idxB = $existing.IndexOf($begin)
-        $idxE = $existing.IndexOf($end) + $end.Length
-        $new = $existing.Substring(0, $idxB) + $managed + $existing.Substring($idxE)
-        [System.IO.File]::WriteAllText($omoCfg, $new, (New-Object System.Text.UTF8Encoding($false)))
-        Write-Output "[bake] managed block updated: $omoCfg"
-    } else {
-        # 标记缺失:把受管块追加到末尾(JSONC 允许尾逗号)
-        $new = $existing.TrimEnd() + "`r`n`r`n" + $managed
-        [System.IO.File]::WriteAllText($omoCfg, $new, (New-Object System.Text.UTF8Encoding($false)))
-        Write-Output "[bake] managed block appended: $omoCfg"
-    }
-} else {
-    [System.IO.File]::WriteAllText($omoCfg, $managed, (New-Object System.Text.UTF8Encoding($false)))
-    Write-Output "[bake] wrote omo config: $omoCfg"
-}
+# ---- 3. omo 配置:⚠️ 隔离原则 —— 绝不写共享的 ~/.omo/omo.jsonc ----
+# 原因:该文件被所有 omo 宿主(OpenCode/Codex/Claude Code)共用,写入会弄坏用户的其他工具(2026-08-23 事故)。
+# HyperCode 的 omo 品牌覆盖待"OMO_CONFIG_HOME 隔离补丁"实现(见 docs/OMO内置与升级兼容方案.md),当前跳过。
+Write-Output "[bake] omo shared config skipped (isolation rule: never touch ~/.omo/omo.jsonc)"
 
 # ---- 3.5 内置技能(系统区整体替换;用户自建技能在 skills/ 其他目录,永不覆盖) ----
 $skillsSrc = Join-Path $PSScriptRoot "skills"

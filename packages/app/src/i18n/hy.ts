@@ -227,11 +227,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API բանալի",
   "provider.connect.apiKey.required": "API բանալի է պահանջվում",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen-ը թույլ է տալիս մուտք գործել կոդավորման գործակալների համար հուսալի օպտիմիզացված մոդելների հավաքածու։",
+    "HyperCode-ը թույլ է տալիս մուտք գործել կոդավորման գործակալների համար հուսալի օպտիմիզացված մոդելների հավաքածու։",
   "provider.connect.opencodeZen.line2":
     "Մեկ API բանալիով դուք մուտք կունենաք այնպիսի մոդելների, ինչպիսիք են՝ Claude, GPT, Gemini, GLM և ավելին:",
   "provider.connect.opencodeZen.visit.prefix": "Այցելություն ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " ձեր API բանալին հավաքելու համար",
   "provider.connect.oauth.code.visit.prefix": "Այցելություն ",
   "provider.connect.oauth.code.visit.link": "այս հղումը",
@@ -395,7 +395,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}}-ը {{total}}-ից միացված է",
   "dialog.mcp.empty": "Կազմաձևված չէ MCPs",
   "dialog.lsp.empty": "LSPs ավտոմատ հայտնաբերվում է ֆայլերի տեսակներից",
-  "dialog.plugins.empty": "Ընդլայնումները կազմաձևված են opencode.json-ում",
+  "dialog.plugins.empty": "Ընդլայնումները կազմաձևված են hypercode.json-ում",
   "mcp.status.connected": "միացված",
   "mcp.status.failed": "ձախողվեց",
   "mcp.status.needs_auth": "անհրաժեշտ է վավերացում",
@@ -664,7 +664,7 @@ export const dict = {
   "error.chain.responseBody": "Պատասխանող մարմին՝\n{{body}}",
   "error.chain.didYouMean": "Դուք նկատի ունեք՝ {{suggestions}}",
   "error.chain.modelNotFound": "Մոդելը չի ​​գտնվել՝ {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Ստուգեք ձեր կազմաձևը (opencode.json) մատակարարի/մոդելի անունները",
+  "error.chain.checkConfig": "Ստուգեք ձեր կազմաձևը (hypercode.json) մատակարարի/մոդելի անունները",
   "error.chain.mcpFailed":
     "MCP «{{name}}» սերվերը ձախողվեց: Նկատի ունեցեք, որ OpenCode-ը դեռ չի աջակցում MCP նույնականացումը:",
   "error.chain.providerAuthFailed": "Մատակարարի նույնականացումը ձախողվեց ({{provider}}): {{message}}",

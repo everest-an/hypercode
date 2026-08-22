@@ -228,11 +228,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API ключ",
   "provider.connect.apiKey.required": "Изисква се ключ API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ви дава достъп до подбран набор от надеждни оптимизирани модели за кодиращи агенти.",
+    "HyperCode ви дава достъп до подбран набор от надеждни оптимизирани модели за кодиращи агенти.",
   "provider.connect.opencodeZen.line2":
     "С един ключ API ще получите достъп до модели като Claude, GPT, Gemini, GLM и други.",
   "provider.connect.opencodeZen.visit.prefix": "Посетете",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "за да вземете своя ключ API.",
   "provider.connect.oauth.code.visit.prefix": "Посетете",
   "provider.connect.oauth.code.visit.link": "тази връзка",
@@ -396,7 +396,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} от {{total}} активирани",
   "dialog.mcp.empty": "Няма конфигурирани MCP",
   "dialog.lsp.empty": "LSPs автоматично разпознати от типове файлове",
-  "dialog.plugins.empty": "Добавки, конфигурирани в opencode.json",
+  "dialog.plugins.empty": "Добавки, конфигурирани в hypercode.json",
   "mcp.status.connected": "свързан",
   "mcp.status.failed": "неуспешно",
   "mcp.status.needs_auth": "се нуждае от авт",
@@ -665,7 +665,7 @@ export const dict = {
   "error.chain.responseBody": "Тяло на отговора:\n{{body}}",
   "error.chain.didYouMean": "Може би имахте предвид: {{suggestions}}",
   "error.chain.modelNotFound": "Моделът не е намерен: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Проверете имената на доставчика/модела на вашата конфигурация (opencode.json).",
+  "error.chain.checkConfig": "Проверете имената на доставчика/модела на вашата конфигурация (hypercode.json).",
   "error.chain.mcpFailed":
     'MCP сървър "{{name}}" не успя. Имайте предвид, че OpenCode все още не поддържа MCP удостоверяване.',
   "error.chain.providerAuthFailed": "Неуспешно удостоверяване на доставчика ({{provider}}): {{message}}",

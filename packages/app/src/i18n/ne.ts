@@ -226,11 +226,11 @@ export const dict: Record<string, string> = {
   "provider.connect.apiKey.placeholder": "API कुञ्जी",
   "provider.connect.apiKey.required": "API कुञ्जी आवश्यक छ",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen ले तपाईंलाई कोडिङ एजेन्टहरूका लागि भरपर्दो अनुकूलित मोडेलहरूको क्युरेट गरिएको सेटमा पहुँच दिन्छ।",
+    "HyperCode ले तपाईंलाई कोडिङ एजेन्टहरूका लागि भरपर्दो अनुकूलित मोडेलहरूको क्युरेट गरिएको सेटमा पहुँच दिन्छ।",
   "provider.connect.opencodeZen.line2":
     "एकल API कुञ्जीको साथ तपाईंले Claude, GPT, Gemini, GLM र थप जस्ता मोडेलहरूमा पहुँच प्राप्त गर्नुहुनेछ।",
   "provider.connect.opencodeZen.visit.prefix": "भ्रमण गर्नुहोस्",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "तपाईँको API कुञ्जी सङ्कलन गर्न।",
   "provider.connect.oauth.code.visit.prefix": "भ्रमण गर्नुहोस्",
   "provider.connect.oauth.code.visit.link": "यो लिङ्क",
@@ -394,7 +394,7 @@ export const dict: Record<string, string> = {
   "dialog.mcp.description": "{{enabled}} को {{total}} सक्षम गरियो",
   "dialog.mcp.empty": "कुनै पनि MCPs कन्फिगर गरिएको छैन",
   "dialog.lsp.empty": "LSPs फाइल प्रकारहरूबाट स्वतः पत्ता लगाइयो",
-  "dialog.plugins.empty": "opencode.json मा कन्फिगर गरिएका प्लगइनहरू",
+  "dialog.plugins.empty": "hypercode.json मा कन्फिगर गरिएका प्लगइनहरू",
   "mcp.status.connected": "जोडिएको",
   "mcp.status.failed": "असफल",
   "mcp.status.needs_auth": "प्रमाणीकरण चाहिन्छ",
@@ -661,7 +661,7 @@ export const dict: Record<string, string> = {
   "error.chain.responseBody": "प्रतिक्रिया मुख्य भाग:\n{{body}}",
   "error.chain.didYouMean": "के तपाईको मतलब: {{suggestions}}",
   "error.chain.modelNotFound": "मोडेल फेला परेन: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "आफ्नो कन्फिगरेसन (opencode.json) प्रदायक/मोडेल नामहरू जाँच गर्नुहोस्",
+  "error.chain.checkConfig": "आफ्नो कन्फिगरेसन (hypercode.json) प्रदायक/मोडेल नामहरू जाँच गर्नुहोस्",
   "error.chain.mcpFailed":
     'MCP सर्भर "{{name}}" असफल भयो। नोट गर्नुहोस्, OpenCode ले अझै पनि MCP प्रमाणीकरणलाई समर्थन गर्दैन।',
   "error.chain.providerAuthFailed": "प्रदायक प्रमाणीकरण असफल भयो ({{provider}}): {{message}}",

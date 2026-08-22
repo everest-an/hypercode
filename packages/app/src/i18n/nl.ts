@@ -226,11 +226,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API-sleutel",
   "provider.connect.apiKey.required": "API-sleutel is vereist",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen geeft je toegang tot een samengestelde set betrouwbare, geoptimaliseerde modellen voor codeeragenten.",
+    "HyperCode geeft je toegang tot een samengestelde set betrouwbare, geoptimaliseerde modellen voor codeeragenten.",
   "provider.connect.opencodeZen.line2":
     "Met één API-sleutel krijg je toegang tot modellen zoals Claude, GPT, Gemini, GLM en meer.",
   "provider.connect.opencodeZen.visit.prefix": "Ga naar ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " om je API-sleutel op te halen.",
   "provider.connect.oauth.code.visit.prefix": "Ga naar ",
   "provider.connect.oauth.code.visit.link": "deze link",
@@ -394,7 +394,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} of {{total}} ingeschakeld",
   "dialog.mcp.empty": "Geen MCP's geconfigureerd",
   "dialog.lsp.empty": "LSP's worden automatisch gedetecteerd uit bestandstypen",
-  "dialog.plugins.empty": "Plug-ins geconfigureerd in opencode.json",
+  "dialog.plugins.empty": "Plug-ins geconfigureerd in hypercode.json",
   "mcp.status.connected": "verbonden",
   "mcp.status.failed": "mislukt",
   "mcp.status.needs_auth": "heeft autorisatie nodig",
@@ -668,7 +668,7 @@ export const dict = {
   "error.chain.responseBody": "Antwoordtekst:\n{{body}}",
   "error.chain.didYouMean": "Bedoelde je: {{suggestions}}",
   "error.chain.modelNotFound": "Model niet gevonden: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Controleer de provider- en modelnamen in je configuratie (opencode.json)",
+  "error.chain.checkConfig": "Controleer de provider- en modelnamen in je configuratie (hypercode.json)",
   "error.chain.mcpFailed": 'MCP-server "{{name}}" is mislukt. Let op: OpenCode ondersteunt nog geen MCP-authenticatie.',
   "error.chain.providerAuthFailed": "Authenticatie bij aanbieder mislukt ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

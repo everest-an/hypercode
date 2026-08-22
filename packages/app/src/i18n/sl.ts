@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "Ključ API",
   "provider.connect.apiKey.required": "Potreben je ključ API",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen vam omogoča dostop do izbranega nabora zanesljivih optimiziranih modelov za agente za kodiranje.",
+    "HyperCode vam omogoča dostop do izbranega nabora zanesljivih optimiziranih modelov za agente za kodiranje.",
   "provider.connect.opencodeZen.line2":
     "Z enim samim ključem API boste dobili dostop do modelov, kot so Claude, GPT, Gemini, GLM in več.",
   "provider.connect.opencodeZen.visit.prefix": "Obisk ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": " za prevzem ključa API.",
   "provider.connect.oauth.code.visit.prefix": "Obisk ",
   "provider.connect.oauth.code.visit.link": "ta povezava",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} od {{total}} omogočen",
   "dialog.mcp.empty": "MCP-ji niso konfigurirani",
   "dialog.lsp.empty": "LSP-ji samodejno zaznani glede na vrste datotek",
-  "dialog.plugins.empty": "Vtičniki, konfigurirani v opencode.json",
+  "dialog.plugins.empty": "Vtičniki, konfigurirani v hypercode.json",
   "mcp.status.connected": "povezan",
   "mcp.status.failed": "ni uspelo",
   "mcp.status.needs_auth": "potrebuje avt",
@@ -662,7 +662,7 @@ export const dict = {
   "error.chain.responseBody": "Telo odgovora:\n{{body}}",
   "error.chain.didYouMean": "Ste mislili: {{suggestions}}",
   "error.chain.modelNotFound": "Modela ni bilo mogoče najti: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Preverite imena ponudnikov/modelov konfiguracije (opencode.json).",
+  "error.chain.checkConfig": "Preverite imena ponudnikov/modelov konfiguracije (hypercode.json).",
   "error.chain.mcpFailed": 'MCP strežnik "{{name}}" ni uspel. Opomba, OpenCode še ne podpira avtentikacije MCP.',
   "error.chain.providerAuthFailed": "Preverjanje pristnosti ponudnika ni uspelo ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

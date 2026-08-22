@@ -225,11 +225,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API kľúč",
   "provider.connect.apiKey.required": "API kľúč je povinný",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen vám poskytuje prístup k vybraným spoľahlivým optimalizovaným modelom pre kódovacích agentov.",
+    "HyperCode vám poskytuje prístup k vybraným spoľahlivým optimalizovaným modelom pre kódovacích agentov.",
   "provider.connect.opencodeZen.line2":
     "S jediným API kľúčom získate prístup k modelom ako Claude, GPT, Gemini, GLM a ďalším.",
   "provider.connect.opencodeZen.visit.prefix": "Navštívte",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "a získajte svoj API kľúč.",
   "provider.connect.oauth.code.visit.prefix": "Navštívte",
   "provider.connect.oauth.code.visit.link": "tento odkaz",
@@ -392,7 +392,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} z {{total}} povolených",
   "dialog.mcp.empty": "Nie sú nastavené žiadne MCP",
   "dialog.lsp.empty": "LSP automaticky zistené podľa typov súborov",
-  "dialog.plugins.empty": "Pluginy nastavené v opencode.json",
+  "dialog.plugins.empty": "Pluginy nastavené v hypercode.json",
   "mcp.status.connected": "pripojené",
   "mcp.status.failed": "zlyhalo",
   "mcp.status.needs_auth": "vyžaduje overenie",
@@ -659,7 +659,7 @@ export const dict = {
   "error.chain.responseBody": "Telo odpovede:\n{{body}}",
   "error.chain.didYouMean": "Mysleli ste: {{suggestions}}",
   "error.chain.modelNotFound": "Model nenájdený: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Skontrolujte názvy poskytovateľa/modelu v konfigurácii (opencode.json)",
+  "error.chain.checkConfig": "Skontrolujte názvy poskytovateľa/modelu v konfigurácii (hypercode.json)",
   "error.chain.mcpFailed": "MCP server „{{name}}“ zlyhal. Poznámka: OpenCode zatiaľ nepodporuje MCP autentifikáciu.",
   "error.chain.providerAuthFailed": "Autentifikácia poskytovateľa zlyhala ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":

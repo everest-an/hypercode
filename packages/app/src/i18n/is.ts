@@ -229,11 +229,11 @@ export const dict = {
   "provider.connect.apiKey.placeholder": "API lykill",
   "provider.connect.apiKey.required": "API lykill er nauðsynlegur",
   "provider.connect.opencodeZen.line1":
-    "OpenCode Zen veitir þér aðgang að safni af áreiðanlegum og fínstilltum gerðum fyrir kóðunarmiðla.",
+    "HyperCode veitir þér aðgang að safni af áreiðanlegum og fínstilltum gerðum fyrir kóðunarmiðla.",
   "provider.connect.opencodeZen.line2":
     "Með einum API lykli færðu aðgang að gerðum eins og Claude, GPT, Gemini, GLM og fleira.",
   "provider.connect.opencodeZen.visit.prefix": "Heimsókn",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
+  "provider.connect.opencodeZen.visit.link": "awareliquid.ai",
   "provider.connect.opencodeZen.visit.suffix": "til að safna API lykilnum þínum.",
   "provider.connect.oauth.code.visit.prefix": "Heimsókn",
   "provider.connect.oauth.code.visit.link": "þennan hlekk",
@@ -397,7 +397,7 @@ export const dict = {
   "dialog.mcp.description": "{{enabled}} af {{total}} virkt",
   "dialog.mcp.empty": "Engar MCPs stilltar",
   "dialog.lsp.empty": "LSPs greind sjálfkrafa úr skráargerðum",
-  "dialog.plugins.empty": "Viðbætur stilltar í opencode.json",
+  "dialog.plugins.empty": "Viðbætur stilltar í hypercode.json",
   "mcp.status.connected": "tengdur",
   "mcp.status.failed": "mistókst",
   "mcp.status.needs_auth": "þarf heimild",
@@ -664,7 +664,7 @@ export const dict = {
   "error.chain.responseBody": "Svarhluti:\n{{body}}",
   "error.chain.didYouMean": "Áttirðu við: {{suggestions}}",
   "error.chain.modelNotFound": "Gerð fannst ekki: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Athugaðu stillingar (opencode.json) þjónustuveitu/módelheiti",
+  "error.chain.checkConfig": "Athugaðu stillingar (hypercode.json) þjónustuveitu/módelheiti",
   "error.chain.mcpFailed": "MCP þjónn „{{name}}“ mistókst. Athugið, OpenCode styður ekki MCP auðkenningu ennþá.",
   "error.chain.providerAuthFailed": "Auðkenning veitu mistókst ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":
