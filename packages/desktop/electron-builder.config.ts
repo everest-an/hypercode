@@ -75,7 +75,7 @@ const getBase = (appId: string): Configuration => ({
   mac: {
     category: "public.app-category.developer-tools",
     icon: `resources/icons/icon.png`,
-    // 签名/公证:由 HC_NOTARIZE 环境变量控制(CI 检测到 Apple 凭证时置 1)
+    // ç­¾å/å…¬è¯:ç”± HC_NOTARIZE çŽ¯å¢ƒå˜é‡æŽ§åˆ¶(CI æ£€æµ‹åˆ° Apple å‡­è¯æ—¶ç½® 1)
     hardenedRuntime: process.env.HC_NOTARIZE === "1",
     gatekeeperAssess: false,
     entitlements: "resources/entitlements.plist",
@@ -128,7 +128,7 @@ function getConfig() {
       return {
         ...base,
         appId,
-        productName: "OpenCode Dev",
+        productName: "HyperCode Dev",
         deb: { fpm: [metainfoFpm(appId)] },
         rpm: { packageName: "opencode-dev", fpm: [metainfoFpm(appId)] },
       }
@@ -137,7 +137,7 @@ function getConfig() {
       return {
         ...base,
         appId,
-        productName: "OpenCode Beta",
+        productName: "HyperCode Beta",
         protocols: { name: "OpenCode Beta", schemes: ["opencode"] },
         publish: { provider: "github", owner: "anomalyco", repo: "opencode-beta", channel: "latest" },
         deb: { fpm: [metainfoFpm(appId)] },
@@ -148,7 +148,7 @@ function getConfig() {
       return {
         ...base,
         appId,
-        productName: "OpenCode",
+        productName: "HyperCode",
         protocols: { name: "OpenCode", schemes: ["opencode"] },
         publish: { provider: "github", owner: "anomalyco", repo: "opencode", channel: "latest" },
         deb: { fpm: [metainfoFpm(appId), legacyDesktopEntryFpm] },
