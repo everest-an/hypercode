@@ -28,11 +28,21 @@ import { errorMessage } from "./util/error"
 import { PluginCommand } from "./cli/cmd/plug"
 import { Heap } from "./cli/heap"
 
+// Legacy Windows consoles default to a locale codepage (e.g. GBK 936) that
+// garbles the block-glyph logo and other UTF-8 output. chcp affects the
+// attached console, so running it as a child switches this console to UTF-8.
+if (process.platform === "win32") {
+  try {
+    const { execFileSync } = await import("node:child_process")
+    execFileSync("cmd.exe", ["/d", "/s", "/c", "chcp 65001"], { stdio: "ignore" })
+  } catch {}
+}
+
 const args = hideBin(process.argv)
 
 function show(out: string) {
   const text = out.trimStart()
-  if (!text.startsWith("opencode ")) {
+  if (!text.startsWith("hypercode ")) {
     process.stderr.write(UI.logo() + EOL + EOL)
     process.stderr.write(text + EOL)
     return

@@ -9,12 +9,6 @@ const execFileAsync = promisify(execFile)
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(packageDir, "../..")
 const signScript = path.join(rootDir, "script", "sign-windows.ps1")
-// The Electron 42 packaging update briefly installed Linux launchers/icons under
-// "opencode-desktop". Keep that hidden desktop entry around so existing GNOME/KDE
-// pins still resolve after the canonical app id changes back to ai.opencode.desktop.
-const legacyDesktopEntry = path.join(packageDir, "resources", "linux", "opencode-desktop.desktop")
-const legacyDesktopEntryFpm = `${legacyDesktopEntry}=/usr/share/applications/opencode-desktop.desktop`
-
 const metainfoFpm = (appId: string) =>
   `${path.join(packageDir, "resources", `${appId}.metainfo.xml`)}=/usr/share/metainfo/${appId}.metainfo.xml`
 
@@ -48,11 +42,15 @@ const getBase = (appId: string): Configuration => ({
     buildResources: "resources",
   },
   // Linux launchers are .desktop files, so this is the desktop file name,
-  // not just the app id. For prod, app id "ai.opencode.desktop" becomes
-  // "ai.opencode.desktop.desktop".
+  // not just the app id. For prod, app id "ai.awareliquid.hypercode" becomes
+  // "ai.awareliquid.hypercode.desktop".
   // https://developer.gnome.org/documentation/guidelines/maintainer/integrating.html
   // https://www.electron.build/docs/linux/
   extraMetadata: {
+    // Override package.json's "@opencode-ai/desktop" so the Windows NSIS
+    // install dir and updater cache dir don't collide with upstream OpenCode
+    // (both would otherwise resolve to %LOCALAPPDATA%\Programs\@opencode-aidesktop).
+    name: "hypercode-desktop",
     desktopName: `${appId}.desktop`,
   },
   files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*"],
@@ -71,11 +69,15 @@ const getBase = (appId: string): Configuration => ({
       to: "native/",
       filter: ["index.js", "index.d.ts", "build/Release/mac_window.node", "swift-build/**"],
     },
+    {
+      from: path.join(rootDir, "THIRD-PARTY-NOTICES.txt"),
+      to: "THIRD-PARTY-NOTICES.txt",
+    },
   ],
   mac: {
     category: "public.app-category.developer-tools",
     icon: `resources/icons/icon.png`,
-    // ç­¾å/å…¬è¯:ç”± HC_NOTARIZE çŽ¯å¢ƒå˜é‡æŽ§åˆ¶(CI æ£€æµ‹åˆ° Apple å‡­è¯æ—¶ç½® 1)
+    // Signing/notarization gated by HC_NOTARIZE (CI sets it to 1 when Apple credentials exist)
     hardenedRuntime: process.env.HC_NOTARIZE === "1",
     gatekeeperAssess: false,
     entitlements: "resources/entitlements.plist",
@@ -130,7 +132,7 @@ function getConfig() {
         appId,
         productName: "HyperCode Dev",
         deb: { fpm: [metainfoFpm(appId)] },
-        rpm: { packageName: "opencode-dev", fpm: [metainfoFpm(appId)] },
+        rpm: { packageName: "hypercode-dev", fpm: [metainfoFpm(appId)] },
       }
     }
     case "beta": {
@@ -138,10 +140,9 @@ function getConfig() {
         ...base,
         appId,
         productName: "HyperCode Beta",
-        protocols: { name: "OpenCode Beta", schemes: ["opencode"] },
-        publish: { provider: "github", owner: "anomalyco", repo: "opencode-beta", channel: "latest" },
+        publish: { provider: "github", owner: "AwareLiquid", repo: "HyperCode", channel: "beta" },
         deb: { fpm: [metainfoFpm(appId)] },
-        rpm: { packageName: "opencode-beta", fpm: [metainfoFpm(appId)] },
+        rpm: { packageName: "hypercode-beta", fpm: [metainfoFpm(appId)] },
       }
     }
     case "prod": {
@@ -149,10 +150,9 @@ function getConfig() {
         ...base,
         appId,
         productName: "HyperCode",
-        protocols: { name: "OpenCode", schemes: ["opencode"] },
-        publish: { provider: "github", owner: "anomalyco", repo: "opencode", channel: "latest" },
-        deb: { fpm: [metainfoFpm(appId), legacyDesktopEntryFpm] },
-        rpm: { packageName: "opencode", fpm: [metainfoFpm(appId), legacyDesktopEntryFpm] },
+        publish: { provider: "github", owner: "AwareLiquid", repo: "HyperCode", channel: "latest" },
+        deb: { fpm: [metainfoFpm(appId)] },
+        rpm: { packageName: "hypercode", fpm: [metainfoFpm(appId)] },
       }
     }
   }

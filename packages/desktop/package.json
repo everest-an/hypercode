@@ -4,10 +4,9 @@
   "version": "1.18.21",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://opencode.ai",
+  "homepage": "https://github.com/AwareLiquid/HyperCode",
   "author": {
-    "name": "OpenCode",
-    "email": "hello@opencode.ai"
+    "name": "AwareLiquid"
   },
   "scripts": {
     "typecheck": "tsgo -b",
