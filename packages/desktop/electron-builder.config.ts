@@ -36,13 +36,13 @@ const channel = (() => {
 })()
 
 const APP_IDS = {
-  dev: "ai.opencode.desktop.dev",
-  beta: "ai.opencode.desktop.beta",
-  prod: "ai.opencode.desktop",
+  dev: "ai.awareliquid.hypercode.dev",
+  beta: "ai.awareliquid.hypercode.beta",
+  prod: "ai.awareliquid.hypercode",
 } as const
 
 const getBase = (appId: string): Configuration => ({
-  artifactName: "opencode-desktop-${os}-${arch}.${ext}",
+  artifactName: "hypercode-desktop-${os}-${arch}.${ext}",
   directories: {
     output: "dist",
     buildResources: "resources",
@@ -74,23 +74,23 @@ const getBase = (appId: string): Configuration => ({
   ],
   mac: {
     category: "public.app-category.developer-tools",
-    icon: `resources/icons/icon.icns`,
-    hardenedRuntime: true,
+    icon: `resources/icons/icon.png`,
+    hardenedRuntime: false,
     gatekeeperAssess: false,
     entitlements: "resources/entitlements.plist",
     entitlementsInherit: "resources/entitlements.plist",
-    notarize: true,
+    notarize: false,
     target: ["dmg", "zip"],
   },
   dmg: {
     sign: true,
   },
   protocols: {
-    name: "OpenCode",
-    schemes: ["opencode"],
+    name: "HyperCode",
+    schemes: ["hypercode"],
   },
   win: {
-    icon: `resources/icons/icon.ico`,
+    icon: `resources/icons/icon.png`,
     signtoolOptions: {
       sign: signWindows,
     },
@@ -100,8 +100,8 @@ const getBase = (appId: string): Configuration => ({
   nsis: {
     oneClick: true,
     perMachine: false,
-    installerIcon: `resources/icons/icon.ico`,
-    installerHeaderIcon: `resources/icons/icon.ico`,
+    installerIcon: `resources/icons/icon.png`,
+    installerHeaderIcon: `resources/icons/icon.png`,
   },
   linux: {
     icon: `resources/icons`,

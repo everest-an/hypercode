@@ -1,0 +1,108 @@
+name: build-desktop
+run-name: "build-desktop ${{ inputs.version || 'snapshot' }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (optional)"
+        required: false
+        type: string
+  push:
+    branches:
+      - dev
+    paths:
+      - "packages/desktop/**"
+      - "packages/tui/**"
+      - "packages/ui/**"
+      - "packages/opencode/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build-win:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node (native installs)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Prebuild (embedded server + icons)
+        working-directory: packages/desktop
+        run: bun run prebuild
+        env:
+          OPENCODE_CHANNEL: prod
+
+      - name: Build
+        working-directory: packages/desktop
+        run: bun run build
+
+      - name: Package Windows (NSIS installer)
+        working-directory: packages/desktop
+        run: bun run package:win
+        env:
+          OPENCODE_CHANNEL: prod
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-desktop-windows
+          path: packages/desktop/dist/*.exe
+          if-no-files-found: error
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node (native installs)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Prebuild (embedded server + icons)
+        working-directory: packages/desktop
+        run: bun run prebuild
+        env:
+          OPENCODE_CHANNEL: prod
+
+      - name: Build
+        working-directory: packages/desktop
+        run: bun run build
+
+      - name: Package macOS (dmg + zip)
+        working-directory: packages/desktop
+        run: bun run package:mac
+        env:
+          OPENCODE_CHANNEL: prod
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Upload dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-desktop-macos
+          path: |
+            packages/desktop/dist/*.dmg
+            packages/desktop/dist/*.zip
+          if-no-files-found: error
