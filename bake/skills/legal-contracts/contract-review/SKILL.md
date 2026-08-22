@@ -1,6 +1,6 @@
 ---
 name: contract-review
-description: Review legal contracts, NDAs, employment agreements, SaaS terms, and M&A documents. Identifies unfavorable terms, suggests redlines, and compares to market standards. Use for contract analysis, due diligence, or negotiation prep. 中文触发词: 合同审查;合同风险;红线条款;NDA;保密协议;并购合同;私募基金;募资;LPA;有限合伙协议;基金备案;carry。
+description: Review legal contracts, NDAs, employment agreements, SaaS terms, and M&A documents. Identifies unfavorable terms, suggests redlines, and compares to market standards. Use for contract analysis, due diligence, or negotiation prep. 中文触发词: 合同审查;合同风险;红线条款;NDA;保密协议;并购合同;合同条款。
 version: 3.0.0
 ---
 
