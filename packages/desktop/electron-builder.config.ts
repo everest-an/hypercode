@@ -100,8 +100,8 @@ const getBase = (appId: string): Configuration => ({
   nsis: {
     oneClick: true,
     perMachine: false,
-    installerIcon: `resources/icons/icon.png`,
-    installerHeaderIcon: `resources/icons/icon.png`,
+    installerIcon: `resources/icons/icon.ico`,
+    installerHeaderIcon: `resources/icons/icon.ico`,
   },
   linux: {
     icon: `resources/icons`,
