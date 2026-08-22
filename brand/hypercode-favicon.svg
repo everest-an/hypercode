@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
-  <!-- HyperCode favicon: simplified mark, chevrons only -->
-  <circle cx="128" cy="128" r="120" stroke="currentColor" stroke-width="16"/>
-  <path d="M108 92 L78 128 L108 164" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M148 92 L178 128 L148 164" stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="123" y1="103" x2="133" y2="153" stroke="currentColor" stroke-width="22" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" fill="currentColor" shape-rendering="crispEdges">
+  <!-- HyperCode favicon: same pixel mark, simplified -->
+  <rect x="70" y="90" width="10" height="10"/><rect x="60" y="100" width="10" height="10"/><rect x="50" y="110" width="10" height="10"/><rect x="40" y="120" width="10" height="10"/><rect x="50" y="130" width="10" height="10"/><rect x="60" y="140" width="10" height="10"/><rect x="70" y="150" width="10" height="10"/>
+  <rect x="120" y="90" width="10" height="10"/><rect x="110" y="100" width="10" height="10"/><rect x="100" y="110" width="10" height="10"/><rect x="90" y="120" width="10" height="10"/><rect x="80" y="130" width="10" height="10"/><rect x="70" y="140" width="10" height="10"/><rect x="60" y="150" width="10" height="10"/>
+  <rect x="140" y="90" width="10" height="10"/><rect x="150" y="100" width="10" height="10"/><rect x="160" y="110" width="10" height="10"/><rect x="170" y="120" width="10" height="10"/><rect x="160" y="130" width="10" height="10"/><rect x="150" y="140" width="10" height="10"/><rect x="140" y="150" width="10" height="10"/>
+  <rect x="190" y="140" width="20" height="20"/>
 </svg>

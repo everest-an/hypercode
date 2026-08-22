@@ -1,12 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
-  <!-- HyperWork mark: same ring + nodes, work-output bars core. Sibling of HyperCode mark. -->
-  <circle cx="128" cy="128" r="112" stroke="currentColor" stroke-width="12"/>
-  <!-- ascending work bars -->
-  <line x1="88" y1="168" x2="88" y2="126" stroke="currentColor" stroke-width="17" stroke-linecap="round"/>
-  <line x1="128" y1="168" x2="128" y2="102" stroke="currentColor" stroke-width="17" stroke-linecap="round"/>
-  <line x1="168" y1="168" x2="168" y2="78" stroke="currentColor" stroke-width="17" stroke-linecap="round"/>
-  <!-- network nodes on the ring -->
-  <circle cx="128" cy="16" r="10" fill="currentColor"/>
-  <circle cx="48" cy="200" r="8" fill="currentColor"/>
-  <circle cx="208" cy="200" r="8" fill="currentColor"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" fill="currentColor" shape-rendering="crispEdges">
+  <!-- HyperWork pixel mark: 25x25 grid, 10px cells. Ascending bars on a baseline. -->
+  <!-- baseline -->
+  <rect x="60" y="160" width="130" height="10"/>
+  <!-- bar 1 (short) -->
+  <rect x="70" y="130" width="30" height="30"/>
+  <!-- bar 2 (medium) -->
+  <rect x="110" y="110" width="30" height="50"/>
+  <!-- bar 3 (tall) -->
+  <rect x="150" y="90" width="30" height="70"/>
 </svg>
