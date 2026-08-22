@@ -67,6 +67,8 @@ jobs:
 
   build-mac:
     runs-on: macos-latest
+    env:
+      APPLE_ID_SECRET: ${{ secrets.APPLE_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -96,7 +98,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Configure signing (optional, only when Apple credentials exist)
-        if: secrets.APPLE_ID != ''
+        if: env.APPLE_ID_SECRET != ''
         run: |
           echo "HC_NOTARIZE=1" >> "$GITHUB_ENV"
           echo "CSC_LINK=${{ secrets.MAC_CERT_P12_BASE64 }}" >> "$GITHUB_ENV"
