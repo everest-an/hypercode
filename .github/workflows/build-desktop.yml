@@ -95,19 +95,22 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
+      - name: Configure signing (optional, only when Apple credentials exist)
+        if: secrets.APPLE_ID != ''
+        run: |
+          echo "HC_NOTARIZE=1" >> "$GITHUB_ENV"
+          echo "CSC_LINK=${{ secrets.MAC_CERT_P12_BASE64 }}" >> "$GITHUB_ENV"
+          echo "CSC_KEY_PASSWORD=${{ secrets.MAC_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> "$GITHUB_ENV"
+          echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> "$GITHUB_ENV"
+          echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> "$GITHUB_ENV"
+
       - name: Package macOS (dmg + zip)
         working-directory: packages/desktop
         run: bun run package:mac -- --publish never
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
-          # 签名/公证凭证(可选):填入 GitHub Secrets 后自动启用
-          HC_NOTARIZE: ${{ secrets.APPLE_ID != '' && '1' || '0' }}
-          CSC_LINK: ${{ secrets.MAC_CERT_P12_BASE64 }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
