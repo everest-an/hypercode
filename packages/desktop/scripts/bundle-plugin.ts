@@ -150,7 +150,13 @@ async function main() {
   // "nothing declares it" is not the same as "nothing requires it" — a lazy require() would only fail at
   // runtime, in a shipped installer. Opt in once a build has been exercised end to end.
   const dropTypescript = args.includes("--drop-typescript")
-  const platformDir = `${process.platform}-${process.arch}`
+  // Defaults to the host, but must be overridable: a macOS arm64 runner cross-building the x64 installer
+  // would otherwise prune to darwin-arm64 and ship an installer whose native binaries cannot run on the
+  // machine it targets.
+  const targetPlatform = flag("platform") ?? process.platform
+  const targetArch = flag("arch") ?? process.arch
+  const platformDir = `${targetPlatform}-${targetArch}`
+  if (!PLATFORM_DIR.test(platformDir)) throw new Error(`unsupported target ${platformDir}`)
 
   const staging = await fs.mkdtemp(path.join(os.tmpdir(), "hypercode-plugin-"))
   console.log(`[bundle-plugin] staging ${pkg} in ${staging}`)
