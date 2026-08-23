@@ -335,7 +335,11 @@ describe("session.retry.retryable", () => {
     expect(retryable).toEqual({ message: "Response decompression failed" })
   })
 
-  test("maps free limits to Go upsell action", () => {
+  // The upsell copy used to push users at "OpenCode Go … starting at $5/month"
+  // with an https://opencode.ai/go link, i.e. it sent HyperCode's paying users
+  // to the upstream product. The classification mechanism is unchanged; only the
+  // copy and the link were neutralised (see src/session/retry.ts).
+  test("maps free limits to a neutral provider-plan action", () => {
     const error = Schema.decodeUnknownSync(SessionV1.APIError.Schema)(
       new SessionV1.APIError({
         message: "Free usage exceeded",
@@ -354,14 +358,22 @@ describe("session.retry.retryable", () => {
         reason: "free_tier_limit",
         provider: "opencode",
         title: "Free limit reached",
-        message: "Subscribe to OpenCode Go for reliable access to the best open-source models, starting at $5/month.",
-        label: "subscribe",
+        message:
+          "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+        label: "learn more",
         link: SessionRetry.GO_UPSELL_URL,
       },
     })
+    expect(SessionRetry.GO_UPSELL_URL).toBe("https://awareliquid.ai")
+    expect(SessionRetry.GO_UPSELL_URL).not.toContain("opencode.ai")
+    expect(SessionRetry.GO_UPSELL_MESSAGE).not.toContain("OpenCode Go")
   })
 
-  test("maps Go subscription limits to workspace PAYG upsell", () => {
+  // Formerly "maps Go subscription limits to workspace PAYG upsell". HyperCode
+  // has no workspace concept, so the fabricated
+  // https://opencode.ai/workspace/<id>/go link was dropped entirely — this
+  // branch now returns an action with no `link` at all.
+  test("maps account usage limits to a neutral dismissable action", () => {
     const error = Schema.decodeUnknownSync(SessionV1.APIError.Schema)(
       new SessionV1.APIError({
         message: "Subscription quota exceeded. You can continue using free models.",
@@ -384,22 +396,26 @@ describe("session.retry.retryable", () => {
       }).toObject(),
     )
 
-    expect(SessionRetry.retryable(error, "opencode-go")).toEqual({
-      message:
-        "5 hour usage limit reached. It will reset in 5 hours 23 minutes. To continue using this model now, enable usage from your available balance - https://opencode.ai/workspace/wrk_01K6XGM22R6FM8JVABE9XDQXGH/go",
+    const expected =
+      "5 hour usage limit reached. It will reset in 5 hours 23 minutes. To continue using this model now, enable usage from your available balance in your provider's dashboard."
+
+    const result = SessionRetry.retryable(error, "opencode-go")
+    expect(result).toEqual({
+      message: expected,
       action: {
         reason: "account_rate_limit",
         provider: "opencode-go",
-        title: "Go limit reached",
-        message:
-          "5 hour usage limit reached. It will reset in 5 hours 23 minutes. To continue using this model now, enable usage from your available balance",
-        label: "open settings",
-        link: "https://opencode.ai/workspace/wrk_01K6XGM22R6FM8JVABE9XDQXGH/go",
+        title: "Usage limit reached",
+        message: expected,
+        label: "dismiss",
       },
     })
+    // No workspace URL is synthesised any more.
+    expect(result?.action).not.toHaveProperty("link")
+    expect(result?.message).not.toContain("opencode.ai")
   })
 
-  test("maps Go subscription limits without limit metadata", () => {
+  test("maps account usage limits without limit metadata", () => {
     const error = Schema.decodeUnknownSync(SessionV1.APIError.Schema)(
       new SessionV1.APIError({
         message: "Subscription quota exceeded. You can continue using free models.",
@@ -422,7 +438,7 @@ describe("session.retry.retryable", () => {
     )
 
     expect(SessionRetry.retryable(error, "opencode-go")?.action?.message).toBe(
-      "Usage limit reached. It will reset in 15 minutes. To continue using this model now, enable usage from your available balance",
+      "Usage limit reached. It will reset in 15 minutes. To continue using this model now, enable usage from your available balance in your provider's dashboard.",
     )
   })
 })
