@@ -5,6 +5,7 @@ import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
 import { useFile } from "@/context/file"
 import { usePlatform } from "@/context/platform"
 import { createVaultConfig } from "./vault-config"
+import { createVaultInitialized, VaultEmptyState } from "./vault-init"
 import { VaultGraph } from "./vault-graph"
 import { VaultPreview } from "./vault-preview"
 import { VaultTaskPanel } from "./vault-task-panel"
@@ -31,6 +32,9 @@ export function VaultPage(props: ParentProps<{ vaultRoot: string }>) {
   const file = useFile()
   const platform = usePlatform()
   const config = createVaultConfig(file)
+  // `undefined` while the marker file is still loading — don't flash the empty
+  // state at users who opened a perfectly good vault.
+  const initialized = createVaultInitialized(file)
   const [selected, setSelected] = createSignal<string>()
   const [view, setView] = createSignal<"preview" | "graph">("preview")
 
@@ -99,9 +103,16 @@ export function VaultPage(props: ParentProps<{ vaultRoot: string }>) {
                 when={selected()}
                 keyed
                 fallback={
-                  <div class="flex flex-1 items-center justify-center text-13-regular text-text-weak">
-                    Select a note
-                  </div>
+                  <Show
+                    when={initialized() === false}
+                    fallback={
+                      <div class="flex flex-1 items-center justify-center text-13-regular text-text-weak">
+                        Select a note
+                      </div>
+                    }
+                  >
+                    <VaultEmptyState vaultRoot={props.vaultRoot} file={file} />
+                  </Show>
                 }
               >
                 {(path) => <VaultPreview path={path} onNavigate={selectNote} />}

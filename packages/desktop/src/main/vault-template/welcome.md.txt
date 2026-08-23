@@ -16,6 +16,14 @@ files you own.
 
 ## Wiki links
 
-Notes connect with wiki links written `[[like this]]`. When agents write notes they link
-related concepts so the vault grows into a connected graph. Try following one:
-[[TODO Colonization workflow]]
+Notes connect with wiki links. Write them as:
+
+```
+[[Note name]]
+```
+
+(The example above is inside a code fence on purpose — the graph view skips fenced blocks,
+so it does not turn into a dangling node.)
+
+When agents write notes they link related concepts so the vault grows into a connected
+graph. Try following a real one: [[TODO-Colonization]]

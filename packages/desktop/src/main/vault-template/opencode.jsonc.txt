@@ -1,18 +1,27 @@
 {
-  "$schema": "https://opencode.ai/config.json",
   // Vault permission model (HyperCode Obsidian-style vault).
-  // Engine-level protection: ALL agents are denied Edit/Write on protected files.
+  // Engine-level protection: ALL agents are denied Edit/Write on protected files,
+  // and shell commands that name a protected path are denied too — otherwise
+  // `printf x > TODO-Colonization.md` walks straight past an edit-only rule.
   // The oh-my-openagent plugin additionally enforces prometheus-md-only for the
   // prometheus planning agent. AI note-writing goes through the obsidian_write_note
   // tool (tool/obsidian_write_note.ts), which only writes inside melting-asphalt/.
   //
-  // Note: permission rules are evaluated with "later keys win" semantics and the
-  // default action when nothing matches is "ask" — so only the deny patterns are
-  // listed here. Do NOT add a "*" rule.
+  // These rules are a first line of defence only: permission rules are evaluated
+  // with "later keys win" semantics, so a plugin-defined agent can append its own
+  // broad "allow" and override everything here. The real enforcement lives in
+  // plugin/vault-guard.ts, whose tool.execute.before hook no agent can override.
+  //
+  // Note: the default action when nothing matches is "ask" — so only the deny
+  // patterns are listed here. Do NOT add a "*" rule.
   "permission": {
     "edit": {
       "TODO-Colonization.md": "deny",
       "sisyphus/plans/**": "deny"
+    },
+    "bash": {
+      "*TODO-Colonization.md*": "deny",
+      "*sisyphus/plans*": "deny"
     }
   }
 }

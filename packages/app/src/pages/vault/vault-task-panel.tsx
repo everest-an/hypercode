@@ -63,6 +63,8 @@ export function VaultTaskPanel(props: {
   const [status, setStatus] = createSignal<PanelStatus>("idle")
   const [sessionID, setSessionID] = createSignal<string>()
   const [lines, setLines] = createSignal<LogLine[]>([])
+  /** Agent the live session actually runs as — undefined once we fell back to the server default. */
+  const [activeAgent, setActiveAgent] = createSignal<string | undefined>(props.agent)
 
   let blockedShownFor = ""
 
@@ -127,19 +129,36 @@ export function VaultTaskPanel(props: {
     batch(() => {
       setExpanded(true)
       setStatus("starting")
+      setActiveAgent(props.agent)
       setLines([{ id: "start", kind: "info", label: `▶ ${props.agent}: ${task}` }])
     })
     blockedShownFor = ""
     try {
       // Fall back to the server's default agent when the configured one (e.g.
       // "prometheus" from oh-my-openagent) is unavailable in this install.
+      // The fallback must also apply to the prompt call: sending
+      // `agent: "prometheus"` to a session created without it makes the engine
+      // throw "Agent not found", which is exactly the case every user who has
+      // not installed oh-my-openagent hits.
+      let agent: string | undefined = props.agent
       const session = await sdk()
         .api.session.create({ agent: props.agent, location: { directory: props.vaultRoot } })
-        .catch(() => sdk().api.session.create({ location: { directory: props.vaultRoot } }))
+        .catch(() => {
+          agent = undefined
+          return sdk().api.session.create({ location: { directory: props.vaultRoot } })
+        })
         .then(normalizeSessionInfo)
+      setActiveAgent(agent)
       setSessionID(session.id)
       setStatus("running")
-      await sdk().api.session.prompt({ sessionID: session.id, agent: props.agent, text: task })
+      if (!agent) {
+        append({
+          id: "agent-fallback",
+          kind: "info",
+          label: `⚠ Agent "${props.agent}" is not installed — running with the default agent instead.`,
+        })
+      }
+      await sdk().api.session.prompt({ sessionID: session.id, agent, text: task })
     } catch (error) {
       append({
         id: `submit-error:${Date.now()}`,
@@ -183,7 +202,7 @@ export function VaultTaskPanel(props: {
           onClick={() => setExpanded((value) => !value)}
         >
           <Icon name={expanded() ? "chevron-down" : "chevron-right"} size="small" />
-          ⚡ {props.agent}
+          ⚡ {activeAgent() ?? "default agent"}
         </button>
         <span class="text-[11px] text-text-weak">{statusLabel()}</span>
         <input
