@@ -180,7 +180,10 @@ export function createMainWindow(id: string = randomUUID()) {
     height: state.height,
     show: false,
     autoHideMenuBar: true,
-    title: "OpenCode",
+    // app.setName() already resolved the channel-aware product name
+    // ("HyperCode" / "HyperCode Beta" / "HyperCode Dev"); reuse it so the title
+    // bar and taskbar never show the upstream name.
+    title: app.getName(),
     icon: iconPath(),
     backgroundColor: backgroundColor ?? defaultBackgroundColor(),
     ...(process.platform === "darwin"

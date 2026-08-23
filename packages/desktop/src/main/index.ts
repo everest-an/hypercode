@@ -69,6 +69,15 @@ let server: SidecarListener | null = null
 
 const pendingDeepLinks: string[] = []
 
+// "hypercode" is the scheme we register with the OS; "opencode" is kept so
+// links handed over by an older install still resolve. Must stay in sync with
+// packages/app/src/pages/layout/deep-links.ts.
+const DEEP_LINK_SCHEMES = ["hypercode://", "opencode://"]
+
+export function collectDeepLinkArgs(argv: readonly string[]) {
+  return argv.filter((arg) => DEEP_LINK_SCHEMES.some((scheme) => arg.startsWith(scheme)))
+}
+
 function useEnvProxy() {
   try {
     // Electron 41.2 runs Node 24.14.1; latest @types/node@24 is 24.12.2.
@@ -200,10 +209,22 @@ const main = Effect.gen(function* () {
     return
   }
 
+  // Windows/Linux hand the deep link to the *first* instance as an argv entry.
+  // That instance owns the single-instance lock, so "second-instance" never
+  // fires for it and the URL would be dropped on a cold start. macOS uses the
+  // "open-url" event below instead, which does fire on cold start.
+  {
+    const urls = collectDeepLinkArgs(process.argv)
+    if (urls.length) {
+      logger.log("deep link received via launch argv", { urls })
+      emitDeepLinks(urls)
+    }
+  }
+
   const shellEnv = preferAppEnv(app.getPath("userData"))
 
   app.on("second-instance", (_event: Event, argv: string[]) => {
-    const urls = argv.filter((arg: string) => arg.startsWith("hypercode://"))
+    const urls = collectDeepLinkArgs(argv)
     if (urls.length) {
       logger.log("deep link received via second-instance", { urls })
       emitDeepLinks(urls)

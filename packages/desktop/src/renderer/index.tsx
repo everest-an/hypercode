@@ -23,6 +23,7 @@ import { createEffect, createMemo, createResource, createSignal, onCleanup, Show
 import { render } from "solid-js/web"
 import pkg from "../../package.json"
 import { t } from "./i18n"
+import notificationIcon from "./notification-icon.png"
 import { initializationData } from "./initialization"
 import { DesktopFirstLaunchOnboarding } from "./onboarding"
 import { resetZoom, setPinchZoomEnabled, webviewZoom, zoomIn, zoomOut } from "./webview-zoom"
@@ -224,6 +225,9 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
     async revealPath(path: string) {
       return window.api.revealPath(path)
     },
+    async vaultInit(root: string) {
+      return window.api.vaultInit(root)
+    },
 
     storage,
     draftStore: createDraftStore({
@@ -257,7 +261,9 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
 
       const notification = new Notification(title, {
         body: description ?? "",
-        icon: "https://opencode.ai/favicon-96x96-v3.png",
+        // Bundled with the app on purpose: never reach out to an external host
+        // for a notification icon (branding, offline reachability, privacy).
+        icon: notificationIcon,
       })
       notification.onclick = () => {
         void window.api.showWindow()
