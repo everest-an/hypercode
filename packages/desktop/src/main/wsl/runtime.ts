@@ -265,12 +265,16 @@ export async function installWslDistro(name: string, opts?: RunWslOptions) {
 }
 
 export async function installWslOpencode(version: string, distro: string, opts?: RunWslOptions) {
+  // Upstream piped `https://opencode.ai/install` into bash here, which provisioned the *upstream* product into
+  // the user's WSL distro. `resolveWslOpencode` would then find that binary and the desktop app would drive it
+  // as if it were HyperCode. There is no Linux CLI build published yet, so failing with a clear message is the
+  // honest behaviour — silently installing someone else's binary is not.
+  const message =
+    `HyperCode ${version} has no Linux CLI build yet, so it cannot be installed into WSL automatically. ` +
+    `Point the WSL settings at an existing HyperCode binary instead.`
   return runInteractiveCommand(
     resolveSystem32Command("wsl.exe"),
-    wslArgs(
-      ["bash", "-lc", `curl -fsSL https://opencode.ai/install | bash -s -- --version ${shellEscape(version)}`],
-      distro,
-    ),
+    wslArgs(["bash", "-lc", `printf '%s\\n' ${shellEscape(message)} >&2; exit 1`], distro),
     withTimeout(opts, DEFAULT_WSL_INSTALL_TIMEOUT_MS),
     DEFAULT_WSL_INSTALL_TIMEOUT_MS,
   )
@@ -308,10 +312,12 @@ export async function probeWslDistro(name: string, opts?: RunWslOptions): Promis
 }
 
 export async function resolveWslOpencode(distro: string, opts?: RunWslOptions) {
+  // Only ever resolve HyperCode's own binary. Probing `~/.opencode/bin/opencode` would pick up a co-installed
+  // upstream OpenCode and hand it to the desktop app as the backend.
   return firstLine(
     (
       await runWslSh(
-        'if [ -x "$HOME/.opencode/bin/opencode" ]; then printf "%s\\n" "$HOME/.opencode/bin/opencode"; fi',
+        'if [ -x "$HOME/.hypercode/bin/hypercode" ]; then printf "%s\\n" "$HOME/.hypercode/bin/hypercode"; fi',
         distro,
         opts,
       )
