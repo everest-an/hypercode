@@ -1753,7 +1753,10 @@ const layer = Layer.effect(
         })
 
         if (baseURL !== undefined) options["baseURL"] = baseURL
-        if (options["apiKey"] === undefined && provider.key) options["apiKey"] = provider.key
+        // Treat an empty apiKey the same as an absent one. A blank string in the config file would otherwise
+        // permanently mask the key the user pasted through the UI (which arrives as `provider.key`), leaving
+        // them with a 401 and no in-app way to recover.
+        if (!options["apiKey"] && provider.key) options["apiKey"] = provider.key
         if (model.headers)
           options["headers"] = {
             ...options["headers"],
@@ -1982,9 +1985,14 @@ const layer = Layer.effect(
 
     const defaultModel = Effect.fn("Provider.defaultModel")(function* () {
       const cfg = yield* config.get()
+      const s = yield* InstanceState.get(state)
+      // A configured model is meaningless when no provider is available — and since HyperCode seeds a default
+      // `model` into the global config, that is the common case for a user who disabled every provider.
+      // Returning "model not found" there sends them hunting for a typo in the model name when the real
+      // problem is that nothing can serve it.
+      if (!Object.keys(s.providers).length) return yield* new NoProvidersError()
       if (cfg.model) return parseModel(cfg.model)
 
-      const s = yield* InstanceState.get(state)
       const recent = yield* fs.readJson(path.join(Global.Path.state, "model.json")).pipe(
         Effect.map((x): { providerID: ProviderV2.ID; modelID: ModelV2.ID }[] => {
           if (!isRecord(x) || !Array.isArray(x.recent)) return []

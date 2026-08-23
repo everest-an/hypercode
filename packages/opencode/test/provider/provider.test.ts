@@ -76,12 +76,6 @@ const providerLayer = (flags: Partial<RuntimeFlags.Info> = {}) =>
 
 const list = Provider.use.list()
 
-const paid = (providers: Record<string, { models: Record<string, { cost: { input: number } }> }>) => {
-  const item = providers[ProviderV2.ID.make("opencode")]
-  expect(item).toBeDefined()
-  return Object.values(item.models).filter((model) => model.cost.input > 0).length
-}
-
 const languageBaseURL = (language: unknown) => (language as { config: { baseURL: string } }).config.baseURL
 
 const it = testEffect(LayerNode.compile(LayerNode.group([Provider.node, Env.node, Plugin.node])))
@@ -1189,11 +1183,13 @@ it.instance("ModelNotFoundError for provider includes suggestions", () =>
   }),
 )
 
+// Uses anthropic rather than the upstream `opencode` gateway: that provider is filtered out of the catalog,
+// so it can no longer stand in for "a provider present in the catalog but not loaded".
 it.instance("ModelNotFoundError suggests catalog models for unloaded providers", () =>
   Effect.gen(function* () {
-    yield* remove("OPENCODE_API_KEY")
+    yield* remove("ANTHROPIC_API_KEY")
     const error = yield* Provider.use
-      .getModel(ProviderV2.ID.opencode, ModelV2.ID.make("claude-haiku-fake-model"))
+      .getModel(ProviderV2.ID.anthropic, ModelV2.ID.make("claude-haiku-fake-model"))
       .pipe(Effect.flip)
     if (!Provider.ModelNotFoundError.isInstance(error)) throw error
     expect(error.suggestions ?? []).toContain("claude-haiku-4-5")
@@ -2064,39 +2060,26 @@ it.instance(
   }),
 )
 
-it.effect("opencode loader keeps paid models when config apiKey is present", () =>
+// The two tests that used to live here asserted the upstream `opencode` provider's paid-model loader. That
+// provider is its own hosted gateway: HyperCode users cannot authenticate against it, and listing it puts a
+// third-party brand in the model picker, so `ModelsDev.populate` now drops it from the catalog entirely.
+// What follows guards that removal instead.
+it.effect("does not list the upstream opencode provider", () =>
   Effect.gen(function* () {
-    const noneDir = yield* tmpdirScoped()
-    const keyedDir = yield* tmpdirScoped({
-      config: { provider: { opencode: { options: { apiKey: "test-key" } } } },
-    })
+    const dir = yield* tmpdirScoped()
 
-    const listIn = (directory: string) =>
-      Provider.use
-        .list()
-        .pipe(provideInstanceEffect(directory))
-        .pipe(Effect.provide(instanceStoreLayer), Effect.provide(AppNodeBuilder.build(CrossSpawnSpawner.node)))
+    const providers = yield* Provider.use
+      .list()
+      .pipe(provideInstanceEffect(dir))
+      .pipe(Effect.provide(instanceStoreLayer), Effect.provide(AppNodeBuilder.build(CrossSpawnSpawner.node)))
 
-    const none = paid(yield* listIn(noneDir))
-    const keyedCount = paid(yield* listIn(keyedDir))
-
-    expect(none).toBe(0)
-    expect(keyedCount).toBeGreaterThan(0)
+    expect(providers[ProviderV2.ID.make("opencode")]).toBeUndefined()
   }).pipe(provideMultiInstance),
 )
 
-it.effect("opencode loader keeps paid models when auth exists", () =>
+it.effect("does not resurrect the upstream opencode provider from a stored auth entry", () =>
   Effect.gen(function* () {
-    const noneDir = yield* tmpdirScoped()
-    const keyedDir = yield* tmpdirScoped()
-
-    const listIn = (directory: string) =>
-      Provider.use
-        .list()
-        .pipe(provideInstanceEffect(directory))
-        .pipe(Effect.provide(instanceStoreLayer), Effect.provide(AppNodeBuilder.build(CrossSpawnSpawner.node)))
-
-    const none = paid(yield* listIn(noneDir))
+    const dir = yield* tmpdirScoped()
 
     const authPath = path.join(Global.Path.data, "auth.json")
     const original = yield* Effect.promise(() => Filesystem.readText(authPath).catch(() => undefined))
@@ -2110,9 +2093,11 @@ it.effect("opencode loader keeps paid models when auth exists", () =>
         }),
     )
 
-    const keyedCount = paid(yield* listIn(keyedDir))
+    const providers = yield* Provider.use
+      .list()
+      .pipe(provideInstanceEffect(dir))
+      .pipe(Effect.provide(instanceStoreLayer), Effect.provide(AppNodeBuilder.build(CrossSpawnSpawner.node)))
 
-    expect(none).toBe(0)
-    expect(keyedCount).toBeGreaterThan(0)
+    expect(providers[ProviderV2.ID.make("opencode")]).toBeUndefined()
   }).pipe(provideMultiInstance),
 )
