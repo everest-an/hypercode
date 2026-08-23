@@ -21,7 +21,7 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "@opencode-ai/desktop#test": {
+    "hypercode-desktop#test": {
       "dependsOn": ["^build"],
       "outputs": []
     },

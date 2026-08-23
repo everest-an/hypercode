@@ -48,9 +48,11 @@ const getBase = (appId: string): Configuration => ({
   // https://developer.gnome.org/documentation/guidelines/maintainer/integrating.html
   // https://www.electron.build/docs/linux/
   extraMetadata: {
-    // Override package.json's "@opencode-ai/desktop" so the Windows NSIS
-    // install dir and updater cache dir don't collide with upstream OpenCode
-    // (both would otherwise resolve to %LOCALAPPDATA%\Programs\@opencode-aidesktop).
+    // The Windows NSIS install dir is derived from the *raw* package.json name,
+    // not from this field. v0.1.5 shipped with this override in place and still
+    // landed in %LOCALAPPDATA%\Programs\@opencode-aidesktop (upstream's dir),
+    // because packages/desktop/package.json still said "@opencode-ai/desktop".
+    // The raw name must stay "hypercode-desktop" — see the test that locks both.
     name: "hypercode-desktop",
     desktopName: `${appId}.desktop`,
     // Let the release workflow stamp the version it is actually publishing. Without this the installer

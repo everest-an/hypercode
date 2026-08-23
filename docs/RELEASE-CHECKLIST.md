@@ -28,7 +28,7 @@
 
 ## B. 隔离(不得影响用户其他工具)
 
-- [ ] 安装目录专属 `hypercode-desktop`(`extraMetadata.name` 保留)
+- [ ] 安装目录专属 `hypercode-desktop`(原始 package.json name 必须为 `hypercode-desktop`;仅靠 `extraMetadata.name` 不够,v0.1.5 仍装进了上游的 `@opencode-aidesktop`)
 - [ ] 不写 `~/.omo/omo.jsonc`
 - [ ] **同机共存 OpenCode**:安装 / 运行 / 卸载全程对它零影响
 - [ ] 卸载只清理自己的目录与 shell rc 标记

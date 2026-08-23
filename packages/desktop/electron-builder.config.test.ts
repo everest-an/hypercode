@@ -55,8 +55,15 @@ test("keeps every user-visible identity on the HyperCode brand", async () => {
 
   expect(config.productName).toBe("HyperCode")
   expect(config.protocols).toEqual({ name: "HyperCode", schemes: ["hypercode"] })
-  expect(config.extraMetadata?.name).toBe("hypercode-desktop")
   expect(config.appId).not.toContain("opencode")
+
+  // Regression guard for v0.1.5: the Windows NSIS install dir is derived from
+  // the raw package.json name, and extraMetadata.name alone did NOT stop the
+  // installer from landing in upstream's %LOCALAPPDATA%\Programs\@opencode-aidesktop.
+  // Lock the raw name so the two can never drift apart again.
+  const pkg = (await Bun.file(new URL("./package.json", import.meta.url)).json()) as { name?: string }
+  expect(pkg.name).toBe("hypercode-desktop")
+  expect(config.extraMetadata?.name).toBe(pkg.name)
 })
 
 test("bundles the CLI outside the dev app archive", async () => {
