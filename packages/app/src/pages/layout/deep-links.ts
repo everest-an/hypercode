@@ -1,7 +1,12 @@
 export const deepLinkEvent = "opencode:deep-link"
 
+// "hypercode://" is what the desktop app registers with the OS (see
+// electron-builder.config.ts protocols + app.setAsDefaultProtocolClient).
+// "opencode://" stays accepted so links minted by older installs keep working.
+export const DEEP_LINK_SCHEMES = ["hypercode://", "opencode://"] as const
+
 const parseUrl = (input: string) => {
-  if (!input.startsWith("opencode://")) return
+  if (!DEEP_LINK_SCHEMES.some((scheme) => input.startsWith(scheme))) return
   if (typeof URL.canParse === "function" && !URL.canParse(input)) return
   try {
     return new URL(input)
