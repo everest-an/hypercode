@@ -1,6 +1,7 @@
 ---
 name: material-contract-schedule
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Build the material contracts disclosure schedule from diligence findings,
   applying the purchase agreement's Material Contract definition and formatting
   per the agreement's schedule format. Use when user says "build the contracts

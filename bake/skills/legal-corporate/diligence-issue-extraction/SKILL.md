@@ -1,6 +1,7 @@
 ---
 name: diligence-issue-extraction
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Read VDR documents and extract issues per house categories and materiality
   thresholds, producing findings in house memo format. Use when user says
   "review the data room", "extract issues from [folder]", "diligence review",

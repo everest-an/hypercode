@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Guided customization of your law-student study profile — change one thing
   without re-running the whole cold-start interview. Adjust current classes,
   learning style, outline preferences, bar prep subjects, seed materials,

@@ -1,6 +1,7 @@
 ---
 name: dpa-review
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Review a Data Processing Agreement against your DPA playbook — auto-detects
   whether you're processor or controller and applies the right half of the playbook.
   Use when the user says "review this DPA", "check this data processing addendum",

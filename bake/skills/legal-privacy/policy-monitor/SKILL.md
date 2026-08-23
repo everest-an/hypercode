@@ -1,6 +1,7 @@
 ---
 name: policy-monitor
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Keep the privacy policy current with practice. Two modes: weekly sweep of saved
   PIAs, DPA reviews, and triage results to find policy drift; or direct query for
   a proposed new practice. Use when the user asks "does our policy cover this",

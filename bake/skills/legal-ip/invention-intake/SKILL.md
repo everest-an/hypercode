@@ -1,6 +1,7 @@
 ---
 name: invention-intake
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Invention disclosure first-pass screen — novelty, obviousness, §101
   eligibility, bar dates, detectability, and strategic value. Use when an
   invention disclosure comes in and needs triage on whether to pursue a

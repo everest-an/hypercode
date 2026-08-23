@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Run the cold-start interview to learn your IP practice and write your
   practice profile. Use on first install when the practice profile is missing
   or still contains placeholders, when re-onboarding with --redo, or when

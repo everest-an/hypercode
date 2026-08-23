@@ -1,6 +1,7 @@
 ---
 name: investigation-summary
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Draft an audience-specific summary from the privileged investigation memo —
   HR, leadership, or outside counsel versions. Use when an investigation memo
   needs to be communicated to an audience that should not see the full

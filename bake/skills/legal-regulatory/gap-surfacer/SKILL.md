@@ -1,6 +1,7 @@
 ---
 name: gap-surfacer
-description: > 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  中文触发词: 监管合规;行政许可;行政处罚;行业监管。
   Reference: shared gap- and comment-tracker framework backing /regulatory-legal:gaps
   and /regulatory-legal:comments. Tracks open policy gaps with remediation status,
   ingests gaps from policy-diff, surfaces what's open and aging, routes to owners,

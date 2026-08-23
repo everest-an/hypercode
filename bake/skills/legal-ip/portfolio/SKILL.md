@@ -1,6 +1,7 @@
 ---
 name: portfolio
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Track the IP portfolio — registrations, renewals, maintenance fees, and use
   declarations. Use when checking what's renewing, adding or updating an
   asset, recording a maintenance filing, or auditing the register for gaps,

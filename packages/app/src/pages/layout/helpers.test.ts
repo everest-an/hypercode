@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test"
 import {
   collectNewSessionDeepLinks,
   collectOpenProjectDeepLinks,
+  DEEP_LINK_SCHEMES,
   drainPendingDeepLinks,
   parseDeepLink,
   parseNewSessionDeepLink,
@@ -38,26 +39,31 @@ const session = (input: Partial<Session> & Pick<Session, "id" | "directory">) =>
     ...input,
   }) as Session
 
-describe("layout deep links", () => {
+// "hypercode://" is the scheme the desktop app actually registers with the OS
+// (electron-builder.config.ts protocols + app.setAsDefaultProtocolClient).
+// "opencode://" is only kept for links minted by older installs. Every case
+// below therefore runs against both schemes — asserting only the legacy one is
+// what let deep links stay 100% broken behind a green suite.
+describe.each([...DEEP_LINK_SCHEMES])("layout deep links (%s)", (scheme) => {
   test("parses open-project deep links", () => {
-    expect(parseDeepLink("opencode://open-project?directory=/tmp/demo")).toBe("/tmp/demo")
+    expect(parseDeepLink(`${scheme}open-project?directory=/tmp/demo`)).toBe("/tmp/demo")
   })
 
   test("ignores non-project deep links", () => {
-    expect(parseDeepLink("opencode://other?directory=/tmp/demo")).toBeUndefined()
+    expect(parseDeepLink(`${scheme}other?directory=/tmp/demo`)).toBeUndefined()
     expect(parseDeepLink("https://example.com")).toBeUndefined()
   })
 
   test("ignores malformed deep links safely", () => {
-    expect(() => parseDeepLink("opencode://open-project/%E0%A4%A%")).not.toThrow()
-    expect(parseDeepLink("opencode://open-project/%E0%A4%A%")).toBeUndefined()
+    expect(() => parseDeepLink(`${scheme}open-project/%E0%A4%A%`)).not.toThrow()
+    expect(parseDeepLink(`${scheme}open-project/%E0%A4%A%`)).toBeUndefined()
   })
 
   test("parses links when URL.canParse is unavailable", () => {
     const original = Object.getOwnPropertyDescriptor(URL, "canParse")
     Object.defineProperty(URL, "canParse", { configurable: true, value: undefined })
     try {
-      expect(parseDeepLink("opencode://open-project?directory=/tmp/demo")).toBe("/tmp/demo")
+      expect(parseDeepLink(`${scheme}open-project?directory=/tmp/demo`)).toBe("/tmp/demo")
     } finally {
       if (original) Object.defineProperty(URL, "canParse", original)
       if (!original) Reflect.deleteProperty(URL, "canParse")
@@ -65,37 +71,37 @@ describe("layout deep links", () => {
   })
 
   test("ignores open-project deep links without directory", () => {
-    expect(parseDeepLink("opencode://open-project")).toBeUndefined()
-    expect(parseDeepLink("opencode://open-project?directory=")).toBeUndefined()
+    expect(parseDeepLink(`${scheme}open-project`)).toBeUndefined()
+    expect(parseDeepLink(`${scheme}open-project?directory=`)).toBeUndefined()
   })
 
   test("collects only valid open-project directories", () => {
     const result = collectOpenProjectDeepLinks([
-      "opencode://open-project?directory=/a",
-      "opencode://other?directory=/b",
-      "opencode://open-project?directory=/c",
+      `${scheme}open-project?directory=/a`,
+      `${scheme}other?directory=/b`,
+      `${scheme}open-project?directory=/c`,
     ])
     expect(result).toEqual(["/a", "/c"])
   })
 
   test("parses new-session deep links with optional prompt", () => {
-    expect(parseNewSessionDeepLink("opencode://new-session?directory=/tmp/demo")).toEqual({ directory: "/tmp/demo" })
-    expect(parseNewSessionDeepLink("opencode://new-session?directory=/tmp/demo&prompt=hello%20world")).toEqual({
+    expect(parseNewSessionDeepLink(`${scheme}new-session?directory=/tmp/demo`)).toEqual({ directory: "/tmp/demo" })
+    expect(parseNewSessionDeepLink(`${scheme}new-session?directory=/tmp/demo&prompt=hello%20world`)).toEqual({
       directory: "/tmp/demo",
       prompt: "hello world",
     })
   })
 
   test("ignores new-session deep links without directory", () => {
-    expect(parseNewSessionDeepLink("opencode://new-session")).toBeUndefined()
-    expect(parseNewSessionDeepLink("opencode://new-session?directory=")).toBeUndefined()
+    expect(parseNewSessionDeepLink(`${scheme}new-session`)).toBeUndefined()
+    expect(parseNewSessionDeepLink(`${scheme}new-session?directory=`)).toBeUndefined()
   })
 
   test("collects only valid new-session deep links", () => {
     const result = collectNewSessionDeepLinks([
-      "opencode://new-session?directory=/a",
-      "opencode://open-project?directory=/b",
-      "opencode://new-session?directory=/c&prompt=ship%20it",
+      `${scheme}new-session?directory=/a`,
+      `${scheme}open-project?directory=/b`,
+      `${scheme}new-session?directory=/c&prompt=ship%20it`,
     ])
     expect(result).toEqual([{ directory: "/a" }, { directory: "/c", prompt: "ship it" }])
   })
@@ -103,12 +109,26 @@ describe("layout deep links", () => {
   test("drains global deep links once", () => {
     const target = {
       __OPENCODE__: {
-        deepLinks: ["opencode://open-project?directory=/a"],
+        deepLinks: [`${scheme}open-project?directory=/a`],
       },
     } as unknown as Window & { __OPENCODE__?: { deepLinks?: string[] } }
 
-    expect(drainPendingDeepLinks(target)).toEqual(["opencode://open-project?directory=/a"])
+    expect(drainPendingDeepLinks(target)).toEqual([`${scheme}open-project?directory=/a`])
     expect(drainPendingDeepLinks(target)).toEqual([])
+  })
+})
+
+describe("layout deep link schemes", () => {
+  test("accepts the scheme the desktop app registers with the OS", () => {
+    expect(DEEP_LINK_SCHEMES).toContain("hypercode://")
+    expect(parseDeepLink("hypercode://open-project?directory=/tmp/demo")).toBe("/tmp/demo")
+    expect(parseNewSessionDeepLink("hypercode://new-session?directory=/tmp/demo")).toEqual({ directory: "/tmp/demo" })
+  })
+
+  test("rejects unrelated schemes", () => {
+    expect(parseDeepLink("vscode://open-project?directory=/tmp/demo")).toBeUndefined()
+    expect(parseDeepLink("file:///tmp/demo")).toBeUndefined()
+    expect(collectNewSessionDeepLinks(["evil://new-session?directory=/a"])).toEqual([])
   })
 })
 

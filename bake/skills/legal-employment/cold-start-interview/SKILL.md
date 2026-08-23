@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Cold-start setup — learns your jurisdictional footprint and escalation rules
   from your handbook and termination memos. Asks which states and countries
   have employees, reads seed documents, and builds a jurisdiction-aware

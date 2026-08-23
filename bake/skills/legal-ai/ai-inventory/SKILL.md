@@ -1,6 +1,7 @@
 ---
 name: ai-inventory
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   EU AI Act per-system inventory — track each AI system's role (provider,
   deployer, importer, distributor, authorized representative, product
   manufacturer) and risk tier (prohibited, high-risk, limited, minimal,

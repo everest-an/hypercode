@@ -1,6 +1,7 @@
 ---
 name: case-brief
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Brief a case in your preferred format. In drill-me mode, makes the student
   state the holding first. Use when the user says "brief [case]", "what's the
   holding in", "case brief", or pastes a case.

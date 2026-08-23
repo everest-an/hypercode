@@ -1,6 +1,7 @@
 ---
 name: socratic-drill
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Socratic drilling — it asks, you answer, it pushes back. Does NOT give you
   the answer until you've earned it. Use when the user says "drill me on",
   "quiz me", "socratic", "test me on [subject]", or wants to study actively.

@@ -1,6 +1,7 @@
 ---
 name: client-letter
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Routine client correspondence from templates — appointment confirmations,
   document requests, brief "we filed it" updates. Plain language, required
   elements, supervision routing. NOT substantive advice. Use when a student

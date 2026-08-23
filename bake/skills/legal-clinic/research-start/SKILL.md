@@ -1,6 +1,7 @@
 ---
 name: research-start
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Research roadmap for a legal issue — statutes to check, case law areas to
   investigate, regulatory frameworks, Westlaw search terms. Leads and
   frameworks, NOT authoritative citations; students verify and develop

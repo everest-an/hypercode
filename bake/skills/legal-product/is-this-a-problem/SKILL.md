@@ -1,6 +1,7 @@
 ---
 name: is-this-a-problem
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Fast "is this a problem?" answer for the quick Slack question — pattern-matches
   against your calibration. Use when the user says "is this a problem", "quick
   question", "can we do X", "do I need legal review for", "sanity check", or

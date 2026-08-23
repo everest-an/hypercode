@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Guided customization of your privacy practice profile — change one thing
   without re-running the whole cold-start interview. Adjust risk posture,
   escalation contacts, DPA playbook, privacy policy commitments, PIA house

@@ -1,6 +1,7 @@
 ---
 name: escalation-flagger
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Route a contract issue to the right approver per the escalation matrix in
   `~/.claude/plugins/config/claude-for-legal/commercial-legal/CLAUDE.md`, and draft the ask. Use when the user
   says "who needs to approve this", "escalate this", "does this need GC sign-off",

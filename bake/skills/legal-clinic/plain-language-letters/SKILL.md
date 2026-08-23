@@ -1,6 +1,7 @@
 ---
 name: plain-language-letters
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Reference: DEPRECATED — use `/client-letter` for routine correspondence or
   `/status client` for substantive updates. Split into two more focused skills
   during the v2 rebuild. Kept as a redirect for migration.

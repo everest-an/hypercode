@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Professor's one-time clinic setup — practice areas, jurisdiction, supervision
   style (formal review queue / configurable flags / lighter-touch), and
   handbook/rules upload. Writes CLAUDE.md so every other skill and every

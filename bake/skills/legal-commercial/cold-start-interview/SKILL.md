@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Run the cold-start interview to learn your commercial contracts practice and write
   your team practice profile. Use on first use of the plugin, when
   `~/.claude/plugins/config/claude-for-legal/commercial-legal/CLAUDE.md` is missing or still contains template

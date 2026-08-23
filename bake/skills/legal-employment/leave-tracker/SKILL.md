@@ -1,6 +1,7 @@
 ---
 name: leave-tracker
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Check open leaves for deadline alerts and required decisions. Surfaces only
   the leaves that require an action and explains why — not a status board.
   Use weekly, or whenever the attorney needs to know which leaves have

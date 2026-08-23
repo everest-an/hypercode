@@ -1,6 +1,7 @@
 ---
 name: renewal-tracker
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Show contracts with cancel-by deadlines coming up and warn before notice windows
   close, working from a maintained renewal register. Use when the user asks "what's
   renewing soon", "what renewals are due", "did we miss a cancellation window", "add

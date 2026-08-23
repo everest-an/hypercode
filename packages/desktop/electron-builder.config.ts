@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process"
+import { existsSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
@@ -52,8 +53,14 @@ const getBase = (appId: string): Configuration => ({
     // (both would otherwise resolve to %LOCALAPPDATA%\Programs\@opencode-aidesktop).
     name: "hypercode-desktop",
     desktopName: `${appId}.desktop`,
+    // Let the release workflow stamp the version it is actually publishing. Without this the installer
+    // carries whatever package.json happens to say, which is how shipped builds came to report a version
+    // that did not match their release tag — and electron-updater compares exactly these numbers.
+    ...(process.env["HYPERCODE_VERSION"] ? { version: process.env["HYPERCODE_VERSION"] } : {}),
   },
-  files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*"],
+  // `!resources/plugin` matters: without it the plugin payload is packed into the asar by the
+  // `resources/**/*` pattern *and* copied again by extraResources below, doubling ~200 MB for nothing.
+  files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*", "!resources/plugin", "!resources/plugin${/*}"],
   extraResources: [
     ...(channel === "dev"
       ? [
@@ -64,11 +71,36 @@ const getBase = (appId: string): Configuration => ({
           },
         ]
       : []),
+    // `native/` is an optional local build output and is not tracked in the repo. electron-builder treats a
+    // missing `from:` as a hard error, so a clean checkout could not be packaged at all.
+    ...(existsSync(path.join(packageDir, "native"))
+      ? [
+          {
+            from: "native/",
+            to: "native/",
+            filter: ["index.js", "index.d.ts", "build/Release/mac_window.node", "swift-build/**"],
+          },
+        ]
+      : []),
+    // Ship the baked skill library with the desktop app. The bake scripts are part of the CLI install flow,
+    // which desktop users never run, so without this the 229 finance/legal/academic skills that the product
+    // is sold on would simply not exist for them.
     {
-      from: "native/",
-      to: "native/",
-      filter: ["index.js", "index.d.ts", "build/Release/mac_window.node", "swift-build/**"],
+      from: path.join(rootDir, "bake", "skills"),
+      to: "skills/",
     },
+    // The orchestration plugin, pre-installed and platform-pruned by scripts/bundle-plugin.ts. Shipping it
+    // is what lets the first launch skip a multi-minute silent npm install; src/main/bundled-plugin.ts seeds
+    // it into the engine's npm cache. Guarded by existsSync for the same reason as `native/`: the payload is
+    // a build output, not tracked in the repo, and electron-builder fails hard on a missing `from:`.
+    ...(existsSync(path.join(packageDir, "resources", "plugin"))
+      ? [
+          {
+            from: "resources/plugin/",
+            to: "plugin/",
+          },
+        ]
+      : []),
     {
       from: path.join(rootDir, "THIRD-PARTY-NOTICES.txt"),
       to: "THIRD-PARTY-NOTICES.txt",

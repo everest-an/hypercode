@@ -1,6 +1,7 @@
 ---
 name: investigation-query
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Ask questions against an open investigation log — what witnesses said, where
   accounts conflict, what gaps exist, what the strongest evidence is on each
   issue. Use when the attorney needs to query the investigation record without

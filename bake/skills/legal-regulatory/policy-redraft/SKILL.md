@@ -1,6 +1,7 @@
 ---
 name: policy-redraft
-description: Produce a proposed marked-up policy redraft that closes a gap found by /regulatory-legal:gaps or /regulatory-legal:policy-diff. A first draft for internal review — not for direct application to approved policy documents. Use when the user says "redraft the policy", "draft the policy fix", "mark up the policy", or when gap-surfacer hands off a gap for drafting. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Produce a proposed marked-up policy redraft that closes a gap found by /regulatory-legal:gaps or /regulatory-legal:policy-diff. A first draft for internal review — not for direct application to approved policy documents. Use when the user says "redraft the policy", "draft the policy fix", "mark up the policy", or when gap-surfacer hands off a gap for drafting. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "[GAP-ID or gap description]"
 ---
 

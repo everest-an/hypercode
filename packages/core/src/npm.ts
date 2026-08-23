@@ -126,7 +126,12 @@ const layer = Layer.effect(
         return resolveEntryPoint(name, path.join(dir, "node_modules", name))
       }
 
+      // A cold-cache plugin install pulls the package's whole dependency tree — measured at ~2.5 minutes and
+      // 311 MB for `oh-my-openagent` — while arborist runs with `progress: false`. Without these markers the
+      // process looks hung, which is exactly how it reads on a first run.
+      yield* Effect.logInfo("installing package", { package: pkg, dir })
       const tree = yield* reify({ dir, add: [pkg] })
+      yield* Effect.logInfo("installed package", { package: pkg })
       const first = tree.edgesOut.values().next().value?.to
       if (!first) {
         const result = resolveEntryPoint(name, path.join(dir, "node_modules", name))

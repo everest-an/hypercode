@@ -13,6 +13,9 @@ import contextMenu from "electron-context-menu"
 
 import type { ServerReadyData } from "../preload/types"
 import { checkAppExists, resolveAppPath } from "./apps"
+import { resolveBundledPluginSource, seedBundledPlugin } from "./bundled-plugin"
+import { installBundledSkills } from "./bundled-skills"
+import { cacheDir, configDir } from "./engine-paths"
 import { CHANNEL } from "./constants"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
 import { forwardInitializationFailure } from "./initialization"
@@ -68,6 +71,15 @@ let logger: ReturnType<typeof initLogging>
 let server: SidecarListener | null = null
 
 const pendingDeepLinks: string[] = []
+
+// "hypercode" is the scheme we register with the OS; "opencode" is kept so
+// links handed over by an older install still resolve. Must stay in sync with
+// packages/app/src/pages/layout/deep-links.ts.
+const DEEP_LINK_SCHEMES = ["hypercode://", "opencode://"]
+
+export function collectDeepLinkArgs(argv: readonly string[]) {
+  return argv.filter((arg) => DEEP_LINK_SCHEMES.some((scheme) => arg.startsWith(scheme)))
+}
 
 function useEnvProxy() {
   try {
@@ -200,10 +212,22 @@ const main = Effect.gen(function* () {
     return
   }
 
+  // Windows/Linux hand the deep link to the *first* instance as an argv entry.
+  // That instance owns the single-instance lock, so "second-instance" never
+  // fires for it and the URL would be dropped on a cold start. macOS uses the
+  // "open-url" event below instead, which does fire on cold start.
+  {
+    const urls = collectDeepLinkArgs(process.argv)
+    if (urls.length) {
+      logger.log("deep link received via launch argv", { urls })
+      emitDeepLinks(urls)
+    }
+  }
+
   const shellEnv = preferAppEnv(app.getPath("userData"))
 
   app.on("second-instance", (_event: Event, argv: string[]) => {
-    const urls = argv.filter((arg: string) => arg.startsWith("hypercode://"))
+    const urls = collectDeepLinkArgs(argv)
     if (urls.length) {
       logger.log("deep link received via second-instance", { urls })
       emitDeepLinks(urls)
@@ -255,6 +279,34 @@ const main = Effect.gen(function* () {
   yield* Effect.promise(() => app.whenReady())
 
   if (!TEST_ONBOARDING) migrate()
+  // Runs before the embedded server starts so the skill library is on disk by the time the engine scans for
+  // it. Failures are logged, never fatal: a missing skill library degrades the product, a failed launch ends
+  // it. Only the "hypercode-" namespaces are replaced, so this cannot clobber skills the user wrote.
+  yield* Effect.promise(() => installBundledSkills(logger)).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to install bundled skills", error)
+      }),
+    ),
+  )
+  // Must land before the sidecar starts: once the engine loads config it resolves the plugin list, and a
+  // cache miss there costs the user minutes of silence. Seeding first turns that resolution into a stat().
+  // Same failure posture as the skills above — a missing plugin degrades the product, a failed launch ends it.
+  yield* Effect.promise(() =>
+    seedBundledPlugin({
+      source: resolveBundledPluginSource({ resourcesPath: process.resourcesPath, appPath: app.getAppPath() }),
+      cacheDir: cacheDir(),
+      configDir: configDir(),
+      version: app.getVersion(),
+      log: logger,
+    }),
+  ).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to seed bundled plugin", error)
+      }),
+    ),
+  )
   yield* Effect.promise(() => cleanupStoreFiles(app.getPath("userData"))).pipe(
     Effect.tap((result) =>
       Effect.sync(() => {

@@ -20,6 +20,11 @@ type SaveFilePickerOptions = { title?: string; defaultPath?: string }
 type PlatformName = "web" | "desktop"
 type DesktopOS = "macos" | "windows" | "linux"
 
+/** Result of scaffolding the vault template into a directory. */
+export type VaultInitResult =
+  | { ok: true; created: string[]; skipped: string[] }
+  | { ok: false; error: string }
+
 export type FatalRendererErrorLog = {
   error: string
   url: string
@@ -43,6 +48,13 @@ type PlatformBase = {
 
   /** Reveal a local path in the system file manager; false when the path does not exist (desktop only) */
   revealPath?(path: string): Promise<boolean>
+
+  /**
+   * Scaffold the vault template (config, guard plugin, starter notes, git init)
+   * into an existing directory. Never overwrites existing files. Desktop only —
+   * absent on web, where the vault page falls back to a read-only empty state.
+   */
+  vaultInit?(root: string): Promise<VaultInitResult>
 
   /** Restart the app  */
   restart(): Promise<void>

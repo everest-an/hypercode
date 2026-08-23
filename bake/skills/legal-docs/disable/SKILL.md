@@ -1,6 +1,7 @@
 ---
 name: disable
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Disable a community skill installed through the hub without removing its
   files. Use when the user wants to temporarily quiet a community skill
   ("disable [skill]"), stop its hooks from firing while keeping its config,

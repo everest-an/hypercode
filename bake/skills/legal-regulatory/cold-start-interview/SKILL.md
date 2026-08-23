@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: Cold-start interview — builds your watchlist, indexes the policy library, and learns your materiality threshold so the monitor surfaces signal instead of noise. Use on fresh install, when reconfiguring (--redo), or when re-checking what connectors are actually responding (--check-integrations). 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Cold-start interview — builds your watchlist, indexes the policy library, and learns your materiality threshold so the monitor surfaces signal instead of noise. Use on fresh install, when reconfiguring (--redo), or when re-checking what connectors are actually responding (--check-integrations). 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "[--redo | --check-integrations]"
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: exam-forecast
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Analyze past exams from the same professor to surface patterns — subject
   weighting, recurring issue-spot traps, favored hypo types, policy-vs-doctrine
   mix — and forecast likely emphases for the upcoming exam. Use when the user

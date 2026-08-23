@@ -1,6 +1,7 @@
 ---
 name: comments
-description: Review open NPRM comment periods, log decisions, track deadlines. Use when an NPRM has a comment window open and you need to surface deadlines, decide whether to file, or record a filing / not-filing / waived decision (--decide CMT-ID). 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Review open NPRM comment periods, log decisions, track deadlines. Use when an NPRM has a comment window open and you need to surface deadlines, decide whether to file, or record a filing / not-filing / waived decision (--decide CMT-ID). 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "[optional: --decide CMT-ID]"
 ---
 

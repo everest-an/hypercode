@@ -1,6 +1,7 @@
 ---
 name: clearance
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Trademark clearance first pass — knockout + similar-marks check producing a
   flag list, not a clearance opinion. Use when a new mark is proposed, when
   asked whether a mark is available or to run a knockout search, or when

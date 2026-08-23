@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Guided customization of your IP practice profile — change one thing without
   re-running the whole cold-start interview. Adjust risk posture, escalation
   contacts, portfolio scope, brand protection strategy, enforcement posture,

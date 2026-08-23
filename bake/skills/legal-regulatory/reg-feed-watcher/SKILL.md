@@ -1,6 +1,7 @@
 ---
 name: reg-feed-watcher
-description: Check regulatory feeds now and report what's new since the last check, filtered by your materiality threshold. Use when the user says "check the feeds", "what's new", "regulatory update", when running from the scheduled agent, or when manually pasting a regulatory development for classification and diff. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Check regulatory feeds now and report what's new since the last check, filtered by your materiality threshold. Use when the user says "check the feeds", "what's new", "regulatory update", when running from the scheduled agent, or when manually pasting a regulatory development for classification and diff. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "[optional: --since DATE]"
 ---
 

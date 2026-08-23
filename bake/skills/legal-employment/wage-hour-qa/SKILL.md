@@ -1,6 +1,7 @@
 ---
 name: wage-hour-qa
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Jurisdiction-aware wage/hour and employment Q&A — classification, overtime,
   meal/rest breaks, leave, final pay — answered for the specific state/country
   with the controlling rule researched and cited rather than stated from

@@ -1,6 +1,7 @@
 ---
 name: fto-triage
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Freedom-to-operate triage — a structured first look at potentially blocking
   patents, not an FTO opinion. Use when a product, process, or feature is
   being evaluated for blocking patents, when asked whether anything stops a

@@ -1,6 +1,7 @@
 ---
 name: outline-builder
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Build or extend a course outline in your format, from class notes and
   casebook. Scaffolds — it does not write the outline for you. Use when the
   user says "outline [subject]", "add to my outline", "build an outline

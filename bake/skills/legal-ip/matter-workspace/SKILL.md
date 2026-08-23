@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Manage matter workspaces — create, list, switch, close, or detach the
   active matter. Use in multi-client private practice to keep one client's
   context separate from another, or when a substantive skill needs to know

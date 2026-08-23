@@ -1,6 +1,7 @@
 ---
 name: deal-team-summary
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Aggregate diligence findings into a deal team briefing at the right altitude
   for the audience — exec summary for leadership, working summary for the team.
   Use when user says "brief the deal team", "what's the state of diligence",

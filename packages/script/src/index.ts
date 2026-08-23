@@ -31,20 +31,26 @@ const CHANNEL = await (async () => {
 })()
 const IS_PREVIEW = CHANNEL !== "latest"
 
+// The version baseline lives in the repo's VERSION file. It used to be fetched from the upstream
+// `opencode-ai` npm package and then incremented, which meant HyperCode's version number silently tracked a
+// different product's release cadence — that is where the 1.18.21 stamped into every package.json came from,
+// while the published releases were tagged v0.1.x.
+export const versionFile = path.resolve(import.meta.dir, "../../../VERSION")
+
 const VERSION = await (async () => {
   if (env.OPENCODE_VERSION) return env.OPENCODE_VERSION
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
-  const version = await fetch("https://registry.npmjs.org/opencode-ai/latest")
-    .then((res) => {
-      if (!res.ok) throw new Error(res.statusText)
-      return res.json()
-    })
-    .then((data: any) => data.version)
-  const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
+  const baseline = (await Bun.file(versionFile).text()).trim()
+  if (!/^\d+\.\d+\.\d+$/.test(baseline))
+    throw new Error(`VERSION must contain a bare semver, got ${JSON.stringify(baseline)}`)
+  const [major, minor, patch] = baseline.split(".").map((x: string) => Number(x) || 0)
   const t = env.OPENCODE_BUMP?.toLowerCase()
   if (t === "major") return `${major + 1}.0.0`
   if (t === "minor") return `${major}.${minor + 1}.0`
-  return `${major}.${minor}.${patch + 1}`
+  if (t === "patch") return `${major}.${minor}.${patch + 1}`
+  // No explicit bump: publish exactly what VERSION says, so the released number is reviewable in the diff
+  // rather than derived at build time from a remote package.
+  return baseline
 })()
 
 const bot = ["actions-user", "opencode", "opencode-agent[bot]"]

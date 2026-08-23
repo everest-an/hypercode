@@ -1,6 +1,7 @@
 ---
 name: closing-checklist
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   What's blocking close — maintain the closing checklist with status, critical
   path, and days to close. Self-updating: ingests new items from diligence
   findings and schedule builds, tracks status, surfaces what's blocking. Use

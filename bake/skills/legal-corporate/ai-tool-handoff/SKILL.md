@@ -1,6 +1,7 @@
 ---
 name: ai-tool-handoff
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Detects when Luminance, Kira, or a similar bulk-review tool is in use,
   hands off the high-volume clause extraction to it, and QAs its output
   per the trust level in `~/.claude/plugins/config/claude-for-legal/corporate-legal/CLAUDE.md`. Use when user says "send to Luminance",

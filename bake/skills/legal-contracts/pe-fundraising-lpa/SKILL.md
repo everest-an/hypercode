@@ -1,6 +1,7 @@
 ---
 name: pe-fundraising-lpa
-description: 私募股权基金募资阶段全流程筹备清单(国内人民币 PE 实务)。覆盖 LPA 定稿、对外募资材料(Teaser/PPM/DDQ)、LP 签约认购包、服务机构对接、GP 内控、工商备案前置、税务与出资/分配机制文件,以及中基协备案时限要求。Use when the user mentions 私募基金、募资、LPA、有限合伙协议、基金备案、PPM、认购协议、carry、管理费、GP/LP、首关、基金小镇、中基协、合伙协议, or asks to prepare fund-raising documents for a private equity fund in China. 中文触发词: 私募基金;募资;LPA;有限合伙协议;基金备案;PPM;认购协议;carry;管理费;GP;LP;首关;基金小镇;中基协;合伙协议;基金合同;认购。
+description: >-
+  私募股权基金募资阶段全流程筹备清单(国内人民币 PE 实务)。覆盖 LPA 定稿、对外募资材料(Teaser/PPM/DDQ)、LP 签约认购包、服务机构对接、GP 内控、工商备案前置、税务与出资/分配机制文件,以及中基协备案时限要求。Use when the user mentions 私募基金、募资、LPA、有限合伙协议、基金备案、PPM、认购协议、carry、管理费、GP/LP、首关、基金小镇、中基协、合伙协议, or asks to prepare fund-raising documents for a private equity fund in China. 中文触发词: 私募基金;募资;LPA;有限合伙协议;基金备案;PPM;认购协议;carry;管理费;GP;LP;首关;基金小镇;中基协;合伙协议;基金合同;认购。
 version: 1.0.0
 ---
 

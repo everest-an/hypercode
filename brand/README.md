@@ -15,6 +15,9 @@
 - 同一 SVG 通过 `currentColor` 控制,无需双份文件
 
 **待办**:
-- [ ] SVG → PNG 多尺寸导出(favicon 180px、og-image 1200x630、安装器图标 256/512)
+- [x] SVG → PNG 多尺寸导出(favicon 180px、og-image 1200x630、安装器图标 256/512)
+  - 安装器图标:`packages/desktop/scripts/generate-brand-icons.mjs`(源 `hypercode-mark.svg`)
+  - 网页 favicon / PWA / og-image:`packages/ui/script/generate-favicon.mjs`(源 `hypercode-favicon.svg`)
+  - 两者共用同一套纯 Node 光栅化器;`--verify` 校验 IHDR 尺寸、不透明比例、ICO 逐帧像素与"墨水覆盖率"(防全空白)
 - [ ] 官网 hypercode.html 使用
 - [ ] 安装器图标使用(Windows .ico / macOS .icns)

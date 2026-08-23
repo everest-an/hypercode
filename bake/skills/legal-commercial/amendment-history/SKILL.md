@@ -1,6 +1,7 @@
 ---
 name: amendment-history
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Trace how a contract has changed across its base agreement and all amendments —
   either a summary of all changes over time, or a provision trace for a specific
   clause. Use when the user says "what changed in this contract over time", "show

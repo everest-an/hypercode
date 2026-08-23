@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Run the cold-start interview — learns your AI governance practice and writes
   `~/.claude/plugins/config/claude-for-legal/ai-governance-legal/CLAUDE.md` from
   your AI policy, a reference impact assessment, and key vendor AI agreements.

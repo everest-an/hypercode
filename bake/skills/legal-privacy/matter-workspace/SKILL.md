@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Manage matter workspaces — create, list, switch, close, or detach (practice-level).
   Keeps one client or engagement's context separate from every other for multi-client
   practitioners. Use when the user wants to open a new matter, switch matters, list

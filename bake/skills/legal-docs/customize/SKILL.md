@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Guided customization of your Legal Builder Hub profile — change one thing
   without re-running the whole cold-start interview. Adjust practice profile,
   installed starter pack, watched registries, update preferences, or QA

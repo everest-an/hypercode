@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Guided customization of your product counsel practice profile — change one
   thing without re-running the whole cold-start interview. Adjust risk
   calibration, escalation contacts, launch review framework, marketing

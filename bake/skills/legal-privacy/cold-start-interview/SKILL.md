@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Run the cold-start interview — learns your privacy practice and writes CLAUDE.md
   from your policy, DPA template, and a reference PIA. Use on first run, when
   CLAUDE.md is missing or has placeholders, or when the user says "set up the

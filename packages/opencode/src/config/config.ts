@@ -228,11 +228,9 @@ const layer = Layer.effect(
       if (!("path" in options)) return data
 
       yield* Effect.promise(() => resolveLoadedPlugins(data, options.path))
-      if (!data.$schema) {
-        data.$schema = "https://opencode.ai/config.json"
-        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://opencode.ai/config.json",')
-        yield* fs.writeFileString(options.path, updated).pipe(Effect.catch(() => Effect.void))
-      }
+      // Upstream back-wrote a `$schema` pointing at its own domain into the user's config file on every load.
+      // HyperCode does not host an equivalent schema, and writing a third-party URL into user-owned files is a
+      // brand leak, so the config is left exactly as the user wrote it.
       return data
     })
 
@@ -255,15 +253,16 @@ const layer = Layer.effect(
               file,
               JSON.stringify(
                 {
-                  $schema: "https://opencode.ai/config.json",
                   // HyperCode 默认供应商:首次启动自动带上 DeepSeek,用户只需在界面里粘贴 key
+                  // 注意:这里绝不能写 apiKey(哪怕是空串)。provider.ts 只在 apiKey === undefined 时
+                  // 才会把 auth store 里用户粘贴的 key 注入进来,写成 "" 会永久遮蔽它,导致界面里
+                  // 粘贴 key 永远不生效、只能手改配置文件。
                   provider: {
                     deepseek: {
                       npm: "@ai-sdk/openai-compatible",
                       name: "DeepSeek",
                       options: {
                         baseURL: "https://api.deepseek.com/v1",
-                        apiKey: "",
                       },
                       models: {
                         "deepseek-v4-pro": { name: "DeepSeek V4 Pro" },
@@ -431,8 +430,13 @@ const layer = Layer.effect(
         }
 
         if (!Flag.OPENCODE_DISABLE_PROJECT_CONFIG) {
-          for (const file of yield* ConfigPaths.files("opencode", ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
-            yield* merge(file, yield* loadFile(file, authEnv), "local")
+          // Read the legacy `opencode.*` names first, then `hypercode.*`, so a HyperCode-named file wins when
+          // both are present. Without the second pass a project-root `hypercode.json` is silently ignored —
+          // while `mcp add`, `cli/error.ts` and the initialize template all tell users to create exactly that.
+          for (const name of ["opencode", "hypercode"]) {
+            for (const file of yield* ConfigPaths.files(name, ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
+              yield* merge(file, yield* loadFile(file, authEnv), "local")
+            }
           }
         }
 

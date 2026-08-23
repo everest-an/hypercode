@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Manage matter workspaces — new, list, switch, close, or detach (practice-level).
   Use when a multi-client practitioner needs to create a matter, switch the active
   matter, list matters, archive a matter, or detach to practice-level context, or

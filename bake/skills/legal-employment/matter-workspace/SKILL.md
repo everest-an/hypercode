@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Manage matter workspaces — new, list, switch, close, or detach (practice-
   level). Creates, lists, switches, closes, and detaches the active matter so
   context from one client engagement never leaks into another. Use when a

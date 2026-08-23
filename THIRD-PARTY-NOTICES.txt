@@ -1,17 +1,727 @@
+==============================================================================
 THIRD-PARTY SOFTWARE NOTICES
+==============================================================================
 
-This product includes software developed by third parties. The applicable
-license terms are reproduced below as required by their licenses. This file
-is provided for legal compliance; it does not affect your license to use
-this product.
+This product (HyperCode) includes software developed by third parties.
+The applicable license terms and attribution notices are reproduced below as
+required by those licenses. This file is provided for legal compliance; it
+does not affect your license to use this product.
 
---------------------------------------------------------------------------
-Component: opencode (portions)
-License: MIT
+Unlike ordinary package dependencies, the 229 agent skills under
+bake/skills/ are third-party SOURCE FILES copied directly into this
+repository and redistributed verbatim inside the product. Sections 2, 3 and 4
+below therefore reproduce their licenses in full and identify every path they
+cover.
+
+Last verified: 2026-08-23, by comparing every bundled file byte-for-byte
+(line-ending normalized) against the pinned upstream revisions named below.
+
+------------------------------------------------------------------------------
+CONTENTS
+------------------------------------------------------------------------------
+
+  1. opencode ......................................... MIT
+  2. anthropics/claude-for-legal ...................... Apache-2.0   150 skills
+  3. anthropics/financial-services .................... Apache-2.0    55 skills
+  4. Yuan1z0825/nature-skills ......................... Apache-2.0    20 skills
+  5. evolsb/claude-legal-skill ........................ MIT            1 skill
+  6. MIT-licensed sub-components inside nature-skills . MIT
+  7. Modifications made by HyperCode (Apache-2.0 Section 4(b))
+  8. NOTICE files (Apache-2.0 Section 4(d)) -- finding: none apply
+  9. Bundled material with no upstream license declaration
+ 10. HyperCode-authored skills (not third-party)
+ 11. Full license text: Apache License 2.0
+ 12. Full license text: MIT License
+ 13. Other bundled package dependencies
+
+------------------------------------------------------------------------------
+1. opencode (portions)
+------------------------------------------------------------------------------
+
+  SPDX-License-Identifier: MIT
+  Copyright (c) 2025 opencode
+  Covers: portions of the HyperCode engine and CLI throughout this product.
+  Full MIT text: section 12.
+
+------------------------------------------------------------------------------
+2. anthropics/claude-for-legal
+------------------------------------------------------------------------------
+
+  Upstream:   https://github.com/anthropics/claude-for-legal
+  Revision:   4a6c651889c97cc9140580363c73e0eb17379c2b
+  SPDX-License-Identifier: Apache-2.0   (full text: section 11)
+  Copyright 2026 Anthropic PBC
+      (stated in the upstream repository README.md and scripts/)
+
+  Covers the following 150 skill directories in this product. Each was copied
+  from the upstream path <plugin>/skills/<skill>/ and renamed as shown:
+
+    bake/skills/legal-ai           <-  ai-governance-legal/skills/   (10)
+    bake/skills/legal-clinic       <-  legal-clinic/skills/   (16)
+    bake/skills/legal-commercial   <-  commercial-legal/skills/   (12)
+    bake/skills/legal-corporate    <-  corporate-legal/skills/   (13)
+    bake/skills/legal-docs         <-  legal-builder-hub/skills/   (10)
+    bake/skills/legal-employment   <-  employment-legal/skills/   (20)
+    bake/skills/legal-ip           <-  ip-legal/skills/   (12)
+    bake/skills/legal-litigation   <-  litigation-legal/skills/   (19)
+    bake/skills/legal-privacy      <-  privacy-legal/skills/   (9)
+    bake/skills/legal-product      <-  product-legal/skills/   (7)
+    bake/skills/legal-regulatory   <-  regulatory-legal/skills/   (9)
+    bake/skills/legal-student      <-  law-student/skills/   (13)
+
+  bake/skills/legal-ai/   (10 skills)
+      ai-inventory, aia-generation, cold-start-interview, customize,
+      matter-workspace, policy-monitor, policy-starter, reg-gap-analysis,
+      use-case-triage, vendor-ai-review
+  bake/skills/legal-clinic/   (16 skills)
+      build-guide, client-comms-log, client-intake, client-letter,
+      cold-start-interview, customize, deadlines, draft, form-generation,
+      memo, plain-language-letters, ramp, research-start, semester-handoff,
+      status, supervisor-review-queue
+  bake/skills/legal-commercial/   (12 skills)
+      amendment-history, cold-start-interview, customize,
+      escalation-flagger, matter-workspace, nda-review, renewal-tracker,
+      review, review-proposals, saas-msa-review, stakeholder-summary,
+      vendor-agreement-review
+  bake/skills/legal-corporate/   (13 skills)
+      ai-tool-handoff, board-minutes, closing-checklist,
+      cold-start-interview, customize, deal-team-summary,
+      diligence-issue-extraction, entity-compliance,
+      integration-management, material-contract-schedule, matter-workspace,
+      tabular-review, written-consent
+  bake/skills/legal-docs/   (10 skills)
+      auto-updater, cold-start-interview, customize, disable,
+      registry-browser, related-skills-surfacer, skill-installer,
+      skill-manager, skills-qa, uninstall
+  bake/skills/legal-employment/   (20 skills)
+      cold-start-interview, customize, expansion-kickoff, expansion-update,
+      handbook-updates, hiring-review, internal-investigation,
+      international-expansion, investigation-add, investigation-memo,
+      investigation-open, investigation-query, investigation-summary,
+      leave-tracker, log-leave, matter-workspace, policy-drafting,
+      termination-review, wage-hour-qa, worker-classification
+  bake/skills/legal-ip/   (12 skills)
+      cease-desist, clearance, cold-start-interview, customize, fto-triage,
+      infringement-triage, invention-intake, ip-clause-review,
+      matter-workspace, oss-review, portfolio, takedown
+  bake/skills/legal-litigation/   (19 skills)
+      brief-section-drafter, chronology, claim-chart, cold-start-interview,
+      customize, demand-draft, demand-intake, demand-received,
+      deposition-prep, legal-hold, matter-briefing, matter-close,
+      matter-intake, matter-update, matter-workspace, oc-status,
+      portfolio-status, privilege-log-review, subpoena-triage
+  bake/skills/legal-privacy/   (9 skills)
+      cold-start-interview, customize, dpa-review, dsar-response,
+      matter-workspace, pia-generation, policy-monitor, reg-gap-analysis,
+      use-case-triage
+  bake/skills/legal-product/   (7 skills)
+      cold-start-interview, customize, feature-risk-assessment,
+      is-this-a-problem, launch-review, marketing-claims-review,
+      matter-workspace
+  bake/skills/legal-regulatory/   (9 skills)
+      cold-start-interview, comments, customize, gap-surfacer, gaps,
+      matter-workspace, policy-diff, policy-redraft, reg-feed-watcher
+  bake/skills/legal-student/   (13 skills)
+      bar-prep-questions, case-brief, cold-call-prep, cold-start-interview,
+      customize, exam-forecast, flashcards, irac-practice, legal-writing,
+      outline-builder, session, socratic-drill, study-plan
+
+  MODIFIED by HyperCode -- see section 7.
+
+------------------------------------------------------------------------------
+3. anthropics/financial-services
+------------------------------------------------------------------------------
+
+  Upstream:   https://github.com/anthropics/financial-services
+  Revision:   33a3d8a9d6e5c3d4861731933a8857cc5e03315d
+  SPDX-License-Identifier: Apache-2.0   (full text: section 11)
+  Copyright 2026 Anthropic PBC
+      (the upstream LICENSE leaves the Apache appendix placeholder unfilled;
+      attribution is taken from the owning GitHub organization (anthropics))
+
+  Copied from plugins/{agent-plugins,vertical-plugins}/<plugin>/skills/<skill>/
+  and flattened into a single directory. Nothing from plugins/partner-built/
+  (LSEG, S&P Global / Kensho Technologies) is included in this product.
+
+  Covers the following 55 skill directories:
+
+  bake/skills/finance/   (55 skills)
+      3-statement-model, accrual-schedule, ai-readiness, audit-xls,
+      break-trace, buyer-list, catalyst-calendar, cim-builder,
+      clean-data-xls, client-report, client-review, competitive-analysis,
+      comps-analysis, datapack-builder, dcf-model, dd-checklist,
+      dd-meeting-prep, deal-screening, deal-sourcing, deal-tracker,
+      deck-refresh, earnings-analysis, earnings-preview, financial-plan,
+      gl-recon, ib-check-deck, ic-memo, idea-generation,
+      initiating-coverage, investment-proposal, kyc-doc-parse, kyc-rules,
+      lbo-model, merger-model, model-update, morning-note, nav-tieout,
+      pitch-deck, portfolio-monitoring, portfolio-rebalance,
+      ppt-template-creator, pptx-author, process-letter, returns-analysis,
+      roll-forward, sector-overview, skill-creator, strip-profile,
+      tax-loss-harvesting, teaser, thesis-tracker, unit-economics,
+      value-creation-plan, variance-commentary, xlsx-author
+
+  17 of these are MODIFIED by HyperCode -- see section 7.
+
+------------------------------------------------------------------------------
+4. Yuan1z0825/nature-skills
+------------------------------------------------------------------------------
+
+  Upstream:   https://github.com/Yuan1z0825/nature-skills
+  Revision:   a6e6f3456f2065eb555afe8ed2c28637f3cd4e1b
+  SPDX-License-Identifier: Apache-2.0   (full text: section 11)
+  Copyright 2026 Yuan1z0825 and the nature-skills contributors
+      (the upstream LICENSE leaves the Apache appendix placeholder unfilled;
+      attribution is taken from the repository owner. Copied by way of the
+      fork Paul-Jeo/nature-skills, which is identical at this revision)
+
+  Copied from the upstream path skills/<skill>/ with no change of name.
+  Covers the following 20 skill directories:
+
+  bake/skills/academic/   (20 skills)
+      nature-academic-search, nature-citation, nature-data,
+      nature-downloader, nature-experiment-log, nature-figure,
+      nature-image2ppt, nature-literature-pipeline, nature-paper-card,
+      nature-paper-to-patent, nature-paper2ppt, nature-polishing,
+      nature-proposal-writer, nature-reader, nature-ref-verifier,
+      nature-response, nature-reviewer, nature-shared, nature-statistics,
+      nature-writing
+
+  NOT modified by HyperCode. Every bundled file is identical to the upstream
+  revision above (five files differ only in line endings). The Chinese
+  trigger keywords present in these skills are upstream content.
+
+  Two carve-outs apply inside this source:
+    - Three components are MIT rather than Apache-2.0 -- see section 6.
+    - One directory carries no license at all -- see section 9.
+
+------------------------------------------------------------------------------
+5. evolsb/claude-legal-skill
+------------------------------------------------------------------------------
+
+  Upstream:   https://github.com/evolsb/claude-legal-skill
+  SPDX-License-Identifier: MIT   (full text: section 12)
+  Copyright (c) 2026 Christopher Sheehan
+
+  Covers:  bake/skills/legal-contracts/contract-review/
+           (upstream skill.md, renamed to SKILL.md)
+
+  MODIFIED by HyperCode -- see section 7.
+
+------------------------------------------------------------------------------
+6. MIT-licensed sub-components inside nature-skills
+------------------------------------------------------------------------------
+
+  The nature-skills repository is Apache-2.0 at the root, but ships three
+  components under their own MIT license. Those MIT terms govern the paths
+  listed here. Full MIT text: section 12.
+
+    bake/skills/academic/nature-downloader/
+      Copyright (c) 2026 baihe26
+      License file kept in place:
+        bake/skills/academic/nature-downloader/LICENSE
+      Scope: the whole of this skill directory
+
+    bake/skills/academic/nature-image2ppt/
+      Copyright (c) 2026 Image2PPT contributors
+      Copyright (c) 2026 ningzimu
+      License file kept in place:
+        bake/skills/academic/nature-image2ppt/LICENSE
+      Scope: the whole of this skill directory
+      Derived from https://github.com/Paul-Jeo/Image2PPT (MIT).
+
+    bake/skills/academic/nature-paper-to-patent/
+      Copyright (c) 2026 handsomestWei
+      License file kept in place:
+        bake/skills/academic/nature-paper-to-patent/references/disclosure/patent-disclosure-skill-MIT-LICENSE.txt
+      Scope: the files under references/disclosure/ only; the rest of the
+      skill is Apache-2.0
+
+------------------------------------------------------------------------------
+7. Modifications made by HyperCode (Apache License 2.0, Section 4(b))
+------------------------------------------------------------------------------
+
+  Apache-2.0 Section 4(b) requires that modified files carry prominent
+  notices stating that they were changed. HyperCode changed exactly the
+  168 files listed below; every other bundled third-party file is a
+  verbatim copy.
+
+  Nature of every change: Chinese trigger keywords were appended to the
+  "description" value in the YAML front matter (the marker "中文触发词:" or
+  "中文触发:"), so that the skill also activates on Chinese-language
+  prompts. No instruction text, script, template or reference material was
+  altered. The one exception is noted inline below.
+
+  In addition to this file, each changed skill directory contains an
+  ATTRIBUTION.md recording the same statement next to the changed file.
+
+  (a) Under Apache-2.0 -- 167 files:
+
+    bake/skills/finance/3-statement-model/SKILL.md
+    bake/skills/finance/audit-xls/SKILL.md
+    bake/skills/finance/competitive-analysis/SKILL.md
+    bake/skills/finance/comps-analysis/SKILL.md
+    bake/skills/finance/dcf-model/SKILL.md
+    bake/skills/finance/earnings-analysis/SKILL.md
+    bake/skills/finance/earnings-preview/SKILL.md
+    bake/skills/finance/ic-memo/SKILL.md
+    bake/skills/finance/idea-generation/SKILL.md
+    bake/skills/finance/initiating-coverage/SKILL.md
+    bake/skills/finance/lbo-model/SKILL.md
+    bake/skills/finance/merger-model/SKILL.md
+    bake/skills/finance/pitch-deck/SKILL.md
+    bake/skills/finance/pptx-author/SKILL.md
+    bake/skills/finance/sector-overview/SKILL.md
+    bake/skills/finance/unit-economics/SKILL.md
+    bake/skills/finance/xlsx-author/SKILL.md
+    bake/skills/legal-ai/ai-inventory/SKILL.md
+    bake/skills/legal-ai/aia-generation/SKILL.md
+    bake/skills/legal-ai/cold-start-interview/SKILL.md
+    bake/skills/legal-ai/customize/SKILL.md
+    bake/skills/legal-ai/matter-workspace/SKILL.md
+    bake/skills/legal-ai/policy-monitor/SKILL.md
+    bake/skills/legal-ai/policy-starter/SKILL.md
+    bake/skills/legal-ai/reg-gap-analysis/SKILL.md
+    bake/skills/legal-ai/use-case-triage/SKILL.md
+    bake/skills/legal-ai/vendor-ai-review/SKILL.md
+    bake/skills/legal-clinic/build-guide/SKILL.md
+    bake/skills/legal-clinic/client-comms-log/SKILL.md
+    bake/skills/legal-clinic/client-intake/SKILL.md
+    bake/skills/legal-clinic/client-letter/SKILL.md
+    bake/skills/legal-clinic/cold-start-interview/SKILL.md
+    bake/skills/legal-clinic/customize/SKILL.md
+    bake/skills/legal-clinic/deadlines/SKILL.md
+    bake/skills/legal-clinic/draft/SKILL.md
+    bake/skills/legal-clinic/form-generation/SKILL.md
+    bake/skills/legal-clinic/memo/SKILL.md
+    bake/skills/legal-clinic/plain-language-letters/SKILL.md
+    bake/skills/legal-clinic/ramp/SKILL.md
+    bake/skills/legal-clinic/research-start/SKILL.md
+    bake/skills/legal-clinic/semester-handoff/SKILL.md
+    bake/skills/legal-clinic/status/SKILL.md
+    bake/skills/legal-clinic/supervisor-review-queue/SKILL.md
+    bake/skills/legal-commercial/amendment-history/SKILL.md
+    bake/skills/legal-commercial/cold-start-interview/SKILL.md
+    bake/skills/legal-commercial/customize/SKILL.md
+    bake/skills/legal-commercial/escalation-flagger/SKILL.md
+    bake/skills/legal-commercial/matter-workspace/SKILL.md
+    bake/skills/legal-commercial/nda-review/SKILL.md
+    bake/skills/legal-commercial/renewal-tracker/SKILL.md
+    bake/skills/legal-commercial/review/SKILL.md
+    bake/skills/legal-commercial/review-proposals/SKILL.md
+    bake/skills/legal-commercial/saas-msa-review/SKILL.md
+    bake/skills/legal-commercial/stakeholder-summary/SKILL.md
+    bake/skills/legal-commercial/vendor-agreement-review/SKILL.md
+    bake/skills/legal-corporate/ai-tool-handoff/SKILL.md
+    bake/skills/legal-corporate/board-minutes/SKILL.md
+    bake/skills/legal-corporate/closing-checklist/SKILL.md
+    bake/skills/legal-corporate/cold-start-interview/SKILL.md
+    bake/skills/legal-corporate/customize/SKILL.md
+    bake/skills/legal-corporate/deal-team-summary/SKILL.md
+    bake/skills/legal-corporate/diligence-issue-extraction/SKILL.md
+    bake/skills/legal-corporate/entity-compliance/SKILL.md
+    bake/skills/legal-corporate/integration-management/SKILL.md
+    bake/skills/legal-corporate/material-contract-schedule/SKILL.md
+    bake/skills/legal-corporate/matter-workspace/SKILL.md
+    bake/skills/legal-corporate/tabular-review/SKILL.md
+    bake/skills/legal-corporate/written-consent/SKILL.md
+    bake/skills/legal-docs/auto-updater/SKILL.md
+    bake/skills/legal-docs/cold-start-interview/SKILL.md
+    bake/skills/legal-docs/customize/SKILL.md
+    bake/skills/legal-docs/disable/SKILL.md
+    bake/skills/legal-docs/registry-browser/SKILL.md
+    bake/skills/legal-docs/related-skills-surfacer/SKILL.md
+    bake/skills/legal-docs/skill-installer/SKILL.md
+    bake/skills/legal-docs/skill-manager/SKILL.md
+    bake/skills/legal-docs/skills-qa/SKILL.md
+    bake/skills/legal-docs/uninstall/SKILL.md
+    bake/skills/legal-employment/cold-start-interview/SKILL.md
+    bake/skills/legal-employment/customize/SKILL.md
+    bake/skills/legal-employment/expansion-kickoff/SKILL.md
+    bake/skills/legal-employment/expansion-update/SKILL.md
+    bake/skills/legal-employment/handbook-updates/SKILL.md
+    bake/skills/legal-employment/hiring-review/SKILL.md
+    bake/skills/legal-employment/internal-investigation/SKILL.md
+    bake/skills/legal-employment/international-expansion/SKILL.md
+    bake/skills/legal-employment/investigation-add/SKILL.md
+    bake/skills/legal-employment/investigation-memo/SKILL.md
+    bake/skills/legal-employment/investigation-open/SKILL.md
+    bake/skills/legal-employment/investigation-query/SKILL.md
+    bake/skills/legal-employment/investigation-summary/SKILL.md
+    bake/skills/legal-employment/leave-tracker/SKILL.md
+    bake/skills/legal-employment/log-leave/SKILL.md
+    bake/skills/legal-employment/matter-workspace/SKILL.md
+    bake/skills/legal-employment/policy-drafting/SKILL.md
+    bake/skills/legal-employment/termination-review/SKILL.md
+    bake/skills/legal-employment/wage-hour-qa/SKILL.md
+    bake/skills/legal-employment/worker-classification/SKILL.md
+    bake/skills/legal-ip/cease-desist/SKILL.md
+    bake/skills/legal-ip/clearance/SKILL.md
+    bake/skills/legal-ip/cold-start-interview/SKILL.md
+    bake/skills/legal-ip/customize/SKILL.md
+    bake/skills/legal-ip/fto-triage/SKILL.md
+    bake/skills/legal-ip/infringement-triage/SKILL.md
+    bake/skills/legal-ip/invention-intake/SKILL.md
+    bake/skills/legal-ip/ip-clause-review/SKILL.md
+    bake/skills/legal-ip/matter-workspace/SKILL.md
+    bake/skills/legal-ip/oss-review/SKILL.md
+    bake/skills/legal-ip/portfolio/SKILL.md
+    bake/skills/legal-ip/takedown/SKILL.md
+    bake/skills/legal-litigation/brief-section-drafter/SKILL.md
+    bake/skills/legal-litigation/chronology/SKILL.md
+    bake/skills/legal-litigation/claim-chart/SKILL.md
+    bake/skills/legal-litigation/cold-start-interview/SKILL.md
+    bake/skills/legal-litigation/customize/SKILL.md
+    bake/skills/legal-litigation/demand-draft/SKILL.md
+    bake/skills/legal-litigation/demand-intake/SKILL.md
+    bake/skills/legal-litigation/demand-received/SKILL.md
+    bake/skills/legal-litigation/deposition-prep/SKILL.md
+    bake/skills/legal-litigation/legal-hold/SKILL.md
+    bake/skills/legal-litigation/matter-briefing/SKILL.md
+    bake/skills/legal-litigation/matter-close/SKILL.md
+    bake/skills/legal-litigation/matter-intake/SKILL.md
+    bake/skills/legal-litigation/matter-update/SKILL.md
+    bake/skills/legal-litigation/matter-workspace/SKILL.md
+    bake/skills/legal-litigation/oc-status/SKILL.md
+    bake/skills/legal-litigation/portfolio-status/SKILL.md
+    bake/skills/legal-litigation/privilege-log-review/SKILL.md
+    bake/skills/legal-litigation/subpoena-triage/SKILL.md
+    bake/skills/legal-privacy/cold-start-interview/SKILL.md
+    bake/skills/legal-privacy/customize/SKILL.md
+    bake/skills/legal-privacy/dpa-review/SKILL.md
+    bake/skills/legal-privacy/dsar-response/SKILL.md
+    bake/skills/legal-privacy/matter-workspace/SKILL.md
+    bake/skills/legal-privacy/pia-generation/SKILL.md
+    bake/skills/legal-privacy/policy-monitor/SKILL.md
+    bake/skills/legal-privacy/reg-gap-analysis/SKILL.md
+    bake/skills/legal-privacy/use-case-triage/SKILL.md
+    bake/skills/legal-product/cold-start-interview/SKILL.md
+    bake/skills/legal-product/customize/SKILL.md
+    bake/skills/legal-product/feature-risk-assessment/SKILL.md
+    bake/skills/legal-product/is-this-a-problem/SKILL.md
+    bake/skills/legal-product/launch-review/SKILL.md
+    bake/skills/legal-product/marketing-claims-review/SKILL.md
+    bake/skills/legal-product/matter-workspace/SKILL.md
+    bake/skills/legal-regulatory/cold-start-interview/SKILL.md
+    bake/skills/legal-regulatory/comments/SKILL.md
+    bake/skills/legal-regulatory/customize/SKILL.md
+    bake/skills/legal-regulatory/gap-surfacer/SKILL.md
+    bake/skills/legal-regulatory/gaps/SKILL.md
+    bake/skills/legal-regulatory/matter-workspace/SKILL.md
+    bake/skills/legal-regulatory/policy-diff/SKILL.md
+    bake/skills/legal-regulatory/policy-redraft/SKILL.md
+    bake/skills/legal-regulatory/reg-feed-watcher/SKILL.md
+    bake/skills/legal-student/bar-prep-questions/SKILL.md
+    bake/skills/legal-student/case-brief/SKILL.md
+    bake/skills/legal-student/cold-call-prep/SKILL.md
+    bake/skills/legal-student/cold-start-interview/SKILL.md
+    bake/skills/legal-student/customize/SKILL.md
+    bake/skills/legal-student/exam-forecast/SKILL.md
+    bake/skills/legal-student/flashcards/SKILL.md
+    bake/skills/legal-student/irac-practice/SKILL.md
+    bake/skills/legal-student/legal-writing/SKILL.md
+    bake/skills/legal-student/outline-builder/SKILL.md
+    bake/skills/legal-student/session/SKILL.md
+    bake/skills/legal-student/socratic-drill/SKILL.md
+    bake/skills/legal-student/study-plan/SKILL.md
+
+  (b) Under MIT (listed for completeness; MIT has no Section 4(b) duty)
+      -- 1 file:
+
+    bake/skills/legal-contracts/contract-review/SKILL.md
+      Additional change in this file: a trailing section requiring
+      source-tracing verification before delivery was appended.
+
+------------------------------------------------------------------------------
+8. NOTICE files (Apache License 2.0, Section 4(d))
+------------------------------------------------------------------------------
+
+  Section 4(d) requires a derivative work to carry forward the contents of
+  any NOTICE file distributed with the original work.
+
+  FINDING: none of the three Apache-2.0 upstream projects ships a NOTICE
+  file, so Section 4(d) imposes no obligation here. Verified 2026-08-23:
+
+    - anthropics/claude-for-legal    GitHub code search for filename:NOTICE
+                                     in that repository returns 0 results;
+                                     the repository tree at revision
+                                     4a6c651 contains no NOTICE file.
+    - anthropics/financial-services  same check, 0 results, revision 33a3d8a.
+    - Yuan1z0825/nature-skills       GET /contents/NOTICE returns HTTP 404;
+                                     the tree at revision a6e6f34 contains
+                                     no NOTICE file.
+
+  This paragraph is recorded so that a later reader does not mistake the
+  absence of carried-forward NOTICE content for an omission.
+
+------------------------------------------------------------------------------
+9. Bundled material with no upstream license declaration
+------------------------------------------------------------------------------
+
+    bake/skills/academic/nature-figure/assets/figures4papers/
+      Origin:   https://github.com/ChenLiu-1996/figures4papers
+      License:  NONE. The upstream repository publishes no LICENSE file and
+                the GitHub license endpoint returns null (checked 2026-08-23).
+      Upstream nature-skills ships its own notice for this directory at
+        bake/skills/academic/nature-figure/assets/figures4papers/THIRD_PARTY_NOTICES.md
+      which states that these files
+      "must therefore not be assumed to fall under the root ... License of
+      nature-skills" and that retaining them "does not grant permission to
+      copy, modify, redistribute, or publish" them.
+
+      HyperCode redistributes this directory inside the product. As of the
+      date above, no license covering that redistribution has been identified
+      and the rights holder has not been contacted. This entry exists so the
+      provenance and licensing status of these files are recorded accurately;
+      it is not a claim of permission.
+
+------------------------------------------------------------------------------
+10. HyperCode-authored skills (not third-party)
+------------------------------------------------------------------------------
+
+  The following skills were written by the HyperCode project. They are not
+  derived from any third-party work and are governed by the LICENSE file at
+  the root of this product, not by the licenses in this file:
+
+    bake/skills/hc-tools/hc-omega/
+    bake/skills/hc-tools/hc-verify/
+    bake/skills/legal-contracts/pe-fundraising-lpa/
+
+------------------------------------------------------------------------------
+11. Full license text: Apache License 2.0
+------------------------------------------------------------------------------
+
+  This single copy satisfies Section 4(a) for all three Apache-2.0 sources
+  named above: anthropics/claude-for-legal (section 2),
+  anthropics/financial-services (section 3), and Yuan1z0825/nature-skills
+  (section 4). It is reproduced verbatim from the upstream LICENSE files,
+  which are byte-identical to one another.
+
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+------------------------------------------------------------------------------
+12. Full license text: MIT License
+------------------------------------------------------------------------------
+
+  The permission text below is reproduced verbatim and is identical in every
+  MIT-licensed component bundled with this product. It applies separately to
+  each of the following copyright holders; the copyright notices are
+  reproduced individually because the holders differ:
+
+    Copyright (c) 2025 opencode
+        -> section 1 (portions of the HyperCode engine and CLI)
+    Copyright (c) 2026 Christopher Sheehan
+        -> bake/skills/legal-contracts/contract-review/
+    Copyright (c) 2026 baihe26
+        -> bake/skills/academic/nature-downloader/
+    Copyright (c) 2026 Image2PPT contributors
+    Copyright (c) 2026 ningzimu
+        -> bake/skills/academic/nature-image2ppt/
+    Copyright (c) 2026 handsomestWei
+        -> bake/skills/academic/nature-paper-to-patent/references/disclosure/
 
 MIT License
-
-Copyright (c) 2025 opencode
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +741,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
---------------------------------------------------------------------------
-Additional open-source packages bundled with this product are used under
-their respective licenses (MIT, Apache-2.0, BSD, ISC). Their license texts
-are available in the corresponding package distributions.
+------------------------------------------------------------------------------
+13. Other bundled package dependencies
+------------------------------------------------------------------------------
+
+  Beyond the source files inventoried above, this product bundles ordinary
+  package dependencies (npm and similar) under their respective licenses
+  (MIT, Apache-2.0, BSD, ISC). Those packages ship their own license texts
+  inside their published distributions, which are included in the product
+  installation. This paragraph applies only to such packaged dependencies;
+  it does not apply to anything under bake/skills/, which is inventoried
+  above in full.
+
+==============================================================================
+End of third-party notices.
+==============================================================================

@@ -1,6 +1,7 @@
 ---
 name: ramp
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Student semester onboarding — clinic procedures, tool walkthrough, practice
   exercises before real cases. Reads the handbook the professor uploaded at
   setup and teaches it interactively. Use when a new clinic student says

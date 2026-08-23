@@ -1,6 +1,7 @@
 ---
 name: pia-generation
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Generate a Privacy Impact Assessment in house format for a new feature, product,
   or processing activity, using the structure learned from your seed PIA. Use when
   the user says "write a PIA", "privacy impact assessment for", "do we need a PIA

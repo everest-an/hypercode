@@ -1,6 +1,7 @@
 ---
 name: reg-gap-analysis
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Diff a new or changed regulation against current privacy policy and practice —
   outputs a gap list and a remediation plan with owners and dates. Use when a new
   reg drops, the user asks "does [regulation] affect us", "gap analysis for

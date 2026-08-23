@@ -1,6 +1,7 @@
 ---
 name: reg-gap-analysis
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Diff a new AI regulation or guidance against your current governance posture —
   surfaces gaps, priorities, and a remediation plan with owners and deadlines.
   Use when an AI regulation moves (or you learn about one you missed), or when

@@ -10,13 +10,24 @@ HyperCode —— 最强大的 AI 编程软件与工作助手
 二、安装(macOS)
   终端执行: bash setup.sh
 
-三、配置模型(首次使用必做)
+三、配置模型(安装向导已自动完成)
   HyperCode 采用"自带 key"模式:你的 DeepSeek API key
   由全部子代理共享,一次配置全局生效。
 
-  1. 打开配置目录:
-     Windows: %APPDATA%\hypercode\
+  安装向导第 3 步已经帮你写好了。想换 key 时有两种方式:
+
+  方式一(推荐):重新运行安装向导,粘贴新 key。
+    向导只会更新 apiKey 这一个字段,你自己加的
+    provider / model / plugin 配置不会被覆盖。
+
+  方式二:手动编辑配置文件
+  1. 打开配置目录(Windows 和 macOS 是同一个位置,
+     引擎用 XDG 规范定位,不是 %APPDATA%):
+     Windows: %USERPROFILE%\.config\hypercode\
      macOS:   ~/.config/hypercode/
+     Linux:   ~/.config/hypercode/
+     (如果设了 XDG_CONFIG_HOME,则是 $XDG_CONFIG_HOME/hypercode/;
+      设了 OPENCODE_CONFIG_DIR 则以它为准)
   2. 编辑 hypercode.json,把 deepseek 的 apiKey 填好:
      "apiKey": "sk-你的DeepSeek密钥"
   3. 保存后运行: hypercode
@@ -32,6 +43,10 @@ HyperCode —— 最强大的 AI 编程软件与工作助手
   A: 关闭当前终端重新打开(或重启电脑),PATH 才会生效。
   Q: 模型报错?
   A: 检查 hypercode.json 里 apiKey 是否正确、DeepSeek 账户余额是否充足。
+     配置文件位置见上面第三节(是 ~/.config/hypercode/,不是 %APPDATA%)。
+  Q: 安装中途报错了?
+  A: 安装日志在 Windows: %TEMP%\hypercode-setup.log
+                macOS/Linux: $TMPDIR/hypercode-setup.log(默认 /tmp)
   Q: 更多帮助?
   A: https://github.com/everest-an/hypercode
 

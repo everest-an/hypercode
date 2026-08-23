@@ -49,7 +49,15 @@ jobs:
         working-directory: packages/desktop
         run: bun run build
         env:
+          OPENCODE_CHANNEL: prod
           NODE_OPTIONS: "--max-old-space-size=8192"
+
+      # Pre-installs the orchestration plugin into resources/plugin so the shipped app never has to download
+      # it. Must run per-platform and before packaging: the payload keeps only this runner's native binaries,
+      # and electron-builder decides whether to include it by checking the directory at config load.
+      - name: Bundle plugin payload
+        working-directory: packages/desktop
+        run: bun ./scripts/bundle-plugin.ts
 
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
@@ -57,6 +65,9 @@ jobs:
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          # Stamps the installer with the version actually being released. Empty on push builds, where
+          # electron-builder falls back to packages/desktop/package.json (kept in sync with /VERSION).
+          HYPERCODE_VERSION: ${{ inputs.version }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
@@ -95,7 +106,11 @@ jobs:
         working-directory: packages/desktop
         run: bun run build
         env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
+          OPENCODE_CHANNEL: prod
+          # macos-latest is an Apple Silicon runner with only 7 GB of RAM. A heap
+          # cap above physical memory stops V8 from applying back-pressure, so the
+          # build hangs instead of failing cleanly. Keep this at 4096.
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Configure signing (optional, only when Apple credentials exist)
         if: env.APPLE_ID_SECRET != ''
@@ -107,12 +122,34 @@ jobs:
           echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> "$GITHUB_ENV"
           echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> "$GITHUB_ENV"
 
-      - name: Package macOS (dmg + zip)
+      # Both macOS architectures are built here rather than in a matrix: a second macOS runner bills at 10x,
+      # and the only per-arch work is the plugin payload plus the electron-builder pass itself. The payload
+      # must be re-pruned between them -- it carries native binaries, so the arm64 tree cannot ship in the
+      # Intel installer. Ordering matters too: electron-builder decides whether to include resources/plugin
+      # when it loads its config, so each bundle step has to precede its own package step.
+      - name: Bundle plugin payload (arm64)
         working-directory: packages/desktop
-        run: bun run package:mac -- --publish never
+        run: bun ./scripts/bundle-plugin.ts --platform darwin --arch arm64
+
+      - name: Package macOS Apple Silicon (dmg + zip)
+        working-directory: packages/desktop
+        run: bun run package:mac -- --arm64 --publish never
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          HYPERCODE_VERSION: ${{ inputs.version }}
+
+      - name: Bundle plugin payload (x64)
+        working-directory: packages/desktop
+        run: bun ./scripts/bundle-plugin.ts --platform darwin --arch x64
+
+      - name: Package macOS Intel (dmg + zip)
+        working-directory: packages/desktop
+        run: bun run package:mac -- --x64 --publish never
+        env:
+          OPENCODE_CHANNEL: prod
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          HYPERCODE_VERSION: ${{ inputs.version }}
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
@@ -122,3 +159,58 @@ jobs:
             packages/desktop/dist/*.dmg
             packages/desktop/dist/*.zip
           if-no-files-found: error
+
+  # Assembles the installers into a *draft* release on the public download repo. Draft is the point: the
+  # product rule is that a build is validated internally before anyone can download it, so publishing stays a
+  # deliberate human action. Until then the assets are fetchable only by repo collaborators.
+  #
+  # Only runs when a version was supplied by hand, so the push-to-dev builds stay artifact-only.
+  #
+  # Requires a RELEASE_TOKEN secret: GITHUB_TOKEN is scoped to this repository and the downloads live in
+  # another one (AwareLiquid/HyperCode). It needs contents:write on that repo and nothing else.
+  draft-release:
+    needs: [build-win, build-mac]
+    if: inputs.version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download installers
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Verify the expected assets exist
+        run: |
+          cd dist
+          ls -la
+          missing=0
+          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg; do
+            if [ ! -f "$f" ]; then echo "::error::missing asset $f"; missing=1; fi
+          done
+          # A zero-byte or few-KB "installer" is the failure mode worth catching here: it uploads without
+          # complaint and 404-page-as-exe looks identical to the real thing in a release listing.
+          for f in *.exe *.dmg; do
+            [ -f "$f" ] || continue
+            size=$(stat -c%s "$f")
+            echo "$f: $size bytes"
+            if [ "$size" -lt 50000000 ]; then echo "::error::$f is only $size bytes"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          tag="v${VERSION#v}"
+          # Recreate rather than append, so a re-run cannot leave assets from a previous attempt behind.
+          gh release delete "$tag" --repo AwareLiquid/HyperCode --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$tag" \
+            --repo AwareLiquid/HyperCode \
+            --draft \
+            --title "HyperCode $tag" \
+            --notes "Desktop installers for Windows and macOS. Built from everest-an/hypercode@${GITHUB_SHA:0:7}." \
+            dist/hypercode-desktop-win-x64.exe \
+            dist/hypercode-desktop-mac-arm64.dmg \
+            dist/hypercode-desktop-mac-x64.dmg
+          echo "::notice::Draft release $tag created. Verify the installers, then publish it to go live."

@@ -1,6 +1,7 @@
 ---
 name: client-comms-log
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Log a client communication — call, email, text, letter, in-person, voicemail.
   Append-only per-case record with dated entries, direction, medium, summary,
   action items. Works alongside /client-letter and /status client. Use when

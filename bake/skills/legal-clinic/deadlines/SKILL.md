@@ -1,6 +1,7 @@
 ---
 name: deadlines
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Track case deadlines — add, cross-case rollup report, update, complete,
   close. Warns at configurable thresholds (default 14/7/3/1 days); overdue
   items stay flagged until resolved. The operational record for a clinic

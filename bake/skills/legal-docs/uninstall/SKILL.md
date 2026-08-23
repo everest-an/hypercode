@@ -1,6 +1,7 @@
 ---
 name: uninstall
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Uninstall a community skill that was installed via the hub. Confirms before
   deleting files, refuses to touch first-party plugin skills, and logs every
   action. Use when the user wants to fully remove a community skill

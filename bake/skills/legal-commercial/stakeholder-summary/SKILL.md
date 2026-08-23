@@ -1,6 +1,7 @@
 ---
 name: stakeholder-summary
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Translates a contract review into a summary the business stakeholder will
   actually read. Not a legal memo — a two-minute answer to "can I sign this
   and what do I need to know." Use when user says "summarize for the business",

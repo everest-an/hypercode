@@ -1,6 +1,7 @@
 ---
 name: policy-drafting
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Draft an employment policy with state supplements where law differs across
   the jurisdictional footprint. Use when the user says "draft a [topic]
   policy", "we need a policy on", "update our [topic] policy", or names a

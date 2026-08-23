@@ -10,9 +10,77 @@ import { isAbsolute, join, relative, resolve } from "node:path"
 // rules AFTER the project config — silently overriding project-level denies.
 // A tool.execute.before hook cannot be overridden by any agent's permission
 // ruleset, so protected files stay protected for every agent.
+//
+// Three tool families are covered:
+//   1. path tools   (edit / write)      -> args.filePath
+//   2. patch tool   (apply_patch)       -> paths parsed out of args.patchText
+//   3. shell tools  (bash / pwsh / ...) -> paths mentioned in args.command
+// Shell is the important one: without it `bash: printf x > TODO-Colonization.md`
+// walks straight past a guard that only knows about edit/write.
 
-const WRITE_TOOLS = new Set(["edit", "write", "apply_patch"])
+const PATH_TOOLS = new Set(["edit", "write"])
+const PATCH_TOOLS = new Set(["apply_patch"])
+// The shell tool ID is "bash" regardless of the actual shell; the others are
+// accepted defensively in case a host exposes them under their own name.
+const SHELL_TOOLS = new Set(["bash", "shell", "pwsh", "powershell", "cmd"])
 const DEFAULT_PROTECTED = ["TODO-Colonization.md", "sisyphus/plans"]
+
+// Commands that cannot mutate a file. A protected path may appear in these
+// freely (agents legitimately read the progress board for context). Anything
+// not on this list is treated as a potential write — fail closed, because the
+// cost of a false positive (agent must ask the user) is far lower than the
+// cost of a false negative (protected file silently rewritten).
+const READ_ONLY_COMMANDS = new Set([
+  "awk",
+  "basename",
+  "cat",
+  "cksum",
+  "column",
+  "comm",
+  "cut",
+  "diff",
+  "dirname",
+  "du",
+  "echo",
+  "egrep",
+  "fgrep",
+  "file",
+  "find",
+  "get-childitem",
+  "get-content",
+  "get-item",
+  "grep",
+  "head",
+  "less",
+  "ls",
+  "md5sum",
+  "more",
+  "nl",
+  "od",
+  "printf",
+  "pwd",
+  "readlink",
+  "realpath",
+  "rg",
+  "sed",
+  "select-string",
+  "sha1sum",
+  "sha256sum",
+  "sort",
+  "stat",
+  "tail",
+  "test",
+  "tr",
+  "type",
+  "uniq",
+  "wc",
+  "xxd",
+])
+
+// Read-only second words for commands that are only safe in some modes.
+const READ_ONLY_SUBCOMMANDS: Record<string, Set<string>> = {
+  git: new Set(["diff", "log", "show", "status", "blame", "grep", "ls-files", "cat-file"]),
+}
 
 function loadProtected(directory: string): string[] {
   try {
@@ -38,22 +106,168 @@ function isProtected(entries: string[], rel: string): boolean {
   })
 }
 
+/** Vault-relative path for an arbitrary (possibly absolute) path, or undefined when outside. */
+function toRelative(directory: string, filePath: string): string | undefined {
+  const resolved = resolve(directory, filePath)
+  const rel = relative(directory, resolved)
+  if (!rel || rel.startsWith("..") || isAbsolute(rel)) return undefined
+  return rel
+}
+
+/**
+ * Pulls every target path out of an apply_patch payload. The apply_patch tool
+ * takes only `patchText` (no filePath argument at all), so without this the
+ * guard used to bail out on the missing-path check and let every patch through.
+ */
+export function parsePatchPaths(patchText: string): string[] {
+  const out: string[] = []
+  const headers = ["*** Update File:", "*** Add File:", "*** Delete File:", "*** Move to:"]
+  for (const line of patchText.split(/\r?\n/)) {
+    const trimmed = line.trim()
+    for (const header of headers) {
+      if (!trimmed.startsWith(header)) continue
+      const value = trimmed.slice(header.length).trim()
+      if (value) out.push(value)
+      break
+    }
+  }
+  return out
+}
+
+/** Splits a shell command into its individual invocations (`;`, `&&`, `||`, `|`, newline). */
+function splitSegments(command: string): string[] {
+  return command
+    .split(/\r?\n|&&|\|\||[;|&]/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+}
+
+/** Leading command word of a segment, skipping env assignments and sudo-style prefixes. */
+function leadingCommand(segment: string): string {
+  const words = segment.split(/\s+/).filter(Boolean)
+  let index = 0
+  while (index < words.length) {
+    const word = words[index]
+    if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) {
+      index++
+      continue
+    }
+    if (word === "sudo" || word === "command" || word === "env" || word === "time" || word === "exec") {
+      index++
+      continue
+    }
+    break
+  }
+  const raw = words[index] ?? ""
+  const bare = raw.replace(/^['"]|['"]$/g, "")
+  const base = bare.split(/[/\\]/).pop() ?? bare
+  return base.toLowerCase()
+}
+
+function isReadOnlySegment(segment: string): boolean {
+  // Any redirection into a file is a write, regardless of the command.
+  if (/>/.test(segment)) return false
+  const head = leadingCommand(segment)
+  if (!head) return true
+  const subs = READ_ONLY_SUBCOMMANDS[head]
+  if (subs) {
+    const words = segment.split(/\s+/).filter(Boolean)
+    const sub = (words[1] ?? "").toLowerCase()
+    return subs.has(sub)
+  }
+  if (!READ_ONLY_COMMANDS.has(head)) return false
+  // `sed -i` / `sed --in-place` rewrite in place even though sed can be read-only.
+  if (head === "sed" && /\s-{1,2}[A-Za-z-]*i/.test(segment)) return false
+  return true
+}
+
+/**
+ * Returns the protected entries mentioned anywhere in a shell command string.
+ * Deliberately a normalized substring match with word-ish boundaries rather
+ * than a real shell parser: it must survive quoting, `$(...)`, redirection and
+ * `tee`/`mv`/`cp`/`rm`/`sed -i` without pretending to be exhaustive.
+ */
+export function mentionedProtected(entries: string[], command: string): string[] {
+  const haystack = normalize(command)
+  const hits: string[] = []
+  for (const entry of entries) {
+    const needle = normalize(entry)
+    if (!needle) continue
+    let from = 0
+    for (;;) {
+      const at = haystack.indexOf(needle, from)
+      if (at === -1) break
+      const before = at === 0 ? "" : haystack[at - 1]
+      const after = haystack[at + needle.length] ?? ""
+      // `.` is excluded on the trailing side so "TODO-Colonization.md.bak" is
+      // not mistaken for "TODO-Colonization.md"; a trailing "/" still matches so
+      // directory entries like "sisyphus/plans" cover everything beneath them.
+      const boundedBefore = before === "" || !/[A-Za-z0-9_-]/.test(before)
+      const boundedAfter = after === "" || !/[A-Za-z0-9_.-]/.test(after)
+      if (boundedBefore && boundedAfter) {
+        hits.push(entry)
+        break
+      }
+      from = at + 1
+    }
+  }
+  return hits
+}
+
+/** Protected entries a shell command would write to, or [] when it only reads. */
+export function shellViolations(entries: string[], command: string): string[] {
+  const mentioned = mentionedProtected(entries, command)
+  if (mentioned.length === 0) return []
+  const segments = splitSegments(command)
+  const touching = segments.filter((segment) => mentionedProtected(entries, segment).length > 0)
+  // No segment matched (path spans a split boundary) — fail closed.
+  const relevant = touching.length > 0 ? touching : segments
+  if (relevant.every(isReadOnlySegment)) return []
+  return mentioned
+}
+
+function deny(tool: string, targets: string[]): never {
+  const list = targets.join(", ")
+  throw new Error(
+    `[vault-guard/prometheus-md-only] "${list}" is a protected vault file. ` +
+      `Agents cannot modify it with ${tool}; it must be edited manually. ` +
+      `AI notes belong in melting-asphalt/ via the obsidian_write_note tool.`,
+  )
+}
+
 export const VaultGuard: Plugin = async (ctx) => {
   const entries = loadProtected(ctx.directory)
   return {
     "tool.execute.before": async (input, output) => {
-      if (!WRITE_TOOLS.has(input.tool.toLowerCase())) return
-      const filePath = output.args?.filePath ?? output.args?.path ?? output.args?.file
+      const tool = input.tool.toLowerCase()
+      const args = (output.args ?? {}) as Record<string, unknown>
+
+      if (SHELL_TOOLS.has(tool)) {
+        const command = args.command ?? args.cmd ?? args.script
+        if (typeof command !== "string" || !command) return
+        const hits = shellViolations(entries, command)
+        if (hits.length > 0) deny(input.tool, hits)
+        return
+      }
+
+      if (PATCH_TOOLS.has(tool)) {
+        const patchText = args.patchText ?? args.patch ?? args.text
+        if (typeof patchText !== "string" || !patchText) return
+        const hits: string[] = []
+        for (const candidate of parsePatchPaths(patchText)) {
+          const rel = toRelative(ctx.directory, candidate)
+          if (rel && isProtected(entries, rel)) hits.push(rel)
+        }
+        if (hits.length > 0) deny(input.tool, hits)
+        return
+      }
+
+      if (!PATH_TOOLS.has(tool)) return
+      const filePath = args.filePath ?? args.path ?? args.file
       if (typeof filePath !== "string" || !filePath) return
-      const resolved = resolve(ctx.directory, filePath)
-      const rel = relative(ctx.directory, resolved)
-      if (rel.startsWith("..") || isAbsolute(rel)) return
-      if (!isProtected(entries, rel)) return
-      throw new Error(
-        `[vault-guard/prometheus-md-only] "${rel}" is a protected vault file. ` +
-          `Agents cannot modify it with ${input.tool}; it must be edited manually. ` +
-          `AI notes belong in melting-asphalt/ via the obsidian_write_note tool.`,
-      )
+      const rel = toRelative(ctx.directory, filePath)
+      if (!rel || !isProtected(entries, rel)) return
+      deny(input.tool, [rel])
     },
   }
 }

@@ -1,6 +1,7 @@
 ---
 name: draft
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   First draft of a common clinic document — practice-area templates (asylum
   applications, eviction answers, protective order petitions, demand letters),
   jurisdiction-aware formatting, explicitly a starting point requiring student

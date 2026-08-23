@@ -1,6 +1,7 @@
 ---
 name: oss-review
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Open source license compliance check for a dependency list, a single
   library, or outbound code. Use when reviewing a manifest, SBOM, or repo for
   copyleft obligations and license compatibility, when asked whether a library

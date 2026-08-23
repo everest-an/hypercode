@@ -280,18 +280,21 @@ export const DESKTOP_MENU: DesktopMenu[] = [
     labelKey: "desktop.menu.help",
     items: [
       { type: "item", labelKey: "desktop.menu.documentation", href: "https://awareliquid.ai" },
-      { type: "item", labelKey: "desktop.menu.supportForum", href: "https://discord.com/invite/opencode" },
+      // No "support forum" entry: HyperCode has no community server of its own,
+      // and linking the upstream OpenCode Discord leaked the fork's origin.
+      // Re-add here once a real HyperCode community URL exists.
       { type: "item", labelKey: "desktop.menu.exportLogs", command: "logs.export" },
       { type: "separator" },
+      // Template file names must match .github/ISSUE_TEMPLATE/*.yml (hyphenated).
       {
         type: "item",
         labelKey: "desktop.menu.shareFeedback",
-        href: "https://github.com/anomalyco/opencode/issues/new?template=feature_request.yml",
+        href: "https://github.com/everest-an/hypercode/issues/new?template=feature-request.yml",
       },
       {
         type: "item",
         labelKey: "desktop.menu.reportBug",
-        href: "https://github.com/anomalyco/opencode/issues/new?template=bug_report.yml",
+        href: "https://github.com/everest-an/hypercode/issues/new?template=bug-report.yml",
       },
     ],
   },

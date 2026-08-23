@@ -1,6 +1,7 @@
 ---
 name: infringement-triage
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Infringement triage across trademark, copyright, patent, and trade secret —
   a flag list with the factors cutting each way, not a finding. Use when
   assessing whether someone is infringing your IP or whether you might be

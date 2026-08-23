@@ -1,6 +1,7 @@
 ---
 name: policy-monitor
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Keep the AI policy current with practice — weekly sweep of saved AIAs, triage
   results, and vendor reviews to find policy drift, or direct query for a proposed
   new AI practice. Use when user says "policy sweep", "does our AI policy cover

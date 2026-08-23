@@ -1,6 +1,7 @@
 ---
 name: expansion-kickoff
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Kick off international expansion planning for a new country — gathers intake,
   runs EOR vs. entity framing, drafts cross-functional questions, surfaces
   country-specific flags, and creates a persistent tracker. Use when someone

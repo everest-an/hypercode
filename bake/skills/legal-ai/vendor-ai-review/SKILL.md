@@ -1,6 +1,7 @@
 ---
 name: vendor-ai-review
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Review vendor AI terms — agreement, addendum, or ToS AI provisions — against your
   governance positions; flag training-on-data, liability, model changes, and AI policy
   consistency. Use when user says "review this AI agreement", "check OpenAI terms",

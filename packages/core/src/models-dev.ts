@@ -228,7 +228,17 @@ const layer = Layer.effect(
         }),
       )
       return JSON.parse(text) as Record<string, Provider>
-    }).pipe(Effect.withSpan("ModelsDev.populate"), Effect.orDie)
+    }).pipe(
+      // The upstream catalog ships provider entries for its own hosted gateways — `opencode` ("OpenCode Zen")
+      // and `opencode-go` ("OpenCode Go"). HyperCode users cannot authenticate against either, and surfacing
+      // them puts a third-party brand in the model picker and in ModelNotFound suggestions. Drop the whole
+      // namespace here, at the single point every catalog source (disk, snapshot, network) flows through.
+      Effect.map((providers) =>
+        Object.fromEntries(Object.entries(providers).filter(([id]) => !/^opencode(-|$)/.test(id))),
+      ),
+      Effect.withSpan("ModelsDev.populate"),
+      Effect.orDie,
+    )
 
     const [cachedGet, invalidate] = yield* Effect.cachedInvalidateWithTTL(populate, Duration.infinity)
 

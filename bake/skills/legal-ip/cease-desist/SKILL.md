@@ -1,6 +1,7 @@
 ---
 name: cease-desist
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Draft a cease-and-desist letter (send mode) or triage one you received
   (receive mode). Use when asserting your rights against an infringer with a
   demand letter calibrated to your enforcement posture, or when an incoming

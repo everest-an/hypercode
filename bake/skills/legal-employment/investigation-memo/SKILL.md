@@ -1,6 +1,7 @@
 ---
 name: investigation-memo
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Draft or update the privileged investigation memo from the investigation log.
   Use when an investigation is far enough along to write the first memo cut, or
   when new data has been added and the existing draft needs updating.

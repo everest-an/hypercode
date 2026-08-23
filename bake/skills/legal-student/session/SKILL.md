@@ -1,6 +1,7 @@
 ---
 name: session
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Run a focused N-question study session on a subject — MBE, essay, or
   flashcards. Tracks performance and updates the study plan. Use when the
   user says "run me 10 questions on [subject]", "do a session on [subject]",
