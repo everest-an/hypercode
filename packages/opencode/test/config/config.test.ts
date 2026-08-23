@@ -308,13 +308,19 @@ it.instance("falls back to generic username when system user info is unavailable
   }),
 )
 
-it.effect("creates global jsonc config with schema when no global configs exist", () =>
+it.effect("seeds the global config with the default provider, no blank apiKey and no third-party schema", () =>
   withGlobalConfig({}, ({ dir }) =>
     Effect.gen(function* () {
       yield* Config.use.get().pipe(provideInstanceEffect(dir))
 
-      const content = yield* FSUtil.use.readFileString(path.join(dir, "opencode.jsonc"))
-      expect(content).toContain('"$schema": "https://opencode.ai/config.json"')
+      const content = yield* FSUtil.use.readFileString(path.join(dir, "hypercode.jsonc"))
+      expect(content).toContain('"deepseek"')
+      expect(content).toContain('"baseURL": "https://api.deepseek.com/v1"')
+      // A blank apiKey would permanently mask the key the user pastes through the UI, because the provider
+      // only falls back to the auth store when the configured value is absent.
+      expect(content).not.toContain("apiKey")
+      // Never write a third-party domain into a file the user owns.
+      expect(content).not.toContain("opencode.ai")
     }).pipe(Effect.provide(testInstanceStoreLayer), Effect.provide(LayerNode.compile(CrossSpawnSpawner.node))),
   ),
 )
@@ -505,25 +511,22 @@ it.instance("handles environment variable substitution", () =>
   ),
 )
 
-it.instance("preserves env variables when adding $schema to config", () =>
+it.instance("leaves the user's config file untouched when loading it", () =>
   withProcessEnv(
     "PRESERVE_VAR",
     "secret_value",
     Effect.gen(function* () {
       const test = yield* TestInstance
-      // Config without $schema - should trigger auto-add
-      yield* FSUtil.use.writeWithDirs(
-        path.join(test.directory, "opencode.json"),
-        JSON.stringify({ username: "{env:PRESERVE_VAR}" }),
-      )
+      const original = JSON.stringify({ username: "{env:PRESERVE_VAR}" })
+      yield* FSUtil.use.writeWithDirs(path.join(test.directory, "opencode.json"), original)
       const config = yield* Config.use.get()
       expect(config.username).toBe("secret_value")
 
-      // Read the file to verify the env variable was preserved
+      // Loading resolves {env:...} in memory only. The file itself must come back byte-identical: rewriting it
+      // would both leak the resolved secret to disk and inject a third-party $schema URL into a user-owned file.
       const content = yield* FSUtil.use.readFileString(path.join(test.directory, "opencode.json"))
-      expect(content).toContain("{env:PRESERVE_VAR}")
+      expect(content).toBe(original)
       expect(content).not.toContain("secret_value")
-      expect(content).toContain("$schema")
     }),
   ),
 )
