@@ -48,7 +48,6 @@ import {
 import { createWslServersController } from "./wsl/servers"
 import { registerWslIpcHandlers } from "./wsl/ipc"
 import { spawnWslSidecar } from "./wsl/sidecar"
-import { migrate } from "./migrate"
 import { cleanupStoreFiles } from "./store-cleanup"
 import { startBackgroundCli } from "./background-cli"
 import { setNativeTranslations } from "./native-translations"
@@ -278,7 +277,6 @@ const main = Effect.gen(function* () {
 
   yield* Effect.promise(() => app.whenReady())
 
-  if (!TEST_ONBOARDING) migrate()
   // Runs before the embedded server starts so the skill library is on disk by the time the engine scans for
   // it. Failures are logged, never fatal: a missing skill library degrades the product, a failed launch ends
   // it. Only the "hypercode-" namespaces are replaced, so this cannot clobber skills the user wrote.
