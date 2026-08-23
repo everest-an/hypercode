@@ -52,6 +52,10 @@ const getBase = (appId: string): Configuration => ({
     // (both would otherwise resolve to %LOCALAPPDATA%\Programs\@opencode-aidesktop).
     name: "hypercode-desktop",
     desktopName: `${appId}.desktop`,
+    // Let the release workflow stamp the version it is actually publishing. Without this the installer
+    // carries whatever package.json happens to say, which is how shipped builds came to report a version
+    // that did not match their release tag — and electron-updater compares exactly these numbers.
+    ...(process.env["HYPERCODE_VERSION"] ? { version: process.env["HYPERCODE_VERSION"] } : {}),
   },
   files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*"],
   extraResources: [

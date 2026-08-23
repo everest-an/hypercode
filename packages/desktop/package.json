@@ -1,7 +1,7 @@
 {
   "name": "@opencode-ai/desktop",
   "private": true,
-  "version": "1.18.21",
+  "version": "0.1.4",
   "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/AwareLiquid/HyperCode",
@@ -9,6 +9,7 @@
     "name": "AwareLiquid"
   },
   "scripts": {
+    "test": "bun test",
     "typecheck": "tsgo -b",
     "predev": "bun ./scripts/predev.ts",
     "dev": "electron-vite dev",

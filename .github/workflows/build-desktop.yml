@@ -49,6 +49,7 @@ jobs:
         working-directory: packages/desktop
         run: bun run build
         env:
+          OPENCODE_CHANNEL: prod
           NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Package Windows (NSIS installer)
@@ -57,6 +58,9 @@ jobs:
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          # Stamps the installer with the version actually being released. Empty on push builds, where
+          # electron-builder falls back to packages/desktop/package.json (kept in sync with /VERSION).
+          HYPERCODE_VERSION: ${{ inputs.version }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
@@ -95,7 +99,11 @@ jobs:
         working-directory: packages/desktop
         run: bun run build
         env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
+          OPENCODE_CHANNEL: prod
+          # macos-latest is an Apple Silicon runner with only 7 GB of RAM. A heap
+          # cap above physical memory stops V8 from applying back-pressure, so the
+          # build hangs instead of failing cleanly. Keep this at 4096.
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Configure signing (optional, only when Apple credentials exist)
         if: env.APPLE_ID_SECRET != ''
@@ -113,6 +121,7 @@ jobs:
         env:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          HYPERCODE_VERSION: ${{ inputs.version }}
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
