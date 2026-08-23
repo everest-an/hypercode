@@ -175,16 +175,37 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
   }
 }
 
+// `plugin install <module>` is the shape users (and our own bake/ installers)
+// reach for by muscle memory from npm/pip. The original command only accepted
+// `plugin <module>`, so yargs bound `module = "install"` and silently tried to
+// install an npm package literally named "install" — dropping the real target.
+// Accept both shapes by treating a leading verb as a no-op prefix.
+const INSTALL_VERBS = new Set(["install", "add", "i"])
+
+/** Resolves the real module spec from the two accepted positional shapes. */
+export function resolveModuleArg(first: string, second?: string): string {
+  const head = first.trim()
+  const tail = (second ?? "").trim()
+  if (tail && INSTALL_VERBS.has(head.toLowerCase())) return tail
+  return head
+}
+
 export const PluginCommand = effectCmd({
-  command: "plugin <module>",
+  command: "plugin <module> [target]",
   aliases: ["plug"],
   describe: "install plugin and update config",
   builder: (yargs) =>
     yargs
       .positional("module", {
         type: "string",
-        describe: "npm module name",
+        describe: 'npm module name (or the literal "install" followed by the module name)',
       })
+      .positional("target", {
+        type: "string",
+        describe: 'npm module name when the "install" verb is used',
+      })
+      .example("$0 plugin oh-my-openagent", "install a plugin")
+      .example("$0 plugin install oh-my-openagent", "same thing, npm-style")
       .option("global", {
         alias: ["g"],
         type: "boolean",
@@ -198,9 +219,10 @@ export const PluginCommand = effectCmd({
         describe: "replace existing plugin version",
       }),
   handler: Effect.fn("Cli.plug")(function* (args) {
-    const mod = String(args.module ?? "").trim()
-    if (!mod) {
+    const mod = resolveModuleArg(String(args.module ?? ""), args.target === undefined ? undefined : String(args.target))
+    if (!mod || INSTALL_VERBS.has(mod.toLowerCase())) {
       UI.error("module is required")
+      UI.error("usage: hypercode plugin <module>   (or: hypercode plugin install <module>)")
       process.exitCode = 1
       return
     }
