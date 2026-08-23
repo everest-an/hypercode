@@ -13,6 +13,7 @@ import contextMenu from "electron-context-menu"
 
 import type { ServerReadyData } from "../preload/types"
 import { checkAppExists, resolveAppPath } from "./apps"
+import { installBundledSkills } from "./bundled-skills"
 import { CHANNEL } from "./constants"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
 import { forwardInitializationFailure } from "./initialization"
@@ -276,6 +277,16 @@ const main = Effect.gen(function* () {
   yield* Effect.promise(() => app.whenReady())
 
   if (!TEST_ONBOARDING) migrate()
+  // Runs before the embedded server starts so the skill library is on disk by the time the engine scans for
+  // it. Failures are logged, never fatal: a missing skill library degrades the product, a failed launch ends
+  // it. Only the "hypercode-" namespaces are replaced, so this cannot clobber skills the user wrote.
+  yield* Effect.promise(() => installBundledSkills(logger)).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to install bundled skills", error)
+      }),
+    ),
+  )
   yield* Effect.promise(() => cleanupStoreFiles(app.getPath("userData"))).pipe(
     Effect.tap((result) =>
       Effect.sync(() => {

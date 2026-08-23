@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process"
+import { existsSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
@@ -68,10 +69,23 @@ const getBase = (appId: string): Configuration => ({
           },
         ]
       : []),
+    // `native/` is an optional local build output and is not tracked in the repo. electron-builder treats a
+    // missing `from:` as a hard error, so a clean checkout could not be packaged at all.
+    ...(existsSync(path.join(packageDir, "native"))
+      ? [
+          {
+            from: "native/",
+            to: "native/",
+            filter: ["index.js", "index.d.ts", "build/Release/mac_window.node", "swift-build/**"],
+          },
+        ]
+      : []),
+    // Ship the baked skill library with the desktop app. The bake scripts are part of the CLI install flow,
+    // which desktop users never run, so without this the 229 finance/legal/academic skills that the product
+    // is sold on would simply not exist for them.
     {
-      from: "native/",
-      to: "native/",
-      filter: ["index.js", "index.d.ts", "build/Release/mac_window.node", "swift-build/**"],
+      from: path.join(rootDir, "bake", "skills"),
+      to: "skills/",
     },
     {
       from: path.join(rootDir, "THIRD-PARTY-NOTICES.txt"),
