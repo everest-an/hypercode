@@ -1,6 +1,7 @@
 ---
 name: written-consent
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Draft a unanimous written consent of the board or a committee in house format,
   with precedent search from the consents repository. Handles multi-resolution
   consents, director conflict flags, state-law notice requirements, and signatory

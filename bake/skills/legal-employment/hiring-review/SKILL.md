@@ -1,6 +1,7 @@
 ---
 name: hiring-review
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Review an offer letter and any restrictive covenants — jurisdiction check
   included. Substantive rules (covenant enforceability, pay-transparency,
   salary-history limits, exemption criteria) are researched per hire, not

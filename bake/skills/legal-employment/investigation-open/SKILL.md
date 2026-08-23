@@ -1,6 +1,7 @@
 ---
 name: investigation-open
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Open a new internal investigation matter — runs intake, generates the sources
   checklist, and creates the persistent investigation log. Use when a complaint
   or allegation comes in and the attorney needs to stand up a privileged

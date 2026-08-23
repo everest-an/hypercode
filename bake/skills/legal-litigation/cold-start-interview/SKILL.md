@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: House cold-start for the litigation plugin — branches by role (in-house, firm associate, solo) and side (plaintiff, defense, both), captures risk calibration, landscape, and house style, and writes the practice profile CLAUDE.md. Use on a fresh install, when the user wants to set up or redo the practice profile, or to re-check available integrations. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
+description: >-
+  House cold-start for the litigation plugin — branches by role (in-house, firm associate, solo) and side (plaintiff, defense, both), captures risk calibration, landscape, and house style, and writes the practice profile CLAUDE.md. Use on a fresh install, when the user wants to set up or redo the practice profile, or to re-check available integrations. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
 argument-hint: "[--redo | --check-integrations]"
 ---
 

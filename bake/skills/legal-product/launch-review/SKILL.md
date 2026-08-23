@@ -1,6 +1,7 @@
 ---
 name: launch-review
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Full launch review against your framework and risk calibration. Use when the
   user says "review this launch", "legal review for [feature]", "can we ship
   this", "what are the legal issues with [product]", or references a launch

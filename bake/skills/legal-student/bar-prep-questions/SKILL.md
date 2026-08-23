@@ -1,6 +1,7 @@
 ---
 name: bar-prep-questions
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Bar prep questions — MBE or essay, targeted at your weak subjects and bar
   jurisdiction. Tracks misses and comes back to patterns. Use when the user
   says "bar prep", "MBE questions", "practice essay", or "test me for the

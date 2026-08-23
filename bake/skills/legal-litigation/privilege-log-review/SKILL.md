@@ -1,6 +1,7 @@
 ---
 name: privilege-log-review
-description: First-pass privilege log review — make the obvious privilege calls and flag the hard ones for attorney review without making close calls. Use when the user says "review the privilege log", "priv log", "check privilege on these docs", or has a log to QA before production. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
+description: >-
+  First-pass privilege log review — make the obvious privilege calls and flag the hard ones for attorney review without making close calls. Use when the user says "review the privilege log", "priv log", "check privilege on these docs", or has a log to QA before production. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
 argument-hint: "[log file, or document set]"
 ---
 

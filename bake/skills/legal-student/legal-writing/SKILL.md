@@ -1,6 +1,7 @@
 ---
 name: legal-writing
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Structural feedback on a legal writing draft (memo, brief, paper, exam
   essay) — organization, analysis depth, clarity, citation form. NEVER
   rewrites the draft. Use when the user says "feedback on my memo", "read my

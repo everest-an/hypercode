@@ -1,6 +1,7 @@
 ---
 name: build-guide
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Help a clinic supervisor author a practice-area guide that configures how
   student-facing skills behave — intake questions, pedagogy posture (assist /
   guide / teach), review gates, cross-plugin checks, and local rules. Use when

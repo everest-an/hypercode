@@ -1,6 +1,7 @@
 ---
 name: aia-generation
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Run an AI impact assessment — structured intake, risk analysis, regulatory
   classification per regime in scope, policy consistency diff, and recommendation
   with conditions. Uses the house-style structure learned from the seed impact

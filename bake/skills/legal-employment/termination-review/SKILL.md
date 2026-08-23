@@ -1,6 +1,7 @@
 ---
 name: termination-review
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Termination review — high-risk flag detection, severance + release, and
   final pay timing by jurisdiction. Jurisdiction-specific rules and release
   consideration periods are researched per review, not stored. Use when the

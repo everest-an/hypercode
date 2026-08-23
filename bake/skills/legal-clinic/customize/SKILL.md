@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Guided customization of your legal clinic profile — change one thing without
   re-running the whole cold-start interview. Adjust clinic profile,
   jurisdiction, supervision style, practice-area templates, semester

@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Manage matter workspaces — new, list, switch, close, or detach (practice-level).
   File-management logic for keeping one client or engagement's context separate
   from every other. Use when working across multiple clients or matters, when the

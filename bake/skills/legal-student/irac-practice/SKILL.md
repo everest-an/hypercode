@@ -1,6 +1,7 @@
 ---
 name: irac-practice
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Grade an IRAC essay for structure, issue-spotting, rule accuracy, analysis
   depth, and organization. Does NOT rewrite the essay or show a model answer;
   tracks patterns across sessions. Use when the user says "grade my IRAC",

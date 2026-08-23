@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Guided customization of your AI governance practice profile — change one thing
   without re-running the whole cold-start interview. Adjust risk posture,
   escalation contacts, use-case registry entries, vendor AI positions,

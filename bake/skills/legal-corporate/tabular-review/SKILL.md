@@ -1,6 +1,7 @@
 ---
 name: tabular-review
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Tabular review — one row per document, one column per data point, every cell
   cited to source. Built for M&A diligence ("review these 200 target contracts
   for change-of-control, assignment, and MAC clauses") but works for any batch

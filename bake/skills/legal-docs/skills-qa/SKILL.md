@@ -1,6 +1,7 @@
 ---
 name: skills-qa
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Evaluate a skill against the Legal Skill Design Framework — thirteen design
   parameters (including trust-surface, freshness, schema validation, and
   conflict detection), three legal failure modes, and a three-band verdict

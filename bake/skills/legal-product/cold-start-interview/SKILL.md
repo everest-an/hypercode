@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Cold-start interview — connects to your launch tracker, reads past reviews,
   learns your risk calibration. Use on fresh install, when onboarding product
   counsel, or when the plugin config has placeholders. Run with --redo to

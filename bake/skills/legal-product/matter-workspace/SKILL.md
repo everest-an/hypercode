@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Manage matter workspaces — new, list, switch, close, or detach (practice-level).
   Use when working across multiple clients or matters in private practice and you
   need to create, list, switch, close, or detach the active matter so context from

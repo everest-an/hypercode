@@ -1,6 +1,7 @@
 ---
 name: takedown
-description: > 中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
+description: >-
+  中文触发词: 知识产权;专利;商标;著作权;商业秘密;侵权。
   Draft a DMCA takedown notice, triage one you received, or draft a §512(g)
   counter-notice. Use when asserting copyright through a §512(c)(3) takedown
   with the fair-use and perjury gates, when an incoming takedown needs triage

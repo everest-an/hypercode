@@ -1,6 +1,7 @@
 ---
 name: log-leave
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Add a new leave to the leave register with the minimum information needed to
   start tracking deadlines. Use when an employee goes on leave and you want the
   tracker to watch designation, certification, and exhaustion clocks from day

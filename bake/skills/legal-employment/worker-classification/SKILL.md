@@ -1,6 +1,7 @@
 ---
 name: worker-classification
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Classify a proposed worker engagement — employee, IC, temp, or vendor — by
   running the applicable jurisdiction tests and flagging misclassification gaps
   between the intended arrangement and what the facts actually support.

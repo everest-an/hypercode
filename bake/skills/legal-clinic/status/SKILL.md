@@ -1,6 +1,7 @@
 ---
 name: status
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Case status summary by audience — client-facing (plain language), internal
   (for the professor), or court-ready (formal caption format per local rules).
   Same facts, different framing and depth. Use when a student needs to update

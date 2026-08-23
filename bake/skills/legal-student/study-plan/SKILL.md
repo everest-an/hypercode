@@ -1,6 +1,7 @@
 ---
 name: study-plan
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Build or update a long-term bar prep (or exam prep) study plan — phases,
   subjects weighted by weakness, daily session schedule, adaptive to session
   history in study-plan.yaml. Use when the user says "build a study plan",

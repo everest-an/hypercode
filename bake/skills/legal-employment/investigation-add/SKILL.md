@@ -1,6 +1,7 @@
 ---
 name: investigation-add
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Add data to an open investigation — documents, interview notes, or
   observations. Processes batches against the documented pull criteria,
   surfaces significant items, and logs everything reviewed for coverage

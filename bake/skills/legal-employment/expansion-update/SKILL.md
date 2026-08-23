@@ -1,6 +1,7 @@
 ---
 name: expansion-update
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Update the status of an in-progress international expansion project —
   recalculates what is now unblocked, flags anything overdue, and surfaces
   the next priorities. Use when work has happened since the last session and

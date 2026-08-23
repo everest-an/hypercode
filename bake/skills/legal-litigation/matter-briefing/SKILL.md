@@ -1,6 +1,7 @@
 ---
 name: matter-briefing
-description: Deep briefing on one matter — current posture, what's changed, next deadline, open questions, and a risk re-assessment check, ready before a GC update or outside counsel call. Use when the user says "brief me on [matter]", "where are we on [matter]", or needs a read on a specific matter. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
+description: >-
+  Deep briefing on one matter — current posture, what's changed, next deadline, open questions, and a risk re-assessment check, ready before a GC update or outside counsel call. Use when the user says "brief me on [matter]", "where are we on [matter]", or needs a read on a specific matter. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
 argument-hint: "[slug]"
 ---
 

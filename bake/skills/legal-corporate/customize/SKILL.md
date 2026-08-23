@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Guided customization of your corporate practice profile — change one thing
   without re-running the whole cold-start interview. Adjust risk posture,
   escalation contacts, active modules (M&A / Board / Public Company / Entity

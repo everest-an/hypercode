@@ -1,6 +1,7 @@
 ---
 name: feature-risk-assessment
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Deeper risk assessment for a single feature or product area when the launch
   review found something that needs more than a line item. Structured analysis:
   what could go wrong, how likely, how bad, what mitigates it. Use when user

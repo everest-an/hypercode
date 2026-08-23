@@ -1,6 +1,7 @@
 ---
 name: dsar-response
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Walk through a Data Subject Access Request (or deletion, portability, correction
   request) and draft the response — verify identity, locate data system-by-system,
   assess exemptions, draft the acknowledgment and substantive response letters.

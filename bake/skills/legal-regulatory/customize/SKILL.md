@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  中文触发词: 监管合规;行政许可;行政处罚;行业监管。
   Guided customization of your regulatory practice profile — change one thing
   without re-running the whole cold-start interview. Adjust watched
   regulators, policy library index, materiality threshold, gap response

@@ -1,6 +1,7 @@
 ---
 name: internal-investigation
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Reference: shared framework for managing internal investigations from intake
   through final memo — privileged investigation log, document processing with
   needle-finding, source coverage tracking, Q&A against the log, memo drafting,

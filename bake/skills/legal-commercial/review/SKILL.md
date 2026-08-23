@@ -1,6 +1,7 @@
 ---
 name: review
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Review a vendor agreement, NDA, or SaaS subscription against your playbook.
   Identifies the agreement structure from titles, routes to the right review skill
   (vendor-agreement-review, nda-review, saas-msa-review), and integrates the output

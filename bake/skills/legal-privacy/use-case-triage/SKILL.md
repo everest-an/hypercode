@@ -1,6 +1,7 @@
 ---
 name: use-case-triage
-description: > 中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
+description: >-
+  中文触发词: 隐私政策;数据合规;个人信息保护;个保法;GDPR;数据出境。
   Quickly determine whether a processing activity needs a PIA, a mandatory GDPR
   DPIA, or can proceed — surfaces privacy policy conflicts and routes to the right
   next step. Use when the user asks "does this need a PIA", "triage this feature",

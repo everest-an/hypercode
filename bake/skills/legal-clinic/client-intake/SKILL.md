@@ -1,6 +1,7 @@
 ---
 name: client-intake
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Structured intake — practice-area templates, cross-area issue spotting,
   conflict flags, and triage classification. Produces a formatted case summary
   the student analyzes and the professor reviews. Does NOT decide case

@@ -1,6 +1,7 @@
 ---
 name: marketing-claims-review
-description: > 中文触发词: 产品合规;用户协议;服务条款;ToS。
+description: >-
+  中文触发词: 产品合规;用户协议;服务条款;ToS。
   Review marketing copy for claims that need substantiation, reframing, or cutting.
   Use when the user says "review this marketing copy", "check these claims",
   "can we say this", "is this puffery or a problem", or pastes marketing content

@@ -1,6 +1,7 @@
 ---
 name: pptx-author
-description: Produce a .pptx file on disk (headless) instead of driving a live PowerPoint document — for managed-agent sessions with no open Office app. 中文触发: 生成PPT;制作PPT;幻灯片。
+description: >-
+  Produce a .pptx file on disk (headless) instead of driving a live PowerPoint document — for managed-agent sessions with no open Office app. 中文触发: 生成PPT;制作PPT;幻灯片。
 ---
 
 # pptx-author

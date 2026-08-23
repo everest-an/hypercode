@@ -1,6 +1,7 @@
 ---
 name: entity-compliance
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Entity compliance tracker — initialize, report upcoming deadlines, update
   status, run health audit, export to CSV. Maintains a compliance-tracker.yaml
   built from the entity table, calculates filing deadlines by entity and

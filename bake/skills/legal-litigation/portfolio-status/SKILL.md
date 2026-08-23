@@ -1,6 +1,7 @@
 ---
 name: portfolio-status
-description: Roll up the portfolio from _log.yaml — risk distribution, upcoming deadlines, stale matters, materiality totals, stage distribution, and flagged anomalies. Use when the user asks "where do we stand", "how many open matters", or wants a portfolio rollup or status across all active matters. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
+description: >-
+  Roll up the portfolio from _log.yaml — risk distribution, upcoming deadlines, stale matters, materiality totals, stage distribution, and flagged anomalies. Use when the user asks "where do we stand", "how many open matters", or wants a portfolio rollup or status across all active matters. 中文触发词: 诉讼;仲裁;起诉状;庭审;证据;举证;上诉。
 argument-hint: "[--all | --risk=high | --stale]"
 ---
 

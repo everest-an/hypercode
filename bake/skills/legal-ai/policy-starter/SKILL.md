@@ -1,6 +1,7 @@
 ---
 name: policy-starter
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Draft a firm AI usage policy from published model policies, adapted to your
   practice profile — a research-and-synthesis tool whose output is a draft for
   attorney review and adoption, not a finished policy. Use when user says "draft

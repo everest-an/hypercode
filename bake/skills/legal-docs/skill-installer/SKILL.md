@@ -1,6 +1,7 @@
 ---
 name: skill-installer
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Install a community skill from a watched registry. Reads the allowlist first,
   fetches, shows the RAW SKILL.md (not just a summary), runs structural trust
   checks, runs skills-qa, and only writes files after explicit user approval.

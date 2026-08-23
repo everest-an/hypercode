@@ -1,6 +1,7 @@
 ---
 name: semester-handoff
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   End-of-semester case handoff memos — the mirror of /ramp. Produces per-case
   transition memos and a cohort summary so the departing cohort hands work to
   the incoming cohort cleanly. Reads deadlines, client-comms, and case history.

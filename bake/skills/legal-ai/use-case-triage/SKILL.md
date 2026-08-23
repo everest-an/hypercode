@@ -1,6 +1,7 @@
 ---
 name: use-case-triage
-description: > 中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
+description: >-
+  中文触发词: AI治理;算法合规;生成式AI;人工智能监管。
   Classify a proposed AI use case against your registry — approved, conditional,
   or not approved — and produce required conditions and next steps. Flags
   cross-plugin handoffs to privacy or product counsel. Use when user says "triage

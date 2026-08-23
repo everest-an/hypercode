@@ -1,6 +1,7 @@
 ---
 name: auto-updater
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Check installed community skills for updates. Shows a diff and requires
   explicit approval before applying. Use when the user says "check for
   updates", "update my skills", "anything new for my installed skills", or

@@ -1,6 +1,7 @@
 ---
 name: handbook-updates
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Diff a proposed handbook change against the current version, flag ripple
   effects and state supplement impacts. Use when user says "update the
   handbook", "add this to the handbook", "handbook change", or has a policy

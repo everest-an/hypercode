@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Guided customization of your commercial contracts practice profile — change
   one thing without re-running the whole cold-start interview. Adjust risk
   posture, escalation contacts, playbook positions, NDA triage preferences,

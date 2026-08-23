@@ -1,6 +1,7 @@
 ---
 name: customize
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Guided customization of your employment practice profile — change one thing
   without re-running the whole cold-start interview. Adjust jurisdictional
   footprint, risk posture, escalation contacts, hiring review rules,

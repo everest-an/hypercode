@@ -1,6 +1,7 @@
 ---
 name: saas-msa-review
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Reference: review of SaaS subscription agreements with attention to the terms
   that matter most in subscription deals — auto-renewal mechanics, price escalation,
   data portability, uptime SLAs, and subprocessor rights. Loaded by

@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Practice-profile interview that recommends and installs a starter pack of
   community legal skills. This IS the cold start for the whole ecosystem — it
   asks what kind of lawyer you are and recommends what to install first. Use

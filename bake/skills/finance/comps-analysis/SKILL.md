@@ -1,6 +1,7 @@
 ---
 name: comps-analysis
-description: | 中文触发: 可比公司;相对估值;估值倍数;市盈率。
+description: >-
+  中文触发: 可比公司;相对估值;估值倍数;市盈率。
   Build institutional-grade comparable company analyses with operating metrics, valuation multiples, and statistical benchmarking in Excel/spreadsheet format.
 
   **Perfect for:**

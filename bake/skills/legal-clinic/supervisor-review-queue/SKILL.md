@@ -1,6 +1,7 @@
 ---
 name: supervisor-review-queue
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Professor's review queue — student output waits here for professor approval
   before going to clients or courts. Only active if "formal review queue"
   supervision style was chosen at setup; otherwise dormant. Use when the

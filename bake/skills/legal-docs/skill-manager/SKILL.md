@@ -1,6 +1,7 @@
 ---
 name: skill-manager
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Reference: detailed uninstall, disable, and re-enable workflows for community
   skills installed via the legal builder hub. Safe by default — refuses to
   touch first-party plugin skills, confirms before removing files, and logs

@@ -1,6 +1,7 @@
 ---
 name: review-proposals
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Review and approve (or reject) pending playbook update proposals from the
   playbook-monitor agent and apply approved changes to the practice profile. Use
   when the playbook-monitor agent has surfaced proposals, when the user says

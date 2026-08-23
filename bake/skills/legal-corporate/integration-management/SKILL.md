@@ -1,6 +1,7 @@
 ---
 name: integration-management
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Post-closing M&A integration tracker — phased workplan, consent tracking,
   contract assignment at scale, weekly status reports. Initializes from whatever
   deal artifacts are available (purchase agreement, deal summary, closing

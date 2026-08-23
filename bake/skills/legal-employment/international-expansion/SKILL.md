@@ -1,6 +1,7 @@
 ---
 name: international-expansion
-description: > 中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
+description: >-
+  中文触发词: 劳动合同;用工;裁员;竞业限制;劳动争议;解雇。
   Reference: implementation-planning framework for international hiring — EOR
   vs. entity decision framing, cross-functional triggers for tax/finance/HR,
   structured outside-counsel briefing requests, and a persistent gap tracker.

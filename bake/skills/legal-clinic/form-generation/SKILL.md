@@ -1,6 +1,7 @@
 ---
 name: form-generation
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   Reference: DEPRECATED — use `/draft` instead. This skill has been folded into
   the draft skill, which handles practice-area document generation including
   form population. Kept as a redirect for migration.

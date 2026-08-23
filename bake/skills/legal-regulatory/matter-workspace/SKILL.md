@@ -1,6 +1,7 @@
 ---
 name: matter-workspace
-description: Manage matter workspaces — create, list, switch, close, or detach the active matter (practice-level). Use when working across multiple clients or matters and you need to keep one engagement's context separate from another, or when a substantive skill needs to know which matter it's working in. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Manage matter workspaces — create, list, switch, close, or detach the active matter (practice-level). Use when working across multiple clients or matters and you need to keep one engagement's context separate from another, or when a substantive skill needs to know which matter it's working in. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "<new | list | switch | close | none> [slug]"
 ---
 

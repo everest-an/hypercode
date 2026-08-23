@@ -1,6 +1,7 @@
 ---
 name: memo
-description: > 中文触发词: 法律咨询;法律援助;公益法律。
+description: >-
+  中文触发词: 法律咨询;法律援助;公益法律。
   IRAC-scaffolded case analysis memo with research gaps flagged — the
   scaffold, not the analysis. Rule blocks are RESEARCH NEEDED, Application
   is STUDENT ANALYSIS prompts, Conclusion is blank. Use when a student needs

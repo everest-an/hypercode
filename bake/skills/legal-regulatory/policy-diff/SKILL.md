@@ -1,6 +1,7 @@
 ---
 name: policy-diff
-description: Diff a specific regulatory change against the indexed policy library. Use when a reg has changed and you need to know which policies it touches and what the gap is, when the user says "diff this reg against our policies", "which policy does this affect", or "gap analysis", or when reg-feed-watcher hands off a material item. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
+description: >-
+  Diff a specific regulatory change against the indexed policy library. Use when a reg has changed and you need to know which policies it touches and what the gap is, when the user says "diff this reg against our policies", "which policy does this affect", or "gap analysis", or when reg-feed-watcher hands off a material item. 中文触发词: 监管合规;行政许可;行政处罚;行业监管。
 argument-hint: "[reg name, or paste reg text/summary]"
 ---
 

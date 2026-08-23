@@ -1,6 +1,7 @@
 ---
 name: vendor-agreement-review
-description: > 中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
+description: >-
+  中文触发词: 商业合同;买卖合同;服务合同;合同条款;交易文件。
   Reference: review of an inbound vendor agreement against the team playbook in
   `~/.claude/plugins/config/claude-for-legal/commercial-legal/CLAUDE.md`. Flags deviations, assesses risk, generates
   specific redline language, and routes to the right approver. Loaded by

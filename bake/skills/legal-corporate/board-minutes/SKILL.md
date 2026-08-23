@@ -1,6 +1,7 @@
 ---
 name: board-minutes
-description: > 中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
+description: >-
+  中文触发词: 公司治理;股权结构;公司章程;股东协议;并购重组;投资协议;尽职调查。
   Drafts board or committee meeting minutes in your house format. Auto-detects
   upcoming board and committee meetings from your calendar, asks for the agenda
   and any slides or pre-read materials, and produces a complete draft in the

@@ -1,6 +1,7 @@
 ---
 name: cold-start-interview
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   About-you interview and materials intake — classes, bar jurisdiction,
   learning style (drill-me vs explain-to-me), past outlines, graded essays,
   old exams, MBE sets, syllabi, papers. Use on a fresh install, when the user

@@ -1,6 +1,7 @@
 ---
 name: registry-browser
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Search watched registries for community legal skills, showing matches with
   descriptions and offering to show the full SKILL.md before install. Use when
   the user says "browse", "search skills", "find a skill for", "what's out

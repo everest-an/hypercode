@@ -1,6 +1,7 @@
 ---
 name: flashcards
-description: > 中文触发词: 法律学习;案例分析;法条学习。
+description: >-
+  中文触发词: 法律学习;案例分析;法条学习。
   Generate or drill flashcards for black-letter memorization — Leitner-style
   buckets, per-subject markdown storage, drill mode with self-assessment. Use
   when the user says "drill flashcards", "make flashcards from", "quiz me on

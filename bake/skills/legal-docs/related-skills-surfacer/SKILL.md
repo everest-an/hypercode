@@ -1,6 +1,7 @@
 ---
 name: related-skills-surfacer
-description: > 中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
+description: >-
+  中文触发词: 法律文书;文书模板;起诉状模板;合同模板。
   Suggest community skills based on recent activity in other plugins. Checks
   whether the community has built something relevant to a task and mentions it
   once, non-intrusively. Use when the user says "is there a community skill for
