@@ -16,6 +16,12 @@ import { addRootArrayEntry, parseJsonc, rootKeys } from "./jsonc-edit"
 
 export const BUNDLED_PLUGIN_PACKAGE = "oh-my-openagent"
 
+// The payload ships its dependency tree under this name rather than `node_modules`. electron-builder skips
+// any directory called `node_modules` inside an extraResources entry, and a `filter` does not override it —
+// shipping it under the real name silently reduced a 184 MB payload to a lone package.json in the installer.
+// scripts/bundle-plugin.ts stages it under this name; seeding renames it back on the way into the cache.
+export const PAYLOAD_MODULES_DIR = "modules"
+
 const VERSION_MARKER = ".hypercode-bundled-version"
 
 // Npm.add keys its cache directory by the *spec string* it is handed, not by the package name
@@ -60,7 +66,10 @@ export type SeedBundledPluginResult = {
 export function resolveBundledPluginSource(input: { resourcesPath: string; appPath: string }) {
   const packaged = path.join(input.resourcesPath, "plugin")
   if (existsSync(packaged)) return packaged
-  const repo = path.join(input.appPath, "resources", "plugin")
+  // Unpackaged: scripts/bundle-plugin.ts writes here. Deliberately outside resources/, because anything the
+  // `resources/**/*` asar pattern claims has to be excluded again for extraResources, and those exclusions
+  // stop extraResources from reading the source at all.
+  const repo = path.join(input.appPath, "plugin-payload")
   return existsSync(repo) ? repo : undefined
 }
 
@@ -71,7 +80,10 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
   // engine then falls back to installing over the network, which is slow but still correct.
   if (!source) return result
 
-  if (!existsSync(path.join(source, "node_modules", BUNDLED_PLUGIN_PACKAGE))) {
+  // The payload stages its tree under PAYLOAD_MODULES_DIR, not `node_modules` — see that constant. Checking
+  // for the package itself rather than just the directory catches a truncated copy, which is exactly the
+  // shape electron-builder's silent skip produced.
+  if (!existsSync(path.join(source, PAYLOAD_MODULES_DIR, BUNDLED_PLUGIN_PACKAGE))) {
     log.warn("bundled plugin payload is incomplete", { source })
     return result
   }
@@ -99,6 +111,23 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
     if (!cloned) {
       await fs.rm(staging, { recursive: true, force: true }).catch(() => {})
       continue
+    }
+
+    // Restore the name Npm.add looks for. Only the first pass needs it: later specs clone from a directory
+    // that has already been renamed, so `modules` is simply absent and this is a no-op.
+    const stagedModules = path.join(staging, PAYLOAD_MODULES_DIR)
+    if (existsSync(stagedModules)) {
+      const renamed = await fs
+        .rename(stagedModules, path.join(staging, "node_modules"))
+        .then(() => true)
+        .catch((error) => {
+          log.warn("failed to restore payload module directory", { spec, error })
+          return false
+        })
+      if (!renamed) {
+        await fs.rm(staging, { recursive: true, force: true }).catch(() => {})
+        continue
+      }
     }
 
     await fs.writeFile(path.join(staging, VERSION_MARKER), `${options.version}\n`, "utf8").catch(() => {})

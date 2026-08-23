@@ -3,7 +3,12 @@ import { existsSync } from "node:fs"
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { BUNDLED_PLUGIN_PACKAGE, resolveBundledPluginSource, seedBundledPlugin } from "./bundled-plugin"
+import {
+  BUNDLED_PLUGIN_PACKAGE,
+  PAYLOAD_MODULES_DIR,
+  resolveBundledPluginSource,
+  seedBundledPlugin,
+} from "./bundled-plugin"
 
 const roots: string[] = []
 
@@ -28,15 +33,21 @@ function collectLog() {
   }
 }
 
-/** A miniature stand-in for the staged install: one plugin package plus one transitive dependency. */
+/**
+ * A miniature stand-in for the staged install: one plugin package plus one transitive dependency.
+ *
+ * The tree sits under PAYLOAD_MODULES_DIR, not `node_modules`, because that is what ships — electron-builder
+ * refuses to copy a directory by the latter name inside extraResources. The assertions below deliberately
+ * check for `node_modules` in the *cache*, which is what proves seeding renames it back.
+ */
 async function payload(root: string) {
   const source = join(root, "payload")
-  const pkg = join(source, "node_modules", BUNDLED_PLUGIN_PACKAGE)
+  const pkg = join(source, PAYLOAD_MODULES_DIR, BUNDLED_PLUGIN_PACKAGE)
   await mkdir(join(pkg, "dist"), { recursive: true })
   await writeFile(join(pkg, "package.json"), JSON.stringify({ name: BUNDLED_PLUGIN_PACKAGE, main: "dist/index.js" }))
   await writeFile(join(pkg, "dist", "index.js"), "export default {}")
-  await mkdir(join(source, "node_modules", "some-dep"), { recursive: true })
-  await writeFile(join(source, "node_modules", "some-dep", "index.js"), "module.exports = 1")
+  await mkdir(join(source, PAYLOAD_MODULES_DIR, "some-dep"), { recursive: true })
+  await writeFile(join(source, PAYLOAD_MODULES_DIR, "some-dep", "index.js"), "module.exports = 1")
   await writeFile(join(source, "package.json"), JSON.stringify({ name: "hypercode-plugin-payload" }))
   return source
 }
@@ -208,7 +219,7 @@ describe("resolveBundledPluginSource", () => {
   test("prefers the packaged resources directory", async () => {
     const root = await tempRoot()
     await mkdir(join(root, "resourcesPath", "plugin"), { recursive: true })
-    await mkdir(join(root, "appPath", "resources", "plugin"), { recursive: true })
+    await mkdir(join(root, "appPath", "plugin-payload"), { recursive: true })
 
     const resolved = resolveBundledPluginSource({
       resourcesPath: join(root, "resourcesPath"),
@@ -220,14 +231,15 @@ describe("resolveBundledPluginSource", () => {
 
   test("falls back to the repo copy so an unpackaged run behaves like a real install", async () => {
     const root = await tempRoot()
-    await mkdir(join(root, "appPath", "resources", "plugin"), { recursive: true })
+    // Outside resources/ on purpose: see the note on resolveBundledPluginSource.
+    await mkdir(join(root, "appPath", "plugin-payload"), { recursive: true })
 
     const resolved = resolveBundledPluginSource({
       resourcesPath: join(root, "missing"),
       appPath: join(root, "appPath"),
     })
 
-    expect(resolved).toBe(join(root, "appPath", "resources", "plugin"))
+    expect(resolved).toBe(join(root, "appPath", "plugin-payload"))
   })
 
   test("returns undefined when neither exists", async () => {

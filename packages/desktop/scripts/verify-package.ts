@@ -69,10 +69,11 @@ else {
 const plugin = path.join(root, "plugin")
 if (!existsSync(plugin)) failures.push("plugin/ is missing entirely")
 else {
-  const target = path.join(plugin, "node_modules", "oh-my-openagent")
+  // The payload stages its tree under a neutral name; see PAYLOAD_MODULES_DIR in src/main/bundled-plugin.ts.
+  const target = path.join(plugin, "modules", "oh-my-openagent")
   const { total, files } = dirSize(plugin)
   console.log(`[verify-package] plugin: ${mb(total)} across ${files} files`)
-  if (!existsSync(target)) failures.push("plugin/node_modules/oh-my-openagent is missing")
+  if (!existsSync(target)) failures.push("plugin/modules/oh-my-openagent is missing")
   if (total < 50 * 1024 * 1024) failures.push(`plugin/ is only ${mb(total)}, expected >50 MB`)
 }
 

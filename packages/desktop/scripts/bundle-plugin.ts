@@ -7,6 +7,8 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
 
+import { PAYLOAD_MODULES_DIR } from "../src/main/bundled-plugin"
+
 const execFileAsync = promisify(execFile)
 const packageDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 
@@ -145,7 +147,7 @@ async function main() {
   }
 
   const pkg = flag("package") ?? DEFAULT_PACKAGE
-  const out = path.resolve(packageDir, flag("out") ?? path.join("resources", "plugin"))
+  const out = path.resolve(packageDir, flag("out") ?? "plugin-payload")
   // Off by default. `typescript` is 23 MB and nothing in the tree declares it as a runtime dependency, but
   // "nothing declares it" is not the same as "nothing requires it" — a lazy require() would only fail at
   // runtime, in a shipped installer. Opt in once a build has been exercised end to end.
@@ -191,7 +193,15 @@ async function main() {
   await fs.mkdir(path.dirname(out), { recursive: true })
   await fs.cp(staging, out, { recursive: true })
   await fs.rm(staging, { recursive: true, force: true })
-  console.log(`[bundle-plugin] wrote ${out} (${mb(await directorySize(out))})`)
+
+  // electron-builder skips any directory named `node_modules` when copying an extraResources entry, and a
+  // `filter` does not override it. That silently reduced a 184 MB payload to a lone package.json in the
+  // installer -- no warning, just a smaller build. Staging it under a neutral name sidesteps that rule;
+  // src/main/bundled-plugin.ts renames it back when it seeds the npm cache.
+  const staged = path.join(out, PAYLOAD_MODULES_DIR)
+  await fs.rename(path.join(out, "node_modules"), staged)
+
+  console.log(`[bundle-plugin] wrote ${out} (${mb(await directorySize(out))}, modules staged as ${PAYLOAD_MODULES_DIR}/)`)
 }
 
 if (import.meta.main) await main()

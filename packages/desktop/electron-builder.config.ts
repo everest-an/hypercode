@@ -58,9 +58,11 @@ const getBase = (appId: string): Configuration => ({
     // that did not match their release tag — and electron-updater compares exactly these numbers.
     ...(process.env["HYPERCODE_VERSION"] ? { version: process.env["HYPERCODE_VERSION"] } : {}),
   },
-  // `!resources/plugin` matters: without it the plugin payload is packed into the asar by the
-  // `resources/**/*` pattern *and* copied again by extraResources below, doubling ~200 MB for nothing.
-  files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*", "!resources/plugin", "!resources/plugin${/*}"],
+  // The plugin payload deliberately lives in plugin-payload/, not under resources/. Keeping it under
+  // resources/ meant this list had to exclude it from the asar (or the `resources/**/*` pattern would pack
+  // ~200 MB twice), and those same exclusions stopped extraResources from reading the source: the copy
+  // silently produced a package.json and nothing else.
+  files: ["out/**/*", "resources/**/*", "!resources/opencode-cli*"],
   extraResources: [
     ...(channel === "dev"
       ? [
@@ -93,11 +95,16 @@ const getBase = (appId: string): Configuration => ({
     // is what lets the first launch skip a multi-minute silent npm install; src/main/bundled-plugin.ts seeds
     // it into the engine's npm cache. Guarded by existsSync for the same reason as `native/`: the payload is
     // a build output, not tracked in the repo, and electron-builder fails hard on a missing `from:`.
-    ...(existsSync(path.join(packageDir, "resources", "plugin"))
+    ...(existsSync(path.join(packageDir, "plugin-payload"))
       ? [
           {
-            from: "resources/plugin/",
+            from: "plugin-payload/",
             to: "plugin/",
+            // Required. Without an explicit filter electron-builder skips node_modules under an
+            // extraResources entry, and node_modules *is* the payload -- the copy silently produced just the
+            // package.json and shipped a 0.1 MB stub where 184 MB was expected. It fails without an error;
+            // only counting the packaged files catches it.
+            filter: ["**/*"],
           },
         ]
       : []),
