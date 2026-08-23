@@ -667,9 +667,15 @@ function Routes(props: { serverScoped?: JSX.Element }) {
           <Route path="/session/:id?" component={SessionRoute} />
         </Route>
       </Route>
+      {/*
+        The vault route sits outside this Show on purpose. Its entry points -- the titlebar button and the
+        "Open Vault…" command -- are registered unconditionally, so gating the route meant turning the old
+        layout on left both of them navigating to a path with no match: a blank screen, no error.
+        The vault is its own full-page view and does not depend on the new layout for anything.
+      */}
+      <Route path="/vault/:dir" component={VaultRoute} />
       <Show when={settings.general.newLayoutDesigns()}>
         <Route path="/" component={NewHome} />
-        <Route path="/vault/:dir" component={VaultRoute} />
         <Route path="/:dir/session/:id" component={NewLayoutLegacySessionRedirect} />
         <Route path="/server/:serverKey/session/:id" component={TargetSessionRoute} />
       </Show>

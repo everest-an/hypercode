@@ -74,11 +74,39 @@ export function VaultGraph(props: {
     }
   }
 
-  const rebuild = async () => {
+  // File contents are cached across rebuilds. The watcher fires on every agent write, and rebuilding from
+  // scratch meant re-reading the whole vault — one file.read per note — just to learn that one file changed.
+  // Building the graph itself is pure and in-memory, so that part still runs over the full set every time.
+  const cache = new Map<string, string>()
+
+  const rebuild = async (changed?: string) => {
+    // The incremental path needs a warm cache and a single known file. Everything else — first paint, a
+    // delete, a rename — falls through to the full scan, which is also what (re)populates the cache.
+    if (changed && cache.size > 0) {
+      const data = await sdk()
+        .client.file.read({ path: changed })
+        .then((x: any) => x.data)
+        .catch(() => undefined)
+      if (disposed) return
+      if (data?.type === "text" && typeof data.content === "string") {
+        cache.set(changed, data.content)
+        render([...cache].map(([path, content]) => ({ path, content })))
+        return
+      }
+      // Unreadable usually means deleted or renamed; a full scan is the cheapest way to stay correct.
+    }
+
     setLoading(true)
     const paths = await listMarkdownFiles("")
     const files = await readAll(paths)
     if (disposed) return
+    cache.clear()
+    for (const entry of files) cache.set(entry.path, entry.content)
+    render(files)
+    setLoading(false)
+  }
+
+  const render = (files: { path: string; content: string }[]) => {
     const data = buildVaultGraph(files, (path) => classifyPath(props.config(), path))
     setCount(data.nodes.filter((node) => !node.ghost).length)
     const colors = palette()
@@ -100,7 +128,6 @@ export function VaultGraph(props: {
         const typed = node as VaultGraphNode
         if (!typed.ghost) props.onSelect(typed.id)
       })
-    setLoading(false)
   }
 
   onMount(() => {
@@ -114,13 +141,24 @@ export function VaultGraph(props: {
 
     // Debounced auto-rebuild on markdown changes (agent writes, CLI writes).
     let timer: ReturnType<typeof setTimeout> | undefined
+    // undefined = nothing pending; a string = exactly one file changed this tick; null = several did, so the
+    // incremental path cannot be trusted and the next rebuild has to rescan.
+    let pending: string | null | undefined
     const stop = sdk().event.listen((event) => {
       const details = event.details as { type: string; properties?: any }
       if (details.type !== "file.watcher.updated" && details.type !== "file.edited") return
       const changed = details.properties?.file
       if (typeof changed === "string" && !/\.md$/i.test(changed)) return
       clearTimeout(timer)
-      timer = setTimeout(() => void rebuild(), 800)
+      // Pass the path through so a single write costs one read instead of a full vault scan. Coalescing
+      // several changes into one tick means only the last path survives, so fall back to a full scan then.
+      const only = typeof changed === "string" && pending === undefined ? changed : undefined
+      pending = pending === undefined ? only : null
+      timer = setTimeout(() => {
+        const target = pending ?? undefined
+        pending = undefined
+        void rebuild(target)
+      }, 800)
     })
 
     onCleanup(() => {
