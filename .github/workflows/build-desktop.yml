@@ -69,6 +69,12 @@ jobs:
           # electron-builder falls back to packages/desktop/package.json (kept in sync with /VERSION).
           HYPERCODE_VERSION: ${{ inputs.version }}
 
+      # extraResources fails quietly: a wrong from:, a filter matching nothing, or an asar pattern
+      # swallowing a directory all yield a green build and a smaller installer. Assert it is really there.
+      - name: Verify packaged payload
+        working-directory: packages/desktop
+        run: bun ./scripts/verify-package.ts dist/win-unpacked/resources
+
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
@@ -150,6 +156,11 @@ jobs:
           OPENCODE_CHANNEL: prod
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
           HYPERCODE_VERSION: ${{ inputs.version }}
+
+      # See the Windows job.
+      - name: Verify packaged payload
+        working-directory: packages/desktop
+        run: bun ./scripts/verify-package.ts "dist/mac-arm64/HyperCode.app/Contents/Resources"
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4
