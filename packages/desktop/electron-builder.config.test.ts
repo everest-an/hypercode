@@ -70,6 +70,15 @@ test("bundles the CLI outside the dev app archive", async () => {
   })
 })
 
+// The plugin payload is ~200 MB. `files: ["resources/**/*"]` would pack it into the asar while
+// extraResources copies it as well, so this exclusion is the only thing keeping it out of the archive.
+test("never packs the plugin payload into the app archive", async () => {
+  const config = await loadConfig("prod", "plugin-payload")
+
+  expect(config.files).toContain("!resources/plugin")
+  expect(config.files).toContain("!resources/plugin${/*}")
+})
+
 for (const channel of ["beta", "prod"] as const) {
   test(`does not bundle the CLI in ${channel} builds`, async () => {
     const config = await loadConfig(channel, `no-cli-resource=${channel}`)

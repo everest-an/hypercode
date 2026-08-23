@@ -13,7 +13,9 @@ import contextMenu from "electron-context-menu"
 
 import type { ServerReadyData } from "../preload/types"
 import { checkAppExists, resolveAppPath } from "./apps"
+import { resolveBundledPluginSource, seedBundledPlugin } from "./bundled-plugin"
 import { installBundledSkills } from "./bundled-skills"
+import { cacheDir, configDir } from "./engine-paths"
 import { CHANNEL } from "./constants"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
 import { forwardInitializationFailure } from "./initialization"
@@ -284,6 +286,24 @@ const main = Effect.gen(function* () {
     Effect.catch((error) =>
       Effect.sync(() => {
         logger.warn("failed to install bundled skills", error)
+      }),
+    ),
+  )
+  // Must land before the sidecar starts: once the engine loads config it resolves the plugin list, and a
+  // cache miss there costs the user minutes of silence. Seeding first turns that resolution into a stat().
+  // Same failure posture as the skills above — a missing plugin degrades the product, a failed launch ends it.
+  yield* Effect.promise(() =>
+    seedBundledPlugin({
+      source: resolveBundledPluginSource({ resourcesPath: process.resourcesPath, appPath: app.getAppPath() }),
+      cacheDir: cacheDir(),
+      configDir: configDir(),
+      version: app.getVersion(),
+      log: logger,
+    }),
+  ).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to seed bundled plugin", error)
       }),
     ),
   )

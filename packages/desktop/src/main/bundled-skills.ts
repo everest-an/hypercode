@@ -1,8 +1,9 @@
 import { app } from "electron"
 import { existsSync } from "node:fs"
 import fs from "node:fs/promises"
-import os from "node:os"
 import path from "node:path"
+
+import { configDir } from "./engine-paths"
 
 // The bake scripts install the skill library during the CLI setup flow. Desktop users never run those, so
 // without this the finance/legal/academic skills the product is sold on would not exist for them.
@@ -13,16 +14,6 @@ import path from "node:path"
 
 const NAMESPACE_PREFIX = "hypercode-"
 const VERSION_MARKER = ".hypercode-bundled-version"
-
-// Must resolve to the same directory the engine reads. `xdg-basedir` has no platform branch, so this is
-// ~/.config/hypercode on Windows and macOS too, not %APPDATA% or ~/Library/Preferences.
-function configDir() {
-  const override = process.env["OPENCODE_CONFIG_DIR"]
-  if (override) return override
-  const xdg = process.env["XDG_CONFIG_HOME"]
-  if (xdg) return path.join(xdg, "hypercode")
-  return path.join(os.homedir(), ".config", "hypercode")
-}
 
 function sourceDir() {
   // Packaged: extraResources puts the library at <resources>/skills. Unpackaged: fall back to the repo copy

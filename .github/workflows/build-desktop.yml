@@ -52,6 +52,13 @@ jobs:
           OPENCODE_CHANNEL: prod
           NODE_OPTIONS: "--max-old-space-size=8192"
 
+      # Pre-installs the orchestration plugin into resources/plugin so the shipped app never has to download
+      # it. Must run per-platform and before packaging: the payload keeps only this runner's native binaries,
+      # and electron-builder decides whether to include it by checking the directory at config load.
+      - name: Bundle plugin payload
+        working-directory: packages/desktop
+        run: bun ./scripts/bundle-plugin.ts
+
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
         run: bun run package:win -- --publish never
@@ -114,6 +121,11 @@ jobs:
           echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> "$GITHUB_ENV"
           echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> "$GITHUB_ENV"
           echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> "$GITHUB_ENV"
+
+      # See the Windows job: per-platform payload, must exist before electron-builder loads its config.
+      - name: Bundle plugin payload
+        working-directory: packages/desktop
+        run: bun ./scripts/bundle-plugin.ts
 
       - name: Package macOS (dmg + zip)
         working-directory: packages/desktop
