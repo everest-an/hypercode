@@ -17,12 +17,19 @@ Write-Output "[setup] downloading $Url"
 # Invoke-WebRequest -Uri $Url -OutFile "$BinPath.download" ; 校验哈希 ; Move-Item 原子替换
 
 # ---- 2. PATH 注入(用户级,免管理员) ----
+# 只读写 User 作用域,绝不回写 Machine+User 的合并值,也绝不用 setx(1024 字符会静默截断)。
+# 判重必须用整段精确匹配:-like/-notlike 是通配符语义(路径含 [ ] 会错乱),
+# 而且是子串匹配 —— "\HyperCode" 会被 "\HyperCodeBackup" 误判为已存在。
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if ($userPath -notlike "*$InstallDir*") {
-    [Environment]::SetEnvironmentVariable("Path", "$userPath;$InstallDir", "User")
-    Write-Output "[setup] added to user PATH: $InstallDir"
-} else {
+if ($null -eq $userPath) { $userPath = "" }
+$pathParts = @($userPath -split ';' | Where-Object { $_.Trim() -ne '' })
+if ($pathParts -contains $InstallDir) {
     Write-Output "[setup] PATH already contains $InstallDir"
+} else {
+    # $userPath 为空时不能直接拼 ";$InstallDir" —— 前导分号等于把当前目录加进 PATH
+    $pathParts += $InstallDir
+    [Environment]::SetEnvironmentVariable("Path", ($pathParts -join ';'), "User")
+    Write-Output "[setup] added to user PATH: $InstallDir"
 }
 
 # ---- 3. 烘焙配置(幂等,受管块合并) ----
