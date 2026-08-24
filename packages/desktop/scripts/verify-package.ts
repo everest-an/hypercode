@@ -16,11 +16,20 @@ import path from "node:path"
 function dirSize(dir: string) {
   let total = 0
   let files = 0
+  const broken: string[] = []
   const walk = (current: string) => {
     for (const entry of readdirSync(current, { withFileTypes: true })) {
       const full = path.join(current, entry.name)
       if (entry.isDirectory()) {
         walk(full)
+        continue
+      }
+      // A symlink whose target is missing used to be skipped silently by the `isFile` check below, since a
+      // dangling link is neither a file nor a directory. That is exactly the shape a payload gets when it is
+      // staged with a plain fs.cp: every node_modules/.bin entry becomes an absolute link into a build
+      // directory that no longer exists. The size check stayed green because the bytes were all still there.
+      if (entry.isSymbolicLink()) {
+        if (!existsSync(full)) broken.push(path.relative(dir, full))
         continue
       }
       if (!entry.isFile()) continue
@@ -29,7 +38,7 @@ function dirSize(dir: string) {
     }
   }
   walk(dir)
-  return { total, files }
+  return { total, files, broken }
 }
 
 const mb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`
@@ -71,10 +80,17 @@ if (!existsSync(plugin)) failures.push("plugin/ is missing entirely")
 else {
   // The payload stages its tree under a neutral name; see PAYLOAD_MODULES_DIR in src/main/bundled-plugin.ts.
   const target = path.join(plugin, "modules", "oh-my-openagent")
-  const { total, files } = dirSize(plugin)
+  const { total, files, broken } = dirSize(plugin)
   console.log(`[verify-package] plugin: ${mb(total)} across ${files} files`)
   if (!existsSync(target)) failures.push("plugin/modules/oh-my-openagent is missing")
   if (total < 50 * 1024 * 1024) failures.push(`plugin/ is only ${mb(total)}, expected >50 MB`)
+  // Dangling links carry no bytes, so the size check above cannot see them. They appear on macOS and Linux
+  // when the payload is staged without verbatimSymlinks: node_modules/.bin ends up pointing at the build's
+  // temp directory. Windows npm writes .cmd shims instead and has none of these, so this stays quiet there.
+  if (broken.length > 0) {
+    console.log(`[verify-package] broken symlinks:\n  ${broken.slice(0, 10).join("\n  ")}`)
+    failures.push(`plugin/ has ${broken.length} dangling symlink(s), first: ${broken[0]}`)
+  }
 }
 
 const notices = path.join(root, "THIRD-PARTY-NOTICES.txt")

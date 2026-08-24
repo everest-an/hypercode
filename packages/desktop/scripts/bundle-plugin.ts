@@ -191,7 +191,12 @@ async function main() {
 
   await fs.rm(out, { recursive: true, force: true })
   await fs.mkdir(path.dirname(out), { recursive: true })
-  await fs.cp(staging, out, { recursive: true })
+  // verbatimSymlinks is not optional here. Without it fs.cp resolves every symlink and writes an *absolute*
+  // path back into the staging tree — which the next line deletes. npm fills node_modules/.bin with relative
+  // symlinks on macOS and Linux (Windows gets .cmd shim files instead, which is why this stayed invisible to
+  // a Windows-only team), so the shipped payload would carry a directory of links pointing into a CI temp
+  // path that no longer exists, and leak that path into the .app besides.
+  await fs.cp(staging, out, { recursive: true, verbatimSymlinks: true })
   await fs.rm(staging, { recursive: true, force: true })
 
   // electron-builder skips any directory named `node_modules` when copying an extraResources entry, and a
