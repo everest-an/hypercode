@@ -16,6 +16,7 @@ import { trimSessions } from "./session-trim"
 import { dropSessionCaches } from "./session-cache"
 import { diffs as list, message as clean } from "@/utils/diffs"
 import { messageKey } from "@/utils/session-message"
+import { markSessionDeleted } from "@/utils/deleted-sessions"
 
 const SKIP_PARTS = new Set(["patch", "step-start", "step-finish"])
 const SESSION_CONTENT_EVENTS = new Set([
@@ -175,6 +176,9 @@ export function applyDirectoryEvent(input: {
       const properties = event.properties as { sessionID?: string; info?: Session }
       const sessionID = properties.info?.id ?? properties.sessionID
       if (!sessionID) break
+      // Recorded so a tab left pointing at this session can tell "deleted while you were here" apart from
+      // "already gone before this window opened" — see utils/deleted-sessions.
+      markSessionDeleted(sessionID)
       const result = Binary.search(input.store.session, sessionID, (s) => s.id)
       const info = properties.info ?? (result.found ? input.store.session[result.index] : undefined)
       if (result.found) {

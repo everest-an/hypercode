@@ -99,6 +99,7 @@ import { diffs as list } from "@/utils/diffs"
 import { Persist, persisted } from "@/utils/persist"
 import { extractPromptFromParts } from "@/utils/prompt"
 import { formatServerError, isLocalSessionNotFoundError, isSessionNotFoundError } from "@/utils/server-errors"
+import { shouldRecoverDeadTab } from "@/utils/deleted-sessions"
 import { legacySessionHref, requireServerKey, sessionHref } from "@/utils/session-route"
 import { useUsageExceededDialogs } from "./session/usage-exceeded-dialogs"
 import { createSessionOwnership } from "./session/session-ownership"
@@ -214,6 +215,14 @@ function SessionErrorFallback(props: { error: unknown; sessionID?: string; serve
     tabs.removeSessionTab({ server: props.serverKey ?? server.key, sessionId: props.sessionID })
   }
   if (isCurrentSessionNotFoundError(props.error, props.sessionID)) {
+    // A tab whose session was already gone before this window opened has nothing to explain: nobody was
+    // ever on it, it can never load, and leaving it costs a click before any composer is reachable. A reset
+    // or corrupted session store puts one of these in front of every affected tab, each hiding the next.
+    //
+    // A session deleted *while the user is looking at it* is the opposite case, and keeps the message —
+    // closing the tab under them would make the page vanish with no explanation. The two produce the same
+    // typed error, so the only thing that separates them is whether we saw the deletion happen.
+    if (shouldRecoverDeadTab(props.sessionID)) onMount(closeTab)
     return (
       <div class="flex-1 min-h-0 overflow-hidden">
         <div class="h-full px-6 pb-42 -mt-4 flex flex-col items-center justify-center text-center gap-4">

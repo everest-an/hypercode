@@ -3,6 +3,7 @@ import type { Message, Part, PermissionRequest, Project, QuestionRequest, Sessio
 import { createStore } from "solid-js/store"
 import type { State } from "./types"
 import { applyDirectoryEvent, applyGlobalEvent, cleanupDroppedSessionCaches } from "./event-reducer"
+import { wasSessionDeletedThisRun } from "@/utils/deleted-sessions"
 
 const rootSession = (input: { id: string; parentID?: string; archived?: number }) =>
   ({
@@ -307,7 +308,15 @@ describe("applyDirectoryEvent", () => {
       expect(store.permission[item.info.id]).toBeUndefined()
       expect(store.question[item.info.id]).toBeUndefined()
       expect(store.session_status[item.info.id]).toBeUndefined()
+      // A tab still pointing here has to know the user was present when this happened, so it keeps the
+      // message instead of closing under them. Sessions already gone before the window opened never pass
+      // through this reducer, and that absence is exactly what tells the two cases apart.
+      expect(wasSessionDeletedThisRun(item.info.id)).toBe(true)
     }
+  })
+
+  test("leaves a session nobody saw deleted unmarked", () => {
+    expect(wasSessionDeletedThisRun("ses_gone_before_this_window_opened")).toBe(false)
   })
 
   test("cleans caches for trimmed sessions on session.created", () => {
