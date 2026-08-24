@@ -39,6 +39,9 @@
 ## C. 功能冒烟(必须在干净虚拟机上做)
 
 - [ ] 桌面版启动 → GUI 出现 → 无白屏崩溃
+- [ ] **macOS:`spctl --assess --type execute -vv <app>` 通过**。未签名的包在 Apple Silicon 上
+      双击直接报「已损坏」——这不是升级问题,是根本打不开。当前流水线把「跳过签名」当 warn 且 exit 0,
+      所以构建绿不能作数。详见 `macOS-签名与公证.md`
 - [ ] **断言渲染出的正文，不要只看 main.log**。`server ready` 不是证据 —— v0.1.8 打印了它，
       同时每个渲染进程请求都是 401,界面停在 "Could not reach Local Server"。
       日志里唯一的线索在 `renderer.log`(`[global-sdk] event stream failed`)。
