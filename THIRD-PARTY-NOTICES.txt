@@ -787,12 +787,24 @@ SOFTWARE.
     has been altered, removed, or obscured. Any future rebranding of strings
     inside this package would violate the license.
 
-    Distribution restriction -- OPEN. The license permits redistribution only
-    when it is free of charge and for non-commercial purposes. Distributing
-    this package inside a product that is sold, or that is given away as the
-    entry point to a paid service, is outside what this license grants, and
-    reproducing the terms here does not cure that. Resolving it requires
-    written permission from the licensor, or removing the package from the
+    Distribution restriction -- CURRENTLY SATISFIED, CONDITIONALLY. The
+    license permits redistribution only when it is both free of charge and
+    for non-commercial purposes. HyperCode is distributed free of charge and
+    is not monetized, which is within that grant.
+
+    This is the one obligation here that a future product decision can break,
+    and it breaks silently: nothing in the build or the tests will fail. It
+    stops being satisfied the moment any of the following is true, and the
+    package must be relicensed or removed BEFORE that ships:
+
+      - HyperCode itself is sold, or gains a paid tier
+      - the app is given away as the entry point to a paid service,
+        including charging for model or token usage routed through it
+      - it is bundled into, or distributed as part of, a paid offering
+
+    Reproducing the terms in this file does not cure any of those. Clearing
+    them requires written permission from the licensor
+    (https://github.com/code-yeongyu) or removing the package from the
     distributed installer. This is a legal question and this note is not
     legal advice; it is recorded here so the constraint is not rediscovered
     by accident.
