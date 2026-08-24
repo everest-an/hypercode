@@ -39,6 +39,11 @@
 ## C. 功能冒烟(必须在干净虚拟机上做)
 
 - [ ] 桌面版启动 → GUI 出现 → 无白屏崩溃
+- [ ] **断言渲染出的正文，不要只看 main.log**。`server ready` 不是证据 —— v0.1.8 打印了它，
+      同时每个渲染进程请求都是 401,界面停在 "Could not reach Local Server"。
+      日志里唯一的线索在 `renderer.log`(`[global-sdk] event stream failed`)。
+      取正文:`curl -s 127.0.0.1:9222/json` 拿 webSocketDebuggerUrl,
+      再用 CDP `Runtime.evaluate` 取 `document.body.innerText`,断言含 "New session" 且不含 "Could not reach"
 - [ ] **图标不是白的** —— 看任务栏和开始菜单的小图标,不要只看文件属性。
       结构合法的 ICO 也可能每一帧都是空的
 - [ ] 应用名是 **HyperCode** 而非 "HyperCode Dev"(验证 channel 确实编译进去了)
@@ -81,3 +86,10 @@
 1. **结构合法 ≠ 内容正确**:空白图标通过了 `file`、header、大小三重检查
 2. **测试全绿 ≠ 功能可用**:deep link 有 19 条断言全绿,锁的是改名前的 scheme
 3. **两端各自正确 ≠ 能接上**:安装器写的目录引擎不读,这类问题只有把读写两端放在一起求值才会暴露
+4. **品牌改名会碰到协议值**:v0.1.8 把 sidecar 的 Basic auth 用户名从 `opencode` 改成 `hypercode`,
+   但服务端仍以 `opencode` 启动,引擎按严格相等比较 → 全部 401,应用完全打不开。
+   凡是"两端必须逐字节相同"的值(用户名、scheme、包名、缓存目录名),
+   都必须是**一个常量被两端 import**,而不是两处各写一遍的字面量 —— 字面量正是改名扫描会命中的东西。
+   守卫见 `packages/desktop/src/main/server-credentials.test.ts`
+5. **自检不能与被检者共谋**:健康检查硬编码了 `opencode:`,于是它是唯一还和服务端一致的调用方,
+   把一个完全不可用的版本报成了启动成功。检查必须和真实用户路径**共用同一份凭据/配置**,否则它只会证明自己
