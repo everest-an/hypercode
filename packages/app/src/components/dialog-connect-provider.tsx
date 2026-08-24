@@ -337,9 +337,7 @@ function ProviderPickerV2(props: {
                         <Show when={false}>
                           <span class="min-w-0 truncate font-[440] text-v2-text-text-muted">
                             {language.t(
-                              provider.id === "opencode"
-                                ? "dialog.provider.opencode.tagline"
-                                : "dialog.provider.opencodeGo.tagline",
+                              "dialog.provider.deepseek.tagline",
                             )}
                           </span>
                           <span class="flex h-4 shrink-0 items-center rounded-xs border-[0.5px] border-v2-border-border-base bg-v2-background-bg-layer-03 px-1 text-[11px] font-[530] leading-none tracking-[0.05px] text-v2-text-text-muted">

@@ -6,9 +6,8 @@ import { Drawer, DrawerClose, DrawerContent } from "@/components/ui/drawer"
 import { usePlatform } from "@/context/platform"
 import { useSettings } from "@/context/settings"
 import { useLanguage } from "@/context/language"
-import introducingTabsVideo from "@/assets/help/introducing-tabs.mp4"
-import homeImage from "@/assets/help/home.png"
 import tabsImage from "@/assets/help/tabs.png"
+import homeImage from "@/assets/help/home.png"
 
 // TODO: wire to changelog / seen-state when available
 const showPopover = () => true
@@ -54,15 +53,11 @@ export function TabsInfoPopup() {
               setDrawerOpen(true)
             }}
           >
-            <video
-              src={introducingTabsVideo}
+            <img
+              src={tabsImage}
               class="absolute inset-0 h-full w-full object-cover"
-              loop
-              muted
-              autoplay
-              playsinline
+              alt=""
               aria-hidden="true"
-              onContextMenu={(event) => event.preventDefault()}
             />
             <div class="absolute inset-x-0 bottom-0 flex w-full flex-col items-start gap-1.5 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,#000000_100%)] px-3 py-5">
               <p class="w-full select-none text-[13px] font-[530] leading-none tracking-[-0.04px] text-[#FFFFFF]">
@@ -122,19 +117,51 @@ export function TabsInfoPopup() {
             />
           </Show>
         </div>
-        <div class="relative flex min-h-0 w-full flex-1 flex-col items-start gap-6 overflow-y-auto p-8">
-          <p class="w-full shrink-0 self-stretch text-[21px] font-[610] leading-6 tracking-[-0.37px] tabular-nums text-v2-text-text-base">
-            {language.t("help.tabs.title")}
-          </p>
-          <div class="flex w-full flex-1 flex-col gap-4 text-[13px] font-[440] leading-5 tracking-[-0.04px] text-v2-text-text-base">
-            <p>{language.t("help.tabs.introduction")}</p>
-            <img src={tabsImage} alt="" class="aspect-video w-full rounded-[6px] object-cover" />
-            <p>{language.t("help.tabs.sessions")}</p>
-            <p>{language.t("help.tabs.organize")}</p>
-            <p>{language.t("help.tabs.home")}</p>
-            <img src={homeImage} alt="" class="aspect-video w-full rounded-[6px] object-cover" />
-            <p>{language.t("help.tabs.persistence")}</p>
-            <p>{language.t("help.tabs.worktrees")}</p>
+        <div class="relative flex min-h-0 w-full flex-1 flex-col items-start gap-8 overflow-y-auto p-8">
+          {/* 快速上手:三步向导 */}
+          <div class="flex w-full flex-col items-start gap-4">
+            <p class="w-full shrink-0 self-stretch text-[21px] font-[610] leading-6 tracking-[-0.37px] tabular-nums text-v2-text-text-base">
+              {language.t("help.guide.title")}
+            </p>
+            <div class="flex w-full flex-col gap-3">
+              <div class="flex w-full items-start gap-3 rounded-[8px] border border-v2-border-border-muted bg-v2-background-bg-subtle p-4">
+                <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-v2-accent-accent-base text-[12px] font-[650] text-white">1</span>
+                <div class="flex min-w-0 flex-1 flex-col gap-1">
+                  <p class="text-[13px] font-[560] leading-5 text-v2-text-text-base">{language.t("help.guide.step1.title")}</p>
+                  <p class="text-[13px] font-[440] leading-5 text-v2-text-text-muted">{language.t("help.guide.step1.body")}</p>
+                </div>
+              </div>
+              <div class="flex w-full items-start gap-3 rounded-[8px] border border-v2-border-border-muted bg-v2-background-bg-subtle p-4">
+                <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-v2-accent-accent-base text-[12px] font-[650] text-white">2</span>
+                <div class="flex min-w-0 flex-1 flex-col gap-1">
+                  <p class="text-[13px] font-[560] leading-5 text-v2-text-text-base">{language.t("help.guide.step2.title")}</p>
+                  <p class="text-[13px] font-[440] leading-5 text-v2-text-text-muted">{language.t("help.guide.step2.body")}</p>
+                </div>
+              </div>
+              <div class="flex w-full items-start gap-3 rounded-[8px] border border-v2-border-border-muted bg-v2-background-bg-subtle p-4">
+                <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-v2-accent-accent-base text-[12px] font-[650] text-white">3</span>
+                <div class="flex min-w-0 flex-1 flex-col gap-1">
+                  <p class="text-[13px] font-[560] leading-5 text-v2-text-text-base">{language.t("help.guide.step3.title")}</p>
+                  <p class="text-[13px] font-[440] leading-5 text-v2-text-text-muted">{language.t("help.guide.step3.body")}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* 标签页引导 */}
+          <div class="flex w-full flex-col items-start gap-4">
+            <p class="w-full shrink-0 self-stretch text-[17px] font-[590] leading-6 tracking-[-0.3px] tabular-nums text-v2-text-text-base">
+              {language.t("help.tabs.title")}
+            </p>
+            <div class="flex w-full flex-1 flex-col gap-4 text-[13px] font-[440] leading-5 tracking-[-0.04px] text-v2-text-text-base">
+              <p>{language.t("help.tabs.introduction")}</p>
+              <img src={tabsImage} alt="" class="aspect-video w-full rounded-[6px] object-cover" />
+              <p>{language.t("help.tabs.sessions")}</p>
+              <p>{language.t("help.tabs.organize")}</p>
+              <p>{language.t("help.tabs.home")}</p>
+              <img src={homeImage} alt="" class="aspect-video w-full rounded-[6px] object-cover" />
+              <p>{language.t("help.tabs.persistence")}</p>
+              <p>{language.t("help.tabs.worktrees")}</p>
+            </div>
           </div>
         </div>
       </DrawerContent>
