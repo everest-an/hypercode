@@ -51,6 +51,7 @@ import { createWslServersController } from "./wsl/servers"
 import { registerWslIpcHandlers } from "./wsl/ipc"
 import { spawnWslSidecar } from "./wsl/sidecar"
 import { cleanupStoreFiles } from "./store-cleanup"
+import { onStoreRecovery } from "./store"
 import { startBackgroundCli } from "./background-cli"
 import { setNativeTranslations } from "./native-translations"
 
@@ -158,9 +159,16 @@ const main = Effect.gen(function* () {
     onboardingTestRoot ? join(onboardingTestRoot, "desktop") : join(app.getPath("appData"), appId),
   )
   if (onboardingTestRoot) app.setPath("sessionData", join(onboardingTestRoot, "session"))
-  initializeOldLayoutEligibility(app.getPath("userData"))
+  // Logging and the crash reporter come first, before anything that can throw. They used to sit after
+  // initializeOldLayoutEligibility, whose first act is to open the settings store — so the one failure that
+  // kills the launch outright was also the one failure that left nothing behind to diagnose it with.
   logger = initLogging()
   initCrashReporter()
+  // Drains anything the store already recovered from before the logger existed, then reports live.
+  onStoreRecovery((report) =>
+    writeLog("store", "settings store was unreadable, starting fresh", report, "warn"),
+  )
+  initializeOldLayoutEligibility(app.getPath("userData"))
 
   const wslServers = createWslServersController(
     app.getVersion(),
