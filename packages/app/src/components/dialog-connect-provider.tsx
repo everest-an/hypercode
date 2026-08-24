@@ -37,6 +37,7 @@ import { useSettings } from "@/context/settings"
 import { popularProviders, useProviders } from "@/hooks/use-providers"
 import { CustomProviderForm } from "./dialog-custom-provider"
 import { decode64 } from "@/utils/base64"
+import { submitApiKey } from "./dialog-connect-provider-submit"
 
 const CUSTOM_ID = "_custom"
 type ConnectMethod = Extract<IntegrationMethod, { type: "key" | "oauth" }>
@@ -815,18 +816,22 @@ function ProviderConnection(props: {
       const formData = new FormData(form)
       const apiKey = formData.get("apiKey") as string
 
-      if (!apiKey?.trim()) {
-        setFormStore("error", language.t("provider.connect.apiKey.required"))
-        return
-      }
-
-      setFormStore("error", undefined)
-      await serverSDK().api.integration.connect.key({
-        integrationID: props.provider,
-        location: location(),
-        key: apiKey,
+      // Validation, the request and its failure handling live in submitApiKey so they can be tested; see
+      // dialog-connect-provider-submit.test.ts. Inline, a rejected key escaped as an unhandled promise and
+      // left the dialog unchanged with no message — indistinguishable from a dead button, on the two most
+      // ordinary outcomes this form has.
+      await submitApiKey({
+        apiKey,
+        connect: (key) =>
+          serverSDK().api.integration.connect.key({
+            integrationID: props.provider,
+            location: location(),
+            key,
+          }),
+        complete,
+        t: language.t,
+        setError: (message) => setFormStore("error", message),
       })
-      await complete()
     }
 
     if (newLayout())
