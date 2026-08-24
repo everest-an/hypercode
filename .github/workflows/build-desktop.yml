@@ -75,11 +75,19 @@ jobs:
         working-directory: packages/desktop
         run: bun ./scripts/verify-package.ts dist/win-unpacked/resources
 
+      # latest.yml is the update manifest electron-updater fetches from the newest release. Shipping only the
+      # installer is why every version so far reported "Cannot find latest.yml ... 404" on launch and could
+      # never update itself: users had to notice a new build existed and reinstall by hand.
+      #
+      # It has to be in the release the client updates *to*, not the one it is running, so adding it here
+      # also rescues the already-installed versions that lack it.
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: hypercode-desktop-windows
-          path: packages/desktop/dist/*.exe
+          path: |
+            packages/desktop/dist/*.exe
+            packages/desktop/dist/latest.yml
           if-no-files-found: error
 
   build-mac:
@@ -195,9 +203,21 @@ jobs:
           cd dist
           ls -la
           missing=0
-          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg; do
+          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml; do
             if [ ! -f "$f" ]; then echo "::error::missing asset $f"; missing=1; fi
           done
+          # A manifest naming a file that is not in the release updates nobody: electron-updater resolves
+          # `path` against the release assets and 404s, which is indistinguishable from having no manifest at
+          # all. Both names come from electron-builder's artifactName, so they can only drift by accident --
+          # which is exactly the kind of drift that ships unnoticed.
+          if [ -f latest.yml ]; then
+            named=$(sed -n 's/^path: *//p' latest.yml | tr -d '\r')
+            echo "latest.yml points at: ${named:-<none>}"
+            if [ -z "$named" ] || [ ! -f "$named" ]; then
+              echo "::error::latest.yml names '$named', which is not among the uploaded assets"
+              missing=1
+            fi
+          fi
           # A zero-byte or few-KB "installer" is the failure mode worth catching here: it uploads without
           # complaint and 404-page-as-exe looks identical to the real thing in a release listing.
           for f in *.exe *.dmg; do
@@ -216,6 +236,12 @@ jobs:
           tag="v${VERSION#v}"
           # Recreate rather than append, so a re-run cannot leave assets from a previous attempt behind.
           gh release delete "$tag" --repo AwareLiquid/HyperCode --yes --cleanup-tag 2>/dev/null || true
+          # latest.yml lets Windows clients update themselves; without it electron-updater 404s and every
+          # release has to be installed by hand. macOS is deliberately not covered yet: it needs the .zip
+          # assets plus a latest-mac.yml merged across the two per-architecture packaging passes, which
+          # overwrite each other, and none of that can be verified from here. Shipping an untested update
+          # manifest is worse than shipping none, so mac keeps updating manually until it can be tested on a
+          # mac.
           gh release create "$tag" \
             --repo AwareLiquid/HyperCode \
             --draft \
@@ -223,5 +249,6 @@ jobs:
             --notes "Desktop installers for Windows and macOS. Built from everest-an/hypercode@${GITHUB_SHA:0:7}." \
             dist/hypercode-desktop-win-x64.exe \
             dist/hypercode-desktop-mac-arm64.dmg \
-            dist/hypercode-desktop-mac-x64.dmg
+            dist/hypercode-desktop-mac-x64.dmg \
+            dist/latest.yml
           echo "::notice::Draft release $tag created. Verify the installers, then publish it to go live."
