@@ -42,8 +42,12 @@
 - [ ] **断言渲染出的正文，不要只看 main.log**。`server ready` 不是证据 —— v0.1.8 打印了它，
       同时每个渲染进程请求都是 401,界面停在 "Could not reach Local Server"。
       日志里唯一的线索在 `renderer.log`(`[global-sdk] event stream failed`)。
-      取正文:`curl -s 127.0.0.1:9222/json` 拿 webSocketDebuggerUrl,
-      再用 CDP `Runtime.evaluate` 取 `document.body.innerText`,断言含 "New session" 且不含 "Could not reach"
+      ```
+      "%LOCALAPPDATA%\Programs\hypercode-desktop\HyperCode.exe" --remote-debugging-port=9222
+      cd packages/desktop && bun ./scripts/smoke-ui.ts     # exit 0 才算过
+      ```
+      该脚本已在三个方向验过:没有 app→失败、修好的 build→通过、真实的 v0.1.8→报出
+      "Could not reach Local Server"。**这条通过之前,不要相信任何其它绿灯**
 - [ ] **图标不是白的** —— 看任务栏和开始菜单的小图标,不要只看文件属性。
       结构合法的 ICO 也可能每一帧都是空的
 - [ ] 应用名是 **HyperCode** 而非 "HyperCode Dev"(验证 channel 确实编译进去了)
