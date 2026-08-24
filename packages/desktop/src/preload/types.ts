@@ -1,6 +1,7 @@
 import type { DesktopMenuAction } from "@opencode-ai/app/desktop-menu"
 import type { WslServersPlatform } from "@opencode-ai/app/wsl/types"
 import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { SetupState } from "@opencode-ai/app/setup-progress"
 import type { DesktopNativeBundle } from "@opencode-ai/app/i18n/desktop-native"
 export type {
   WslDistroProbe,
@@ -29,6 +30,11 @@ export type UpdaterAPI = {
   install: () => Promise<void>
 }
 
+/** First-run payload preparation. Subscribing replays the current state — see main/setup-progress.ts. */
+export type SetupProgressAPI = {
+  subscribe: (cb: (state: SetupState) => void) => Promise<() => void>
+}
+
 export type LinuxDisplayBackend = "wayland" | "auto"
 export type TitlebarTheme = {
   mode: "light" | "dark"
@@ -48,6 +54,7 @@ export type ElectronAPI = {
   awaitInitialization: () => Promise<ServerReadyData>
   wslServers: WslServersAPI
   updater: UpdaterAPI
+  setupProgress: SetupProgressAPI
   consumeInitialDeepLinks: () => Promise<string[]>
   getDefaultServerUrl: () => Promise<string | null>
   setDefaultServerUrl: (url: string | null) => Promise<void>

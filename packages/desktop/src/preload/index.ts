@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron"
 import type { ElectronAPI, WslServersEvent } from "./types"
 import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { SetupState } from "@opencode-ai/app/setup-progress"
 
 const updaterCallbacks = new Set<(state: UpdaterState) => void>()
 let updaterState: UpdaterState | undefined
@@ -8,6 +9,17 @@ let updaterSubscription: Promise<void> | undefined
 const updaterHandler = (_: unknown, state: UpdaterState) => {
   updaterState = state
   updaterCallbacks.forEach((callback) => callback(state))
+}
+
+// Mirrors the updater block above. The cached state matters more here: main starts copying payloads before
+// any window exists, so a renderer that reloads mid-setup must be able to catch up rather than wait for the
+// next transition that may never come.
+const setupCallbacks = new Set<(state: SetupState) => void>()
+let setupState: SetupState | undefined
+let setupSubscription: Promise<void> | undefined
+const setupHandler = (_: unknown, state: SetupState) => {
+  setupState = state
+  setupCallbacks.forEach((callback) => callback(state))
 }
 
 const api: ElectronAPI = {
@@ -55,6 +67,24 @@ const api: ElectronAPI = {
     },
     check: () => ipcRenderer.invoke("updater-check"),
     install: () => ipcRenderer.invoke("updater-install"),
+  },
+  setupProgress: {
+    subscribe: async (cb) => {
+      setupCallbacks.add(cb)
+      if (setupState) cb(setupState)
+      if (!setupSubscription) {
+        ipcRenderer.on("setup-state", setupHandler)
+        setupSubscription = ipcRenderer.invoke("setup-subscribe")
+      }
+      await setupSubscription
+      return () => {
+        setupCallbacks.delete(cb)
+        if (setupCallbacks.size > 0) return
+        ipcRenderer.removeListener("setup-state", setupHandler)
+        setupSubscription = undefined
+        void ipcRenderer.invoke("setup-unsubscribe")
+      }
+    },
   },
   consumeInitialDeepLinks: () => ipcRenderer.invoke("consume-initial-deep-links"),
   getDefaultServerUrl: () => ipcRenderer.invoke("get-default-server-url"),

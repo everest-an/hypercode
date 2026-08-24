@@ -56,6 +56,14 @@ export type SeedBundledPluginOptions = {
   /** Fallback identity for the payload, used only when it does not declare its own version. */
   version: string
   log: Log
+  /**
+   * Called with a running count of files placed, so the window can show that something is happening.
+   *
+   * A count rather than a percentage: the total is ~24k files and learning it up front means walking the
+   * tree twice. A number that climbs is enough to distinguish "working" from "hung", and inventing a
+   * denominator would be a guess presented as a fact.
+   */
+  onProgress?: (files: number) => void
 }
 
 /**
@@ -113,6 +121,7 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
   }
 
   const identity = await payloadIdentity(source, options.version)
+  const progress: CloneState = { link: true, files: 0, report: options.onProgress }
 
   // Whichever directory we populate first becomes the clone source for the rest, so the expensive path (out
   // of the app bundle, possibly across volumes) is walked at most once.
@@ -128,7 +137,8 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
     // nothing is racing us for the directory.
     const staging = `${target}.incoming`
     await fs.rm(staging, { recursive: true, force: true }).catch(() => {})
-    const cloned = await cloneTree(clonedFrom, staging)
+    // Carried across both cache specs so the count the user sees keeps climbing instead of restarting.
+    const cloned = await cloneTree(clonedFrom, staging, progress)
       .then(() => true)
       .catch((error) => {
         log.warn("failed to stage bundled plugin", { spec, error })
@@ -191,7 +201,9 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
  * the walk to real copies — that happens when the app runs from a mounted DMG, or sits on a different drive
  * than the user profile.
  */
-async function cloneTree(from: string, to: string, state: { link: boolean } = { link: true }): Promise<void> {
+type CloneState = { link: boolean; files: number; report?: (files: number) => void }
+
+async function cloneTree(from: string, to: string, state: CloneState = { link: true, files: 0 }): Promise<void> {
   await fs.mkdir(to, { recursive: true })
   const entries = await fs.readdir(from, { withFileTypes: true })
   for (const entry of entries) {
@@ -206,6 +218,7 @@ async function cloneTree(from: string, to: string, state: { link: boolean } = { 
       // duplicate content and, for a link pointing outside the tree, copy the wrong thing entirely.
       const target = await fs.readlink(src)
       await fs.symlink(target, dest).catch(() => {})
+      tally(state)
       continue
     }
     if (state.link) {
@@ -213,11 +226,26 @@ async function cloneTree(from: string, to: string, state: { link: boolean } = { 
         .link(src, dest)
         .then(() => true)
         .catch(() => false)
-      if (linked) continue
+      if (linked) {
+        tally(state)
+        continue
+      }
       state.link = false
     }
     await fs.copyFile(src, dest)
+    tally(state)
   }
+}
+
+/**
+ * Count a placed file and report occasionally.
+ *
+ * Every 250 files rather than every file: this runs ~24k times over a couple of seconds on a warm disk, and
+ * an IPC message per file would cost more than the copy it is describing.
+ */
+function tally(state: CloneState) {
+  state.files++
+  if (state.files % 250 === 0) state.report?.(state.files)
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

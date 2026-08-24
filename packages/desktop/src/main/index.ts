@@ -18,6 +18,7 @@ import { installBundledSkills } from "./bundled-skills"
 import { cacheDir, configDir } from "./engine-paths"
 import { CHANNEL } from "./constants"
 import { SERVER_USERNAME } from "./server-credentials"
+import { createSetupProgress } from "./setup-progress"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
 import { forwardInitializationFailure } from "./initialization"
 import { exportDebugLogs, initCrashReporter, initLogging, startNetLog, write as writeLog } from "./logging"
@@ -275,37 +276,13 @@ const main = Effect.gen(function* () {
   }
 
   const serverReady = Deferred.makeUnsafe<ServerReadyData, unknown>()
+  // Constructed before the seeds run and before any window exists. The renderer subscribes late and gets the
+  // current state replayed, which is the whole point: on a fresh install the copying is already underway by
+  // the time there is anything to show it in.
+  const setupProgress = createSetupProgress()
 
   yield* Effect.promise(() => app.whenReady())
 
-  // Runs before the embedded server starts so the skill library is on disk by the time the engine scans for
-  // it. Failures are logged, never fatal: a missing skill library degrades the product, a failed launch ends
-  // it. Only the "hypercode-" namespaces are replaced, so this cannot clobber skills the user wrote.
-  yield* Effect.promise(() => installBundledSkills(logger)).pipe(
-    Effect.catch((error) =>
-      Effect.sync(() => {
-        logger.warn("failed to install bundled skills", error)
-      }),
-    ),
-  )
-  // Must land before the sidecar starts: once the engine loads config it resolves the plugin list, and a
-  // cache miss there costs the user minutes of silence. Seeding first turns that resolution into a stat().
-  // Same failure posture as the skills above — a missing plugin degrades the product, a failed launch ends it.
-  yield* Effect.promise(() =>
-    seedBundledPlugin({
-      source: resolveBundledPluginSource({ resourcesPath: process.resourcesPath, appPath: app.getAppPath() }),
-      cacheDir: cacheDir(),
-      configDir: configDir(),
-      version: app.getVersion(),
-      log: logger,
-    }),
-  ).pipe(
-    Effect.catch((error) =>
-      Effect.sync(() => {
-        logger.warn("failed to seed bundled plugin", error)
-      }),
-    ),
-  )
   yield* Effect.promise(() => cleanupStoreFiles(app.getPath("userData"))).pipe(
     Effect.tap((result) =>
       Effect.sync(() => {
@@ -354,6 +331,7 @@ const main = Effect.gen(function* () {
     checkAppExists: (appName) => checkAppExists(appName),
     resolveAppPath: async (appName) => resolveAppPath(appName),
     updater,
+    setupProgress,
     showUpdater: () => showUpdaterDialog(updater, true),
     setBackgroundColor: (color) => setBackgroundColor(color),
     exportDebugLogs: () => exportDebugLogs(),
@@ -374,6 +352,65 @@ const main = Effect.gen(function* () {
       }),
     ),
   )
+
+  app.on("window-all-closed", () => {
+    if (process.platform === "darwin") return
+    app.quit()
+  })
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length > 0) return
+    restoreMainWindows()
+  })
+
+  // Open the window here — before the payload copy below, not after it.
+  //
+  // A fresh install spends over a minute moving a 44 MB skill library and a 215 MB plugin tree out of the
+  // app bundle. With window creation at the end of startup the user had a dock icon and nothing else for
+  // that whole time, which reads as a failed install; clicking the icon again did nothing, because the
+  // single-instance lock silently quits the second process. It also made the renderer's own waiting UI
+  // unreachable — awaitInitialization, the splash and the retry screen exist for exactly this wait, but
+  // serverReady was always already resolved by the time anything asked.
+  //
+  // Everything the window needs is in place by now: registerRendererProtocol() for the oc:// scheme it
+  // loads from, and registerIpcHandlers() for the calls it makes on boot. Nothing below this line depends
+  // on a window existing, and nothing above it depends on the payloads being present.
+  const windows = restoreMainWindows()
+  if (windows.length) createMenu(menuDeps)
+
+  // Runs before the embedded server starts so the skill library is on disk by the time the engine scans for
+  // it. Failures are logged, never fatal: a missing skill library degrades the product, a failed launch ends
+  // it. Only the "hypercode-" namespaces are replaced, so this cannot clobber skills the user wrote.
+  yield* Effect.promise(() =>
+    installBundledSkills(logger, (done, total) => setupProgress.advance("skills", done, total)),
+  ).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to install bundled skills", error)
+      }),
+    ),
+  )
+  // Must land before the sidecar starts: once the engine loads config it resolves the plugin list, and a
+  // cache miss there costs the user minutes of silence. Seeding first turns that resolution into a stat().
+  // Same failure posture as the skills above — a missing plugin degrades the product, a failed launch ends it.
+  yield* Effect.promise(() =>
+    seedBundledPlugin({
+      source: resolveBundledPluginSource({ resourcesPath: process.resourcesPath, appPath: app.getAppPath() }),
+      cacheDir: cacheDir(),
+      configDir: configDir(),
+      version: app.getVersion(),
+      log: logger,
+      onProgress: (files) => setupProgress.advance("plugin", files),
+    }),
+  ).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to seed bundled plugin", error)
+      }),
+    ),
+  )
+  // Both payloads are on disk. Silent unless one of them actually announced work, so an ordinary launch
+  // never shows the preparation screen at all.
+  setupProgress.finish()
 
   const loadingTask = yield* Effect.gen(function* () {
     logger.log("sidecar connection started", { version: SIDECAR_VERSION })
@@ -458,19 +495,9 @@ const main = Effect.gen(function* () {
     logger.log("loading task finished")
   }).pipe(forwardInitializationFailure(serverReady), Effect.forkChild)
 
+  // The await stays: loadingTask is forked into this scope, so returning without it would interrupt the
+  // sidecar startup it is running. The window is already open by now.
   yield* Fiber.await(loadingTask)
-
-  app.on("window-all-closed", () => {
-    if (process.platform === "darwin") return
-    app.quit()
-  })
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length > 0) return
-    restoreMainWindows()
-  })
-
-  const windows = restoreMainWindows()
-  if (windows.length) createMenu(menuDeps)
 })
 
 Effect.runFork(main)

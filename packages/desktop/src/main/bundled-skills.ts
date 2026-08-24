@@ -25,10 +25,14 @@ function sourceDir() {
   return existsSync(repo) ? repo : undefined
 }
 
-export async function installBundledSkills(log: {
-  log: (message: string, extra?: unknown) => void
-  warn: (message: string, extra?: unknown) => void
-}) {
+export async function installBundledSkills(
+  log: {
+    log: (message: string, extra?: unknown) => void
+    warn: (message: string, extra?: unknown) => void
+  },
+  /** Reports group counts so the window can show real progress. Unlike the plugin, the total is known here. */
+  onProgress?: (done: number, total: number) => void,
+) {
   const source = sourceDir()
   if (!source) return
 
@@ -63,6 +67,9 @@ export async function installBundledSkills(log: {
 
   await fs.mkdir(dest, { recursive: true })
   let count = 0
+  // Announced only once we know a copy is actually needed — the early returns above are the common case and
+  // must not flash a progress screen on an ordinary launch.
+  onProgress?.(0, dirs.length)
   for (const entry of dirs) {
     const target = path.join(dest, `${NAMESPACE_PREFIX}${entry.name}`)
     // Replace the system-managed namespace wholesale rather than merging, so a skill removed upstream does
@@ -91,6 +98,7 @@ export async function installBundledSkills(log: {
       })
     if (swapped) count++
     else await fs.rm(staging, { recursive: true, force: true }).catch(() => {})
+    onProgress?.(count, dirs.length)
   }
 
   if (count === 0) return

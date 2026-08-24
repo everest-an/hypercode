@@ -22,6 +22,7 @@ import {
 } from "./windows"
 import type { UpdaterController } from "./updater-controller"
 import { createUpdaterSubscriptions } from "./updater-subscriptions"
+import type { SetupProgress } from "./setup-progress"
 import { createDesktopDraftStore } from "./draft-store"
 import { nativeT } from "./native-translations"
 import { scaffoldVault } from "./vault-template/scaffold"
@@ -48,6 +49,7 @@ type Deps = {
   checkAppExists: (appName: string) => Promise<boolean> | boolean
   resolveAppPath: (appName: string) => Promise<string | null>
   updater: UpdaterController
+  setupProgress: SetupProgress
   showUpdater: () => Promise<void> | void
   setBackgroundColor: (color: string) => void
   exportDebugLogs: () => Promise<string>
@@ -58,7 +60,10 @@ type Deps = {
 export function registerIpcHandlers(deps: Deps) {
   const drafts = createDesktopDraftStore(join(app.getPath("userData"), "drafts.sqlite"))
   const updaterSubscriptions = createUpdaterSubscriptions()
+  // Same registry type: it only tracks unsubscribe callbacks per renderer, nothing updater-specific.
+  const setupSubscriptions = createUpdaterSubscriptions()
   app.once("will-quit", updaterSubscriptions.clear)
+  app.once("will-quit", setupSubscriptions.clear)
   app.on("before-quit", () => drafts.flush())
   app.once("will-quit", () => drafts.close())
   app.on("browser-window-created", (_event, win) => win.on("session-end", () => drafts.flush()))
@@ -93,6 +98,21 @@ export function registerIpcHandlers(deps: Deps) {
     event.sender.once("destroyed", () => updaterSubscriptions.delete(id))
   })
   ipcMain.handle("updater-unsubscribe", (event) => updaterSubscriptions.delete(event.sender.id))
+  // Same shape as the updater subscription above, replay included: on a fresh install the copying is already
+  // underway before any window exists, so a future-events-only channel would deliver nothing during the one
+  // minute it is needed.
+  ipcMain.handle("setup-subscribe", (event) => {
+    const id = event.sender.id
+    setupSubscriptions.set(
+      id,
+      deps.setupProgress.subscribe((state) => {
+        if (event.sender.isDestroyed()) return setupSubscriptions.delete(id)
+        event.sender.send("setup-state", state)
+      }),
+    )
+    event.sender.once("destroyed", () => setupSubscriptions.delete(id))
+  })
+  ipcMain.handle("setup-unsubscribe", (event) => setupSubscriptions.delete(event.sender.id))
   ipcMain.handle("updater-check", () => deps.updater.check())
   ipcMain.handle("updater-install", () => deps.updater.install())
   ipcMain.handle("set-background-color", (_event: IpcMainInvokeEvent, color: string) => deps.setBackgroundColor(color))
