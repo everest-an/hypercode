@@ -87,6 +87,7 @@ jobs:
           name: hypercode-desktop-windows
           path: |
             packages/desktop/dist/*.exe
+            packages/desktop/dist/*.blockmap
             packages/desktop/dist/latest.yml
           if-no-files-found: error
 
@@ -203,7 +204,10 @@ jobs:
           cd dist
           ls -la
           missing=0
-          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml; do
+          # The blockmap is what lets an update fetch only the changed blocks. Without it electron-updater
+          # logs "Cannot download differentially, fallback to full download" and pulls the whole ~190 MB
+          # installer every time - which still works, so its absence is invisible except in the logs.
+          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml hypercode-desktop-win-x64.exe.blockmap; do
             if [ ! -f "$f" ]; then echo "::error::missing asset $f"; missing=1; fi
           done
           # A manifest naming a file that is not in the release updates nobody: electron-updater resolves
@@ -250,5 +254,6 @@ jobs:
             dist/hypercode-desktop-win-x64.exe \
             dist/hypercode-desktop-mac-arm64.dmg \
             dist/hypercode-desktop-mac-x64.dmg \
-            dist/latest.yml
+            dist/latest.yml \
+            dist/hypercode-desktop-win-x64.exe.blockmap
           echo "::notice::Draft release $tag created. Verify the installers, then publish it to go live."
