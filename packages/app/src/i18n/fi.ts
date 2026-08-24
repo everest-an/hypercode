@@ -1169,6 +1169,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Uusi ulkoasu ei vielä tue Git-työpuita, mutta tuki on tulossa pian. Jos haluat jatkaa aiemman ulkoasun käyttöä, voit vaihtaa ulkoasua asetuksissa. Huomaa kuitenkin, että uudesta ulkoasusta tulee pysyvä muutaman viikon kuluttua.",
 }

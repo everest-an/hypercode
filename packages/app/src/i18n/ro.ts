@@ -527,6 +527,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Noul design nu suportă încă Git Worktrees, dar va fi disponibil în curând. Dacă preferi să folosești aspectul anterior, poți comuta între layout-uri din Setări. Ține cont că noul layout va deveni permanent în câteva săptămâni.",
   "server.row.noUsername": "fără nume de utilizator",

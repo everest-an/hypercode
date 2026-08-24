@@ -530,6 +530,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Тарҳи нав то ҳол Git Worktrees-ро дастгирӣ намекунад, он ба зудӣ меояд. Пас, агар шумо хоҳед, ки истифодаи тарҳи қаблиро идома диҳед, шумо метавонед дар Танзимот байни тарҳҳо гузаред. Танҳо дар хотир доред, ки тарҳи нав пас аз чанд ҳафта доимӣ хоҳад шуд.",
   "server.row.noUsername": "номи корбар нест",

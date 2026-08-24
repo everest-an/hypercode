@@ -90,10 +90,10 @@ export function HomeProjectsView(props: HomeProjectsViewProps) {
                 <TooltipV2 placement="bottom" value="Open Vault">
                   <IconButtonV2
                     data-action="home-open-vault"
-                    variant="ghost-muted"
+                    variant="neutral"
                     size="large"
-                    class="titlebar-icon [&_[data-slot=icon-svg]]:text-v2-icon-icon-muted"
-                    icon={<IconV2 name="archive" />}
+                    class="titlebar-icon [&_[data-slot=icon-svg]]:text-v2-icon-icon-base"
+                    icon={<IconV2 name="branch" />}
                     disabled={props.serverHealth(props.servers()[0])?.healthy === false}
                     onClick={() => onOpenVault()(props.servers()[0])}
                     aria-label="Open Vault"

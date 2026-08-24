@@ -528,6 +528,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "新しいデザインはまだGitワークツリーに対応していませんが、近日中に対応する予定です。以前のレイアウトを引き続き使用する場合は、設定でレイアウトを切り替えることができます。新しいレイアウトは数週間後に標準となる予定です。",
   "dialog.project.edit.title": "プロジェクトを編集",

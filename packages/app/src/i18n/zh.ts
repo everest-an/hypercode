@@ -571,6 +571,7 @@ export const dict = {
 "help.guide.step2.body": "在主页点击 添加项目,选择你的项目文件夹;在左侧列表切换多个项目。",
 "help.guide.step3.title": "查看知识图谱",
 "help.guide.step3.body": "打开项目菜单,选择 Open Vault——浏览文件树、预览笔记并查看图谱视图。",
+  "vault.open": "知识图谱",
   "help.tabs.worktrees":
     "新设计暂不支持 Git Worktrees，此功能即将推出。如果希望继续使用之前的布局，可在“设置”中切换布局。请注意，新布局将在几周后永久启用。",
 

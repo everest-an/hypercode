@@ -519,6 +519,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "አዲሱ ንድፍ እስካሁን Git Worktreesን አይደግፍም፣ በቅርቡ ይመጣል። ስለዚህ የቀደመውን አቀማመጥ በመጠቀም መቀጠል ከፈለግክ በቅንብሮች ውስጥ በአቀማመጦች መካከል መቀያየር ትችላለህ። አዲሱ አቀማመጥ በጥቂት ሳምንታት ውስጥ ዘላቂ እንደሚሆን ብቻ ያስታውሱ።",
   "server.row.noUsername": "የተጠቃሚ ስም የለም",

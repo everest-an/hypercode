@@ -527,6 +527,7 @@ export const dict: Record<string, string> = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "නව සැලසුම තවමත් Git Worktrees සඳහා සහය නොදක්වයි, එය ඉක්මනින් පැමිණේ. එබැවින් ඔබ පෙර පිරිසැලසුම දිගටම භාවිතා කිරීමට කැමති නම්, ඔබට සැකසීම් තුළ පිරිසැලසුම් අතර මාරු විය හැක. නව පිරිසැලසුම සති කිහිපයකින් ස්ථිර වනු ඇති බව මතක තබා ගන්න.",
   "server.row.noUsername": "පරිශීලක නාමයක් නැත",

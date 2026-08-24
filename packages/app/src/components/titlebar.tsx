@@ -39,6 +39,7 @@ import type { PromptSession } from "@/context/prompt"
 import "./titlebar.css"
 import { newTabTooltipKeybind } from "./command-tooltip-keybind"
 import { normalizeSessionInfo } from "@/utils/session"
+import { base64Encode } from "@opencode-ai/core/util/encode"
 
 const legacyTitlebarHeight = 40
 const v2TitlebarHeight = 36
@@ -313,6 +314,25 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
             }
             const toggleHome = () => tabs.toggleHome({ home: layout.route().type === "home", current: currentTab() })
 
+            const openVault = () => {
+              const route = layout.route()
+              let directory: string | undefined
+              if (route.type === "session") {
+                directory = session()?.directory
+              } else if (route.type === "draft") {
+                const tab = currentTab()
+                if (tab?.type === "draft") directory = tab.directory
+              } else if (route.type === "home") {
+                directory = layout.home.selection().directory
+              }
+              if (!directory) {
+                const project = layout.projects.list()[0]
+                directory = project?.worktree
+              }
+              if (!directory) return
+              navigate(`/vault/${base64Encode(directory)}`)
+            }
+
             command.register("titlebar-home", () => [
               {
                 id: "home.toggle",
@@ -430,6 +450,17 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                   />
                 </TooltipV2>
                 <div class="flex-1" />
+                <TooltipV2 placement="bottom" value={language.t("vault.open")}>
+                  <IconButtonV2
+                    type="button"
+                    variant="ghost-muted"
+                    size="large"
+                    class="shrink-0"
+                    icon={<IconV2 name="branch" />}
+                    onClick={openVault}
+                    aria-label={language.t("vault.open")}
+                  />
+                </TooltipV2>
                 <TitlebarV2Right state={v2RightState()} />
               </div>
             )

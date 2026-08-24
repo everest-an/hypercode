@@ -528,6 +528,7 @@ export const dict: Record<string, string> = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "নতুন ডিজাইন এখনও Git Worktrees সমর্থন করে না, এটি শীঘ্রই আসছে। সুতরাং আপনি যদি পূর্ববর্তী লেআউটটি ব্যবহার করা চালিয়ে যেতে চান তবে আপনি সেটিংসে লেআউটগুলির মধ্যে স্যুইচ করতে পারেন৷ শুধু মনে রাখবেন যে নতুন লেআউট কয়েক সপ্তাহের মধ্যে স্থায়ী হয়ে যাবে।",
   "server.row.noUsername": "ব্যবহারকারীর নাম নেই",

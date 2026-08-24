@@ -529,6 +529,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Den nya designen stöder inte Git Worktrees ännu, men stöd kommer snart. Om du föredrar att fortsätta använda den tidigare layouten kan du därför växla mellan layouterna i Inställningar. Tänk bara på att den nya layouten blir permanent om några veckor.",
   "server.row.noUsername": "inget användarnamn",

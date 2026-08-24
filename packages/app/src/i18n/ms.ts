@@ -528,6 +528,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Reka bentuk baharu belum menyokong Git Worktrees, ia akan hadir tidak lama lagi. Jika anda ingin terus menggunakan susun atur sebelum ini, anda boleh bertukar antara susun atur dalam Tetapan. Harap maklum bahawa susun atur baharu akan menjadi kekal dalam beberapa minggu lagi.",
   "server.row.noUsername": "tiada nama pengguna",

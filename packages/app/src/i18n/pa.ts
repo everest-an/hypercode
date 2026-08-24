@@ -535,6 +535,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "نواں ڈیزائن ہلے Git Worktrees نوں سہارا نئیں دیندا، ایہ سہولت چھیتی آ رہی اے۔ جے تسی پچھلا لے آؤٹ ورتدے رہنا چاہندے او تے ترتیبات وچ لے آؤٹ بدل سکدے او۔ بس چیتے رکھو کہ کجھ ہفتیاں پچھوں نواں لے آؤٹ پکا ہو جائے گا۔",
   "server.row.noUsername": "کوئی ورتن آلا ناں نئیں",

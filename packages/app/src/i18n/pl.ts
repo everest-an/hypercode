@@ -530,6 +530,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Nowy układ nie obsługuje jeszcze drzew roboczych Git, ale ta funkcja pojawi się wkrótce. Jeśli wolisz nadal korzystać z poprzedniego układu, możesz przełączać układy w Ustawieniach. Pamiętaj jednak, że za kilka tygodni nowy układ stanie się jedynym dostępnym.",
   "dialog.project.edit.title": "Edytuj projekt",

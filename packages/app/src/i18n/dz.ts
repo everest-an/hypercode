@@ -527,6 +527,7 @@ export const dict: Record<string, string> = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.sessions":
     "མཆོང་ལྡེ་ཅིག་ནང་ལཱ་ཡུན་གསརཔ་འགོ་བཙུགས་ ཡང་ན་ ཁྱོད་རའི་ལས་འགུལ་གང་རུང་ཅིག་ལས་ ད་ལྟོ་ཡོད་པའི་ལཱ་ཡུན་ཅིག་ཁ་ཕྱེ། ཁྱོད་ཀྱིས་ག་ཅི་ཡང་གསརཔ་འགོ་བཙུགས་པའི་སྐབས་ མཆོང་ལྡེ་གསརཔ་ཅིག་ཁ་ཕྱེ་ཞིནམ་ལས་ ཁྱོད་ཀྱིས་འབད་ཚརཝ་ད་ ཁ་བསྡམས།",
   "help.tabs.organize":

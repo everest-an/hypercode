@@ -528,6 +528,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "Нови дизајн још увек не подржава Git Ворктреес, ускоро долази. Дакле, ако желите да наставите да користите претходни изглед, можете да прелазите између изгледа у подешавањима. Само имајте на уму да ће нови изглед постати трајан за неколико недеља.",
   "server.row.noUsername": "нема корисничког имена",

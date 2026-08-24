@@ -535,6 +535,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "އާ ޑިޒައިން އިން އަދި Git ވޯކްޓްރީސް އަށް ސަޕޯޓް ނުކުރާއިރު، ވަރަށް އަވަހަށް އަންނާނެ އެވެ. އެހެންކަމުން ކުރީގެ ލޭއައުޓް ބޭނުންކުރުން ކުރިއަށް ގެންދަން ބޭނުންނަމަ ސެޓިންގްސްގައިވާ ލޭއައުޓްތަކުގެ މެދުގައި ބަދަލުވެވޭނެއެވެ. ހަމައެކަނި ހަނދާނުގައި ބަހައްޓަންވީ އާ ލޭއައުޓް ދެތިން ހަފްތާއެއްހާ ދުވަހުގެ ތެރޭގައި ދާއިމީ ވެގެންދާނެ ކަމެވެ.",
   "server.row.noUsername": "ޔޫޒަރނޭމް އެއް ނެތެވެ",

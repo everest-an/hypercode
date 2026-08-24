@@ -535,6 +535,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "La nouvelle interface ne prend pas encore en charge les arbres de travail Git, mais cette fonctionnalité sera bientôt disponible. Si vous préférez continuer à utiliser la mise en page précédente, vous pouvez changer de mise en page dans les paramètres. N'oubliez pas que la nouvelle mise en page deviendra définitive dans quelques semaines.",
   "dialog.project.edit.title": "Modifier le projet",

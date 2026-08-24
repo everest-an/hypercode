@@ -533,6 +533,7 @@ export const dict = {
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
 "help.guide.step3.body": "Open a project menu and choose Open Vault — browse the file tree, preview notes and explore the graph view.",
+  "vault.open": "Knowledge graph",
   "help.tabs.worktrees":
     "ဒီဇိုင်းအသစ်သည် Git Worktrees ကို မပံ့ပိုးရသေးပါ၊ ၎င်းသည် မကြာမီ ရောက်ရှိလာတော့မည်ဖြစ်သည်။ ထို့ကြောင့် သင်သည် ယခင်အပြင်အဆင်ကို ဆက်လက်အသုံးပြုလိုပါက၊ ဆက်တင်များတွင် အပြင်အဆင်များအကြား ပြောင်းနိုင်သည်။ အပြင်အဆင်အသစ်သည် ရက်သတ္တပတ်အနည်းငယ်အတွင်း အမြဲတမ်းဖြစ်လာမည်ကို သတိပြုပါ။",
   "server.row.noUsername": "အသုံးပြုသူအမည်မရှိပါ။",
