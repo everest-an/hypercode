@@ -1,6 +1,8 @@
 import * as http from "node:http"
 import * as tls from "node:tls"
 
+import { SERVER_USERNAME } from "./server-credentials"
+
 type NodeHttpWithEnvProxy = typeof http & {
   setGlobalProxyFromEnv: () => void
 }
@@ -59,7 +61,7 @@ async function start(command: StartCommand) {
     listener = await Server.listen({
       port: command.port,
       hostname: command.hostname,
-      username: "opencode",
+      username: SERVER_USERNAME,
       password: command.password,
       cors: ["oc://renderer"],
     })

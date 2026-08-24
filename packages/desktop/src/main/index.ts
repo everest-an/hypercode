@@ -17,6 +17,7 @@ import { resolveBundledPluginSource, seedBundledPlugin } from "./bundled-plugin"
 import { installBundledSkills } from "./bundled-skills"
 import { cacheDir, configDir } from "./engine-paths"
 import { CHANNEL } from "./constants"
+import { SERVER_USERNAME } from "./server-credentials"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
 import { forwardInitializationFailure } from "./initialization"
 import { exportDebugLogs, initCrashReporter, initLogging, startNetLog, write as writeLog } from "./logging"
@@ -436,7 +437,8 @@ const main = Effect.gen(function* () {
     server = listener
     yield* Deferred.succeed(serverReady, {
       url,
-      username: "hypercode",
+      // Must match what sidecar.ts hands Server.listen(); the engine compares usernames exactly.
+      username: SERVER_USERNAME,
       password,
     })
 

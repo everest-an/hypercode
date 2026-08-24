@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
 import { app } from "electron"
 
+import { SERVER_USERNAME } from "./server-credentials"
+
 const execFileAsync = promisify(execFile)
 const root = dirname(fileURLToPath(import.meta.url))
 const stateHome = process.env.XDG_STATE_HOME
@@ -47,12 +49,14 @@ export async function startBackgroundCli(logger: Logger, shellStateHome?: string
   })
   logger.log("v2 CLI background service ready", {
     existing: Boolean(found),
-    username: "hypercode",
+    username: SERVER_USERNAME,
     ...endpoint(url),
   })
   return {
     url,
-    username: "hypercode",
+    // The daemon is started by the bundled CLI, which resolves OPENCODE_SERVER_USERNAME's default. We do
+    // not configure it, so we must report the same value the CLI chose rather than a name of our own.
+    username: SERVER_USERNAME,
     password,
   }
 }

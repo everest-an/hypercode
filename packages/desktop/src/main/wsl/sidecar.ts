@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto"
 import { createServer } from "node:net"
 import { app } from "electron"
 import { checkHealth } from "../server"
+import { SERVER_USERNAME } from "../server-credentials"
 import { type WslCommandLine, resolveWslOpencode, shellEscape, wslArgs } from "./runtime"
 import { pollWslHealth } from "./startup"
 import { nativeT } from "../native-translations"
@@ -23,7 +24,7 @@ export async function spawnWslSidecar(
 
   const port = await allocatePort()
   const password = randomUUID()
-  const username = "opencode"
+  const username = SERVER_USERNAME
   const script = [
     "set -euo pipefail",
     'cd "$HOME" || cd /',
