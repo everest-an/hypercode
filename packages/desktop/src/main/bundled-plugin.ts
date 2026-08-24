@@ -53,8 +53,32 @@ export type SeedBundledPluginOptions = {
   source: string | undefined
   cacheDir: string
   configDir: string
+  /** Fallback identity for the payload, used only when it does not declare its own version. */
   version: string
   log: Log
+}
+
+/**
+ * What the seeded cache is keyed on.
+ *
+ * This used to be the app version, which meant every update re-cloned ~24k files that had not changed —
+ * 40 of the 50 seconds a user spent looking at "Could not reach Local Server" after upgrading 0.1.8 to
+ * 0.1.9. The payload's identity is the plugin's own version, not ours, and it costs one file read to learn.
+ *
+ * The tree is produced by installing this package at a pinned version, so its version moving is what a
+ * changed tree looks like. Falls back to the app version when the payload cannot be read, which restores
+ * the old always-reseed behaviour rather than risking a stale cache.
+ */
+async function payloadIdentity(source: string, fallback: string): Promise<string> {
+  const manifest = path.join(source, PAYLOAD_MODULES_DIR, BUNDLED_PLUGIN_PACKAGE, "package.json")
+  const raw = await fs.readFile(manifest, "utf8").catch(() => undefined)
+  if (!raw) return fallback
+  try {
+    const version: unknown = JSON.parse(raw).version
+    return typeof version === "string" && version ? `${BUNDLED_PLUGIN_PACKAGE}@${version}` : fallback
+  } catch {
+    return fallback
+  }
 }
 
 export type SeedBundledPluginResult = {
@@ -88,13 +112,15 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
     return result
   }
 
+  const identity = await payloadIdentity(source, options.version)
+
   // Whichever directory we populate first becomes the clone source for the rest, so the expensive path (out
   // of the app bundle, possibly across volumes) is walked at most once.
   let clonedFrom = source
   for (const spec of CACHE_SPECS) {
     const target = npmPackageDir(options.cacheDir, spec)
     const installed = await fs.readFile(path.join(target, VERSION_MARKER), "utf8").catch(() => undefined)
-    if (installed?.trim() === options.version && existsSync(path.join(target, "node_modules", BUNDLED_PLUGIN_PACKAGE)))
+    if (installed?.trim() === identity && existsSync(path.join(target, "node_modules", BUNDLED_PLUGIN_PACKAGE)))
       continue
 
     // Build beside the real path and swap, so a crash or a full disk mid-clone cannot leave a half-populated
@@ -130,7 +156,7 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
       }
     }
 
-    await fs.writeFile(path.join(staging, VERSION_MARKER), `${options.version}\n`, "utf8").catch(() => {})
+    await fs.writeFile(path.join(staging, VERSION_MARKER), `${identity}\n`, "utf8").catch(() => {})
     await fs.rm(target, { recursive: true, force: true }).catch(() => {})
     const swapped = await fs
       .rename(staging, target)

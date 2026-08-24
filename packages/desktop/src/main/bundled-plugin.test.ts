@@ -40,11 +40,14 @@ function collectLog() {
  * refuses to copy a directory by the latter name inside extraResources. The assertions below deliberately
  * check for `node_modules` in the *cache*, which is what proves seeding renames it back.
  */
-async function payload(root: string) {
+async function payload(root: string, pluginVersion?: string) {
   const source = join(root, "payload")
   const pkg = join(source, PAYLOAD_MODULES_DIR, BUNDLED_PLUGIN_PACKAGE)
   await mkdir(join(pkg, "dist"), { recursive: true })
-  await writeFile(join(pkg, "package.json"), JSON.stringify({ name: BUNDLED_PLUGIN_PACKAGE, main: "dist/index.js" }))
+  await writeFile(
+    join(pkg, "package.json"),
+    JSON.stringify({ name: BUNDLED_PLUGIN_PACKAGE, main: "dist/index.js", ...(pluginVersion && { version: pluginVersion }) }),
+  )
   await writeFile(join(pkg, "dist", "index.js"), "export default {}")
   await mkdir(join(source, PAYLOAD_MODULES_DIR, "some-dep"), { recursive: true })
   await writeFile(join(source, PAYLOAD_MODULES_DIR, "some-dep", "index.js"), "module.exports = 1")
@@ -52,11 +55,11 @@ async function payload(root: string) {
   return source
 }
 
-async function setup(root: string) {
+async function setup(root: string, pluginVersion?: string) {
   const cacheDir = join(root, "cache")
   const configDir = join(root, "config")
   await mkdir(configDir, { recursive: true })
-  return { source: await payload(root), cacheDir, configDir }
+  return { source: await payload(root, pluginVersion), cacheDir, configDir }
 }
 
 describe("seedBundledPlugin", () => {
@@ -101,7 +104,39 @@ describe("seedBundledPlugin", () => {
     expect(JSON.parse(config).plugin).toEqual([BUNDLED_PLUGIN_PACKAGE])
   })
 
-  test("re-seeds when the app version changes", async () => {
+  // Keying the cache on the app version made every update re-clone ~24k unchanged files: 40 of the 50
+  // seconds a user spent on "Could not reach Local Server" after upgrading 0.1.8 to 0.1.9. The payload's
+  // identity belongs to the plugin, not to us.
+  test("does not re-seed when only the app version moved", async () => {
+    const root = await tempRoot()
+    const { source, cacheDir, configDir } = await setup(root, "4.19.4")
+
+    await seedBundledPlugin({ source, cacheDir, configDir, version: "0.1.9", log: collectLog() })
+    const upgraded = await seedBundledPlugin({ source, cacheDir, configDir, version: "0.1.10", log: collectLog() })
+
+    expect(upgraded.seeded).toEqual([])
+  })
+
+  test("re-seeds when the bundled plugin version changes", async () => {
+    const root = await tempRoot()
+    const first = await setup(root, "4.19.4")
+
+    await seedBundledPlugin({ ...first, version: "0.1.9", log: collectLog() })
+    const bumped = await setup(join(root, "next"), "4.20.0")
+    const upgraded = await seedBundledPlugin({
+      source: bumped.source,
+      cacheDir: first.cacheDir,
+      configDir: first.configDir,
+      version: "0.1.9",
+      log: collectLog(),
+    })
+
+    expect(upgraded.seeded).toEqual([`${BUNDLED_PLUGIN_PACKAGE}@latest`, BUNDLED_PLUGIN_PACKAGE])
+  })
+
+  // A payload that declares no version cannot be told apart from a different one, so fall back to the old
+  // always-reseed behaviour rather than trusting a cache we cannot identify.
+  test("re-seeds on an app version change when the payload declares no version", async () => {
     const root = await tempRoot()
     const { source, cacheDir, configDir } = await setup(root)
 
