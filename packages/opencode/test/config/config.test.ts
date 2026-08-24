@@ -325,6 +325,28 @@ it.effect("seeds the global config with the default provider, no blank apiKey an
   ),
 )
 
+// The desktop app writes this file before the engine ever runs, to list the plugin it ships. That turned the
+// create-if-missing seed above into a no-op, so the shipped product had no provider and no model: it picked
+// an arbitrary entry from whatever a stray env var made available, landed on an intent-classification model,
+// and answered every message with a 400.
+it.effect("still configures a provider when another component created the config file first", () =>
+  withGlobalConfig({ config: { plugin: ["oh-my-openagent"] }, name: "hypercode.jsonc" }, ({ dir }) =>
+    Effect.gen(function* () {
+      const config = yield* Config.use.get().pipe(provideInstanceEffect(dir))
+
+      expect(config.model).toBe("deepseek/deepseek-v4-pro")
+      expect(Object.keys(config.provider ?? {})).toContain("deepseek")
+      // Whatever that other component wrote has to survive being merged with the defaults.
+      expect(config.plugin).toContain("oh-my-openagent")
+
+      // Defaults are merged in memory. Rewriting a file we did not author would risk the user's comments and
+      // their intent, and buys nothing the merge does not already give us.
+      const content = yield* FSUtil.use.readFileString(path.join(dir, "hypercode.jsonc"))
+      expect(content).not.toContain("deepseek")
+    }).pipe(Effect.provide(testInstanceStoreLayer), Effect.provide(LayerNode.compile(CrossSpawnSpawner.node))),
+  ),
+)
+
 it.effect("does not create global config when OPENCODE_CONFIG_DIR is set", () =>
   Effect.gen(function* () {
     const custom = yield* tmpdirScoped()

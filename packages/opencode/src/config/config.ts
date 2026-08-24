@@ -146,6 +146,27 @@ function globalConfigFile() {
   return candidates[0]
 }
 
+// HyperCode 的出厂默认:DeepSeek 供应商 + 一个真实存在的默认模型。
+//
+// 注意:这里绝不能写 apiKey(哪怕是空串)。provider.ts 只在 apiKey === undefined 时才会把 auth store
+// 里用户粘贴的 key 注入进来,写成 "" 会永久遮蔽它,导致界面里粘贴 key 永远不生效。
+const DEFAULT_GLOBAL_CONFIG = {
+  provider: {
+    deepseek: {
+      npm: "@ai-sdk/openai-compatible",
+      name: "DeepSeek",
+      options: {
+        baseURL: "https://api.deepseek.com/v1",
+      },
+      models: {
+        "deepseek-v4-pro": { name: "DeepSeek V4 Pro" },
+        "deepseek-v4-flash": { name: "DeepSeek V4 Flash" },
+      },
+    },
+  },
+  model: "deepseek/deepseek-v4-pro",
+} as const
+
 function patchJsonc(input: string, patch: unknown, path: string[] = []): string {
   if (!isRecord(patch)) {
     const edits = modify(input, path, patch, {
@@ -249,33 +270,7 @@ const layer = Layer.effect(
         const file = globalConfigFile()
         if (!existsSync(file)) {
           yield* fs
-            .writeWithDirs(
-              file,
-              JSON.stringify(
-                {
-                  // HyperCode 默认供应商:首次启动自动带上 DeepSeek,用户只需在界面里粘贴 key
-                  // 注意:这里绝不能写 apiKey(哪怕是空串)。provider.ts 只在 apiKey === undefined 时
-                  // 才会把 auth store 里用户粘贴的 key 注入进来,写成 "" 会永久遮蔽它,导致界面里
-                  // 粘贴 key 永远不生效、只能手改配置文件。
-                  provider: {
-                    deepseek: {
-                      npm: "@ai-sdk/openai-compatible",
-                      name: "DeepSeek",
-                      options: {
-                        baseURL: "https://api.deepseek.com/v1",
-                      },
-                      models: {
-                        "deepseek-v4-pro": { name: "DeepSeek V4 Pro" },
-                        "deepseek-v4-flash": { name: "DeepSeek V4 Flash" },
-                      },
-                    },
-                  },
-                  model: "deepseek/deepseek-v4-pro",
-                },
-                null,
-                2,
-              ),
-            )
+            .writeWithDirs(file, JSON.stringify(DEFAULT_GLOBAL_CONFIG, null, 2))
             .pipe(Effect.catch(() => Effect.void))
         }
       }
@@ -299,6 +294,19 @@ const layer = Layer.effect(
             .catch(() => {}),
         )
       }
+
+      // The write above only fires when no global config file exists at all, and by the time the desktop app
+      // gets here one usually does: seedBundledPlugin creates it to list the bundled plugin before the engine
+      // ever starts. The result was a config holding nothing but `plugin`, so no provider was configured and
+      // no model was chosen — the engine then fell back to whatever a stray env var made available and picked
+      // an arbitrary entry off that list. Users saw it select an intent-classification model and answer every
+      // message with a 400.
+      //
+      // So treat "no provider and no model" as unconfigured regardless of which file exists. This is in
+      // memory only: rewriting a file the user or another component authored risks losing their comments and
+      // their intent, and the defaults are equally effective merged at load. It also repairs installs that
+      // are already in this state, which a create-if-missing check never can.
+      if (!result.provider && !result.model) result = mergeConfig(result, DEFAULT_GLOBAL_CONFIG as Info)
 
       return result
     })
