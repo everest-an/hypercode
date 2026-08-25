@@ -28,9 +28,13 @@ test("starts every configured WSL server on initialization", () => {
 
 test("rejects an update that did not install the desktop version", () => {
   expect(() => expectOpencodeVersion("1.16.2", "1.16.2")).not.toThrow()
-  expect(() => expectOpencodeVersion("1.14.35", "1.16.2")).toThrow(
-    "OpenCode update finished but Debian still reports 1.14.35; expected 1.16.2",
-  )
+  // Asserts the facts the message has to carry, not the sentence it carries them in. Pinning the whole
+  // string meant a rebrand sweep that correctly changed "OpenCode" to "HyperCode" in this user-visible
+  // error left the suite red for four releases, because the product was right and only the test was stale.
+  // The product name is covered by the branding checks, not here.
+  expect(() => expectOpencodeVersion("1.14.35", "1.16.2")).toThrow(/Debian/)
+  expect(() => expectOpencodeVersion("1.14.35", "1.16.2")).toThrow(/1\.14\.35/)
+  expect(() => expectOpencodeVersion("1.14.35", "1.16.2")).toThrow(/1\.16\.2/)
 })
 
 test("restarts an existing distro server after updating OpenCode", () => {
