@@ -558,6 +558,7 @@ export const dict = {
   "help.tabs.home": "Semua sesi dan proyek Anda tersedia di layar Beranda baru. Memilih sesi akan membukanya di tab.",
   "help.tabs.persistence": "Saat Anda membuka kembali aplikasi, tab Anda tetap terbuka.",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",
@@ -587,6 +588,13 @@ export const dict = {
   "dialog.releaseNotes.media.alt": "Pratinjau rilis",
 
   "dialog.usageExceeded.dontShowAgain": "Jangan tampilkan lagi",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "Rincian Konteks",
   "context.breakdown.note": 'Perkiraan rincian token masukan. "Lainnya" mencakup definisi alat dan beban tambahan.',

@@ -560,6 +560,7 @@ export const dict = {
     "Усі свої сесії та проєкти ви знайдете на новому екрані «Головна». Вибрана сесія відкриється у вкладці.",
   "help.tabs.persistence": "Після повторного відкриття програми ваші вкладки залишаться відкритими.",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",
@@ -589,6 +590,13 @@ export const dict = {
   "dialog.releaseNotes.media.alt": "Попередній перегляд релізу",
 
   "dialog.usageExceeded.dontShowAgain": "Більше не показувати",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "Розподіл контексту",
   "context.breakdown.note":

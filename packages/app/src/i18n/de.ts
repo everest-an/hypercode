@@ -428,6 +428,13 @@ export const dict = {
     "Wird nach dem Erstellen eines neuen Arbeitsbereichs (Worktree) ausgeführt.",
   "dialog.project.edit.worktree.startup.placeholder": "z. B. bun install",
   "dialog.usageExceeded.dontShowAgain": "Nicht mehr anzeigen",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "Kontext-Aufschlüsselung",
   "context.breakdown.note":
@@ -1180,6 +1187,7 @@ export const dict = {
     "Auf der neuen Startseite finden Sie alle Ihre Sitzungen und Projekte. Wenn Sie eine Sitzung auswählen, wird sie in einem Tab geöffnet.",
   "help.tabs.persistence": "Wenn Sie die App erneut öffnen, sind Ihre Tabs weiterhin geöffnet.",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",

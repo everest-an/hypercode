@@ -549,6 +549,7 @@ export const dict = {
   "help.tabs.home": "คุณจะพบเซสชันและโปรเจกต์ทั้งหมดในหน้าจอหน้าหลักแบบใหม่ เมื่อเลือกเซสชัน เซสชันนั้นจะเปิดในแท็บ",
   "help.tabs.persistence": "เมื่อเปิดแอปอีกครั้ง แท็บของคุณจะยังคงเปิดอยู่",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",
@@ -572,6 +573,13 @@ export const dict = {
   "dialog.project.edit.worktree.startup.placeholder": "เช่น bun install",
 
   "dialog.usageExceeded.dontShowAgain": "ไม่ต้องแสดงอีก",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "การแบ่งบริบท",
   "context.breakdown.note": 'การแบ่งโดยประมาณของโทเค็นนำเข้า "อื่น ๆ" รวมถึงคำนิยามเครื่องมือและโอเวอร์เฮด',

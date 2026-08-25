@@ -565,6 +565,7 @@ export const dict = {
   "help.tabs.home": "你可以在新的主页中找到所有会话和项目。选择会话即可在标签页中将其打开。",
   "help.tabs.persistence": "重新打开应用时，标签页仍会保持打开。",
 "help.guide.title": "快速上手",
+  "help.feedback": "反馈与支持:",
 "help.guide.step1.title": "配置模型服务商(API Key)",
 "help.guide.step1.body": "打开 设置 → 模型,选择 DeepSeek 并粘贴你的 API Key。还没有 Key?访问 awareliquid.ai 获取。",
 "help.guide.step2.title": "添加与管理项目",
@@ -588,6 +589,13 @@ export const dict = {
   "dialog.project.edit.worktree.startup.placeholder": "例如 bun install",
 
   "dialog.usageExceeded.dontShowAgain": "不再显示",
+  "dialog.usageExceeded.freeTier.title": "免费额度已用完",
+  "dialog.usageExceeded.freeTier.description": "当前提供商的免费额度已耗尽。请充值或升级套餐,或切换到其他模型继续使用。",
+  "dialog.usageExceeded.freeTier.actionLabel": "了解更多",
+  "dialog.usageExceeded.accountRateLimit.title": "用量已达上限",
+  "dialog.usageExceeded.accountRateLimit.description": "提供商的用量已达上限。请在提供商后台开启余额用量,或配置自己的 API Key。",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "知道了",
+  "dialog.usageExceeded.configureKey": "使用自己的 API Key",
 
   "context.breakdown.title": "上下文细分",
   "context.breakdown.note": "输入 token 的大致细分。“其他”包含工具定义和开销。",

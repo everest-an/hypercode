@@ -551,6 +551,7 @@ export const dict = {
     "Все сессии и проекты находятся на новом экране «Главная». При выборе сессии она открывается во вкладке.",
   "help.tabs.persistence": "После повторного открытия приложения вкладки останутся открытыми.",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",
@@ -575,6 +576,13 @@ export const dict = {
     "Запускается после создания нового рабочего пространства (worktree).",
   "dialog.project.edit.worktree.startup.placeholder": "например, bun install",
   "dialog.usageExceeded.dontShowAgain": "Больше не показывать",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "Разбивка контекста",
   "context.breakdown.note":

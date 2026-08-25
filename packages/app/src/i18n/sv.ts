@@ -523,6 +523,7 @@ export const dict = {
     "Du hittar alla dina sessioner och projekt på den nya hemskärmen. När du väljer en session öppnas den på en flik.",
   "help.tabs.persistence": "När du öppnar appen igen är dina flikar fortfarande öppna.",
 "help.guide.title": "Quick start",
+  "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
 "help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit awareliquid.ai to get one.",
 "help.guide.step2.title": "Add and manage projects",
@@ -549,6 +550,13 @@ export const dict = {
   "dialog.releaseNotes.action.hideFuture": "Visa inte dessa i framtiden",
   "dialog.releaseNotes.media.alt": "Förhandsvisning av version",
   "dialog.usageExceeded.dontShowAgain": "Visa inte igen",
+  "dialog.usageExceeded.freeTier.title": "Free limit reached",
+  "dialog.usageExceeded.freeTier.description": "The free usage allowance for this provider has been exhausted. Add credits or upgrade your plan with the provider, or switch to a different model to continue.",
+  "dialog.usageExceeded.freeTier.actionLabel": "Learn more",
+  "dialog.usageExceeded.accountRateLimit.title": "Usage limit reached",
+  "dialog.usageExceeded.accountRateLimit.description": "Your provider usage limit has been reached. Enable usage from your available balance in your provider dashboard, or bring your own API key.",
+  "dialog.usageExceeded.accountRateLimit.actionLabel": "Dismiss",
+  "dialog.usageExceeded.configureKey": "Use my own API key",
 
   "context.breakdown.title": "Kontextfördelning",
   "context.breakdown.note":

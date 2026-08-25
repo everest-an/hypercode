@@ -160,8 +160,15 @@ export function TabsInfoPopup() {
               <p>{language.t("help.tabs.home")}</p>
               <img src={homeImage} alt="" class="aspect-video w-full rounded-[6px] object-cover" />
               <p>{language.t("help.tabs.persistence")}</p>
-              <p>{language.t("help.tabs.worktrees")}</p>
-            </div>
+          <p>{language.t("help.tabs.worktrees")}</p>
+          </div>
+        </div>
+          {/* 反馈 */}
+          <div class="flex w-full flex-col items-start gap-1 border-t border-v2-border-border-muted pt-4 text-[13px] font-[440] leading-5 text-v2-text-text-muted">
+            <p>{language.t("help.feedback")}</p>
+            <a href="mailto:anmuning@awareliquid.ai" class="text-v2-text-text-accent hover:underline">
+              anmuning@awareliquid.ai
+            </a>
           </div>
         </div>
       </DrawerContent>
