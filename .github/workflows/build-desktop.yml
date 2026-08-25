@@ -232,6 +232,20 @@ jobs:
           done
           exit $missing
 
+      # This job only downloads artifacts, so the repository is not otherwise present. Sparse, because the
+      # release body is the only thing needed here and a full checkout of this monorepo for one markdown
+      # file costs minutes of runner time.
+      #
+      # clean: false is load-bearing. checkout defaults to `git clean -ffdx`, which would delete the
+      # untracked dist/ the previous step just filled with 600 MB of installers, and the release would then
+      # be created with no assets.
+      - name: Fetch the release notes body
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/release-notes.md
+          sparse-checkout-cone-mode: false
+          clean: false
+
       - name: Create draft release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
@@ -246,11 +260,19 @@ jobs:
           # overwrite each other, and none of that can be verified from here. Shipping an untested update
           # manifest is worse than shipping none, so mac keeps updating manually until it can be tested on a
           # mac.
+          # The download page links here for the macOS one-time authorization step, so this body has to
+          # carry it. Kept in .github/release-notes.md rather than inline: prose belongs in a file that can
+          # be read and edited, and a step that depends on someone remembering to paste it is the step that
+          # gets skipped.
+          {
+            printf 'Desktop installers for Windows and macOS. Built from everest-an/hypercode@%s.\n\n' "${GITHUB_SHA:0:7}"
+            cat "$GITHUB_WORKSPACE/.github/release-notes.md"
+          } > notes.md
           gh release create "$tag" \
             --repo AwareLiquid/HyperCode \
             --draft \
             --title "HyperCode $tag" \
-            --notes "Desktop installers for Windows and macOS. Built from everest-an/hypercode@${GITHUB_SHA:0:7}." \
+            --notes-file notes.md \
             dist/hypercode-desktop-win-x64.exe \
             dist/hypercode-desktop-mac-arm64.dmg \
             dist/hypercode-desktop-mac-x64.dmg \
