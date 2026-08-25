@@ -330,7 +330,7 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                 directory = project?.worktree
               }
               if (!directory) return
-              navigate(`/vault/${base64Encode(directory)}`)
+              navigate(`/?vault=${base64Encode(directory)}`)
             }
 
             command.register("titlebar-home", () => [

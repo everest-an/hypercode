@@ -20,6 +20,18 @@ function VaultDataProvider(props: ParentProps<{ directory: string }>) {
   )
 }
 
+export function VaultContent(props: { directory: string }) {
+  return (
+    <SDKProvider directory={props.directory}>
+      <VaultDataProvider directory={props.directory}>
+        <FileProvider>
+          <VaultPage vaultRoot={props.directory} />
+        </FileProvider>
+      </VaultDataProvider>
+    </SDKProvider>
+  )
+}
+
 export default function VaultRoute() {
   const params = useParams<{ dir: string }>()
   const navigate = useNavigate()
@@ -44,15 +56,7 @@ export default function VaultRoute() {
 
   return (
     <Show when={resolved()} keyed>
-      {(directory) => (
-        <SDKProvider directory={directory}>
-          <VaultDataProvider directory={directory}>
-            <FileProvider>
-              <VaultPage vaultRoot={directory} />
-            </FileProvider>
-          </VaultDataProvider>
-        </SDKProvider>
-      )}
+      {(directory) => <VaultContent directory={directory} />}
     </Show>
   )
 }

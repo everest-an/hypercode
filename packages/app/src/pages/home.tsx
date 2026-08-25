@@ -1,4 +1,6 @@
 import { ScrollView } from "@opencode-ai/ui/scroll-view"
+import { Show } from "solid-js"
+import { useSearchParams } from "@solidjs/router"
 import { createHomeController } from "./home/home-controller"
 import { createHomeProjectsController } from "./home/home-projects-controller"
 import { HomeUtilityNav } from "./home/home-projects-view"
@@ -7,6 +9,8 @@ import { createHomeScrollController } from "./home/home-scroll-controller"
 import { createHomeSessionSearchController } from "./home/home-session-search-controller"
 import { createHomeSessionsController } from "./home/home-sessions-controller"
 import { HomeSessions } from "./home/home-sessions"
+import { VaultContent } from "./vault/vault-route"
+import { decodeDirectory } from "./directory-layout"
 
 export function NewHome() {
   const home = createHomeController()
@@ -14,6 +18,12 @@ export function NewHome() {
   const sessions = createHomeSessionsController(home)
   const search = createHomeSessionSearchController(home, sessions)
   const scroll = createHomeScrollController(sessions.data.groups)
+  const [searchParams] = useSearchParams<{ vault?: string }>()
+  const vaultDir = () => {
+    const encoded = searchParams.vault
+    if (!encoded) return undefined
+    return decodeDirectory(encoded) || undefined
+  }
   return (
     <div
       class={`
@@ -36,7 +46,13 @@ export function NewHome() {
           `}
         >
           <HomeProjects projects={projects} scroll={scroll} />
-          <HomeSessions sessions={sessions} search={search} scroll={scroll} />
+          <Show when={vaultDir()} keyed fallback={<HomeSessions sessions={sessions} search={search} scroll={scroll} />}>
+            {(directory) => (
+              <div class="h-full min-h-0 min-w-0 overflow-hidden rounded-[10px]">
+                <VaultContent directory={directory} />
+              </div>
+            )}
+          </Show>
           <HomeUtilityNav
             class="flex lg:hidden"
             onOpenSettings={projects.utility.settings}

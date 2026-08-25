@@ -103,11 +103,11 @@ export function createHomeProjectsController(home: HomeController) {
         pickDirectory({
           server: conn,
           title: "Open Vault",
-          onSelect: (result) => {
-            const directory = Array.isArray(result) ? result[0] : result
-            if (!directory) return
-            navigate(`/vault/${base64Encode(directory)}`)
-          },
+onSelect: (result) => {
+const directory = Array.isArray(result) ? result[0] : result
+if (!directory) return
+navigate(`/?vault=${base64Encode(directory)}`)
+},
         })
       },
       close: (conn: ServerConnection.Any, directory: string) => {

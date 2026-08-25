@@ -367,7 +367,7 @@ function VaultCommands() {
           onSelect: (result) => {
             const directory = Array.isArray(result) ? result[0] : result
             if (!directory) return
-            navigate(`/vault/${base64Encode(directory)}`)
+            navigate(`/?vault=${base64Encode(directory)}`)
           },
         })
       },
