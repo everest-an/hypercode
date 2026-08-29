@@ -11,6 +11,7 @@ morning_note.py — 每日金融晨报自动生成器(自动化获客内容引�
 import argparse
 import os
 import re
+import time
 from datetime import datetime, date
 
 import httpx
@@ -106,16 +107,24 @@ def generate_morning_note() -> str:
         date=date.today().strftime("%Y-%m-%d"))
     if not DEEPSEEK_API_KEY:
         return "# 晨报\n(未配置 DEEPSEEK_API_KEY)"
-    r = httpx.post(
-        f"{DEEPSEEK_BASE}/chat/completions",
-        headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}"},
-        json={"model": DEEPSEEK_MODEL,
-              "messages": [{"role": "user", "content": prompt}],
-              "max_tokens": 800, "temperature": 0.5},
-        timeout=90,
-    )
-    r.raise_for_status()
-    return r.json()["choices"][0]["message"]["content"].strip()
+    for attempt in range(3):
+        try:
+            r = httpx.post(
+                f"{DEEPSEEK_BASE}/chat/completions",
+                headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}"},
+                json={"model": DEEPSEEK_MODEL,
+                      "messages": [{"role": "user", "content": prompt}],
+                      "max_tokens": 800, "temperature": 0.5},
+                timeout=90,
+            )
+            r.raise_for_status()
+            note = r.json()["choices"][0]["message"]["content"].strip()
+            if note:
+                return note
+        except Exception:
+            pass
+        time.sleep(2)
+    return "# 晨报\n(生成失败,请检查 DeepSeek 服务)"
 
 
 def main():
