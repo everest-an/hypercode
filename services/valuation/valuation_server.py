@@ -15,10 +15,18 @@ import time
 from datetime import date
 from typing import Optional
 
+import json
+import os
+import re
+import sqlite3
+import time
+from datetime import date
+from pathlib import Path
+
 import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 try:
     import load_env  # noqa: F401  # 自动加载 .env(服务器部署用)
@@ -170,6 +178,58 @@ def api_valuation_prefixed(ticker: str = Query(..., description="股票代码,�
     return build_report(ticker)
 
 
+# ── 邮箱收集(获客转化闭环)──
+_DB_PATH = os.environ.get("LEADS_DB", "/opt/valuation/leads.db")
+
+
+def _leads_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(_DB_PATH)
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS leads ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "email TEXT UNIQUE NOT NULL, "
+        "ticker TEXT, "
+        "created_at TEXT DEFAULT (datetime('now')))")
+    conn.commit()
+    return conn
+
+
+@app.post("/api/leads")
+def collect_lead(email: str = Query(..., description="邮箱"), ticker: str = Query("")):
+    email = email.strip().lower()
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "邮箱格式不正确")
+    conn = _leads_db()
+    try:
+        conn.execute("INSERT OR IGNORE INTO leads (email, ticker) VALUES (?, ?)",
+                     (email, ticker))
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True, "email": email, "message": "已记录,完整模型模板将通过邮件发送"}
+
+
+@app.get("/api/leads/count")
+def leads_count():
+    conn = _leads_db()
+    try:
+        row = conn.execute("SELECT COUNT(*) FROM leads").fetchone()
+        return {"count": row[0]}
+    finally:
+        conn.close()
+
+
+# Caddy 前缀兼容路由
+@app.post("/valuation/api/leads")
+def collect_lead_prefixed(email: str = Query(...), ticker: str = Query("")):
+    return collect_lead(email, ticker)
+
+
+@app.get("/valuation/api/leads/count")
+def leads_count_prefixed():
+    return leads_count()
+
+
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +277,30 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 <div class="card"><h2>📊 Comps 对比(AI 生成)</h2><div class="md">{comps}</div></div>
 <p class="note">⚠️ {disclaimer}</p>
 <a class="cta" href="https://awareliquid.ai/hypercode">🚀 要完整 DCF/LBO 模型?下载 HyperCode</a>
+<div class="card" style="margin-top:24px">
+<h2>📩 免费领取:DCF 模型模板 + 每日晨报</h2>
+<p class="md" style="color:var(--muted)">留邮箱,我们发送完整的 DCF/LBO Excel 模板(公式即用)+ 每交易日 AI 晨报。绝不自动扣费,随时退订。</p>
+<form id="leadForm" style="margin-bottom:0">
+<input type="email" id="leadEmail" placeholder="你的工作邮箱" required style="margin-top:12px">
+<button type="submit" style="margin-top:12px">领取模板</button>
+</form>
+<p id="leadMsg" class="note" style="min-height:18px"></p>
+</div>
+<script>
+document.getElementById('leadForm').addEventListener('submit', async function(e) {{
+  e.preventDefault();
+  const email = document.getElementById('leadEmail').value.trim();
+  const msg = document.getElementById('leadMsg');
+  if (!email) {{ msg.textContent = '请输入邮箱'; return; }}
+  try {{
+    const r = await fetch('/valuation/api/leads?email=' + encodeURIComponent(email) + '&ticker={ticker}', {{method:'POST'}});
+    const j = await r.json();
+    msg.textContent = r.ok ? '✅ ' + j.message : '❌ ' + (j.detail || '提交失败');
+  }} catch(err) {{
+    msg.textContent = '❌ 网络错误,请稍后重试';
+  }}
+}});
+</script>
 <p class="note" style="text-align:center;margin-top:14px">{cta}</p>
 </div></body></html>"""
 
