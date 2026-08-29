@@ -159,6 +159,12 @@ def api_valuation(ticker: str = Query(..., description="股票代码,如 600519"
     return build_report(ticker)
 
 
+# Caddy 保留 /valuation 前缀时的兼容路由(Caddy handle 不剥离前缀)
+@app.get("/valuation/api/valuation")
+def api_valuation_prefixed(ticker: str = Query(..., description="股票代码,如 600519")):
+    return build_report(ticker)
+
+
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
