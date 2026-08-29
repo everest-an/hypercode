@@ -95,21 +95,21 @@ def fetch_history(ticker: str, days: int = 60) -> list:
 
 
 # ── 模型层 ──
-DCF_PROMPT = """你是投行 DCF 建模师。对 {name}({code},现价 {price},市值 {market_cap} 亿,PE {pe}):
-1. 给出 3 个关键假设(收入增速/营业利润率/WACC),明确标注"假设值,非财报数据"
-2. 基于假设给出简版 DCF 每股价值区间
-3. 一句话结论(低估/合理/高估,注明这是 AI 观点)
-4. 必须含:非投资建议
-输出结构化 Markdown,300 字以内,中文。"""
+DCF_PROMPT = """你是投行 DCF 建模师。对 {name}(现价 {price},市值 {market_cap} 亿,PE {pe}),用一段话给出:收入增速、营业利润率、WACC 三个关键假设(标注为假设值,非财报数据),以及基于这些假设的简版 DCF 每股价值区间,最后一句结论(低估/合理/高估)。必须含:非投资建议。200 字以内,中文,纯文本不要用表格或列表。"""
 
 COMPS_PROMPT = """对 {name}(现价 {price},PE {pe}),给出同行业 3 家可比公司及各自典型 PE 区间,
 对比判断相对估值位置(低估/合理/高估)。必须含:非投资建议。150 字以内,中文。"""
 
 
-def ask_deepseek(prompt: str, retries: int = 2) -> str:
-    """调用 DeepSeek。返回文本。空响应重试。"""
+def ask_deepseek(prompt: str, retries: int = 4) -> str:
+    """调用 DeepSeek。返回文本。空响应/限流时指数退避重试。
+
+    批量运行时 DeepSeek 可能限流(尤其 DCF 这类具体价格预测),固定 1s 重试
+    无法恢复;用 1s/2s/4s/8s 指数退避让限流窗口过去。
+    """
     if not DEEPSEEK_API_KEY:
         return "模型未配置(需 DEEPSEEK_API_KEY 环境变量)"
+    backoff = [1, 2, 4, 8]
     for attempt in range(retries + 1):
         try:
             r = httpx.post(
@@ -130,7 +130,7 @@ def ask_deepseek(prompt: str, retries: int = 2) -> str:
         except Exception:
             pass
         if attempt < retries:
-            time.sleep(1)
+            time.sleep(backoff[min(attempt, len(backoff) - 1)])
     return "(模型未返回内容,请稍后重试)"
 
 
