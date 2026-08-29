@@ -20,6 +20,11 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 
+try:
+    import load_env  # noqa: F401  # 自动加载 .env(服务器部署用)
+except ImportError:
+    pass
+
 # ── DeepSeek(从环境变量读 key,绝不硬编码)──
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE = "https://api.deepseek.com/v1"
