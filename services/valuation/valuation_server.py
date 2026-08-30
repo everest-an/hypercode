@@ -23,6 +23,8 @@ import time
 from datetime import date
 from pathlib import Path
 
+import auth  # noqa: E402  # HyperCode 邮箱账户体系
+
 import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query
@@ -228,6 +230,71 @@ def collect_lead_prefixed(email: str = Query(...), ticker: str = Query("")):
 @app.get("/valuation/api/leads/count")
 def leads_count_prefixed():
     return leads_count()
+
+
+# ── HyperCode 邮箱账户体系 ──
+# 方案 A:网页邮箱注册 + 验证码登录。plan/status/uuid 字段预留,便于统计与后续付费。
+
+# 邮件发送回调(可插拔):默认空实现(仅打日志)。接入 Resend/SendGrid 时替换。
+SEND_MAIL = os.environ.get("SEND_MAIL", "")  # 预留:一封邮件 API 的配置
+
+
+def _deliver_code(email: str, code: str) -> bool:
+    """发送验证码邮件。默认不实际发送(dev 模式打日志),返回 True 表示"已发出"。
+    接入 Resend 后可改成真实调用。"""
+    print(f"[auth] 验证码 {code} → {email}(开发模式,未实际发送邮件)")
+    return True
+
+
+@app.post("/api/auth/register")
+def auth_register(email: str = Query(..., description="邮箱")):
+    email = email.strip().lower()
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "邮箱格式不正确")
+    code = auth.issue_code(email)
+    _deliver_code(email, code)
+    return {"ok": True, "message": "验证码已发送,5 分钟内有效"}
+
+
+# Caddy 前缀兼容(前端用 /auth/register,但 Caddy handle 保留 /valuation)
+@app.post("/valuation/api/auth/register")
+def auth_register_prefixed(email: str = Query(...)):
+    return auth_register(email)
+
+
+@app.post("/api/auth/verify")
+def auth_verify(email: str = Query(...), code: str = Query(...)):
+    email = email.strip().lower()
+    if not auth.verify_code(email, code.strip()):
+        raise HTTPException(400, "验证码错误或已过期")
+    user = auth.upsert_user(email)
+    return {"ok": True, "user": {
+        "uuid": user["uuid"], "email": user["email"],
+        "plan": user["plan"], "status": user["status"],
+    }, "message": "登录成功"}
+
+
+@app.post("/valuation/api/auth/verify")
+def auth_verify_prefixed(email: str = Query(...), code: str = Query(...)):
+    return auth_verify(email, code)
+
+
+@app.get("/api/user/me")
+def user_me(email: str = Query(...)):
+    user = auth.get_user_by_email(email.strip().lower())
+    if not user:
+        raise HTTPException(404, "用户不存在")
+    return {"user": user}
+
+
+@app.get("/api/user/count")
+def user_count():
+    return {"count": auth.user_count()}
+
+
+@app.get("/valuation/api/user/count")
+def user_count_prefixed():
+    return {"count": auth.user_count()}
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
