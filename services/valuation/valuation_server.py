@@ -295,6 +295,45 @@ def user_count_prefixed():
     return {"count": auth.user_count()}
 
 
+# ── 注册脚本(与 HTML_TEMPLATE 分离,避免 .format 冲突)──
+REG_SCRIPT = """
+<script>
+(function() {
+  var email = document.getElementById('regEmail');
+  var code = document.getElementById('regCode');
+  var msg = document.getElementById('regMsg');
+  var api = '/valuation/api';
+  function err(e) { msg.textContent = '❌ ' + (e || '请求失败'); }
+
+  document.getElementById('regCodeBtn').addEventListener('click', async function() {
+    var v = email.value.trim();
+    if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(v)) { err('请输入正确邮箱'); return; }
+    msg.textContent = '发送中...';
+    try {
+      var r = await fetch(api + '/auth/register?email=' + encodeURIComponent(v), {method:'POST'});
+      var j = await r.json();
+      msg.textContent = r.ok ? '✅ 验证码已发送到你邮箱' : err(j.detail || '发送失败');
+    } catch(e) { err('网络错误'); }
+  });
+
+  document.getElementById('regVerifyBtn').addEventListener('click', async function() {
+    var v = email.value.trim(), c = code.value.trim();
+    if (!v || !c) { err('请输入邮箱和验证码'); return; }
+    msg.textContent = '验证中...';
+    try {
+      var r = await fetch(api + '/auth/verify?email=' + encodeURIComponent(v) + '&code=' + encodeURIComponent(c), {method:'POST'});
+      var j = await r.json();
+      if (r.ok) {
+        msg.textContent = '✅ 注册成功!欢迎 ' + j.user.email + ' · 档位:' + j.user.plan;
+        code.value = ''; email.readOnly = true;
+      } else { err(j.detail || '验证码错误'); }
+    } catch(e) { err('网络错误'); }
+  });
+})();
+</script>
+"""
+
+
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -343,29 +382,17 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 <p class="note">⚠️ {disclaimer}</p>
 <a class="cta" href="https://awareliquid.ai/hypercode">🚀 要完整 DCF/LBO 模型?下载 HyperCode</a>
 <div class="card" style="margin-top:24px">
-<h2>📩 免费领取:DCF 模型模板 + 每日晨报</h2>
-<p class="md" style="color:var(--muted)">留邮箱,我们发送完整的 DCF/LBO Excel 模板(公式即用)+ 每交易日 AI 晨报。绝不自动扣费,随时退订。</p>
-<form id="leadForm" style="margin-bottom:0">
-<input type="email" id="leadEmail" placeholder="你的工作邮箱" required style="margin-top:12px">
-<button type="submit" style="margin-top:12px">领取模板</button>
-</form>
-<p id="leadMsg" class="note" style="min-height:18px"></p>
+<h2>📩 注册账户:领 DCF 模型模板 + 每日晨报</h2>
+<p class="md" style="color:var(--muted)">邮箱注册即可领取完整 DCF/LBO Excel 模板(公式即用)+ 每交易日 AI 晨报。绝不自动扣费,随时退订。</p>
+<div id="regForm" style="margin-top:12px">
+<input type="email" id="regEmail" placeholder="你的工作邮箱" required style="margin-top:12px">
+<button type="button" id="regCodeBtn" style="margin-top:12px">获取验证码</button>
+<input type="text" id="regCode" placeholder="输入验证码" required style="margin-top:12px">
+<button type="button" id="regVerifyBtn" style="margin-top:12px">注册 / 登录</button>
 </div>
-<script>
-document.getElementById('leadForm').addEventListener('submit', async function(e) {{
-  e.preventDefault();
-  const email = document.getElementById('leadEmail').value.trim();
-  const msg = document.getElementById('leadMsg');
-  if (!email) {{ msg.textContent = '请输入邮箱'; return; }}
-  try {{
-    const r = await fetch('/valuation/api/leads?email=' + encodeURIComponent(email) + '&ticker={ticker}', {{method:'POST'}});
-    const j = await r.json();
-    msg.textContent = r.ok ? '✅ ' + j.message : '❌ ' + (j.detail || '提交失败');
-  }} catch(err) {{
-    msg.textContent = '❌ 网络错误,请稍后重试';
-  }}
-}});
-</script>
+<p id="regMsg" class="note" style="min-height:18px"></p>
+</div>
+{REG_SCRIPT}
 <p class="note" style="text-align:center;margin-top:14px">{cta}</p>
 </div></body></html>"""
 
@@ -375,7 +402,9 @@ def valuation_page(ticker: str = "600519"):
     rep = build_report(ticker)
     q = rep["quote"]
     import html as _h
-    return HTML_TEMPLATE.format(
+    # 先替换 REG_SCRIPT 为双写花括号的版本,避免 .format 把 JS 里的 {} 当占位符
+    tpl = HTML_TEMPLATE.replace("{REG_SCRIPT}", REG_SCRIPT.replace("{", "{{").replace("}", "}}"))
+    return tpl.format(
         ticker=_h.escape(ticker),
         name=_h.escape(q["name"]), code=_h.escape(q["code"]),
         price=q["price"], change_pct=q["change_pct"],
@@ -386,6 +415,71 @@ def valuation_page(ticker: str = "600519"):
         disclaimer=_h.escape(rep["disclaimer"]),
         cta=_h.escape(rep["cta"]),
     )
+
+
+# ── 独立注册/登录页面(/auth)──
+AUTH_HTML = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>注册 / 登录 — HyperCode</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+.wrap{max-width:440px;margin:0 auto;padding:60px 24px}
+h1{font-size:24px;margin-bottom:6px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:16px}
+input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font-size:15px;margin-bottom:12px}
+button{width:100%;padding:12px 20px;border:none;border-radius:8px;background:var(--fg);color:var(--bg);font-weight:600;cursor:pointer;font-size:15px;margin-bottom:8px}
+button:hover{opacity:.9}
+.note{color:var(--muted);font-size:12px;margin-top:8px;min-height:18px}
+.back{color:var(--muted);font-size:13px;display:block;margin-top:12px;text-align:center;text-decoration:none}
+</style></head><body><div class="wrap">
+<h1>HyperCode 账户</h1>
+<p class="sub">邮箱验证码登录,领取 DCF 模板 + 每日晨报</p>
+<div class="card">
+<input type="email" id="authEmail" placeholder="你的工作邮箱">
+<button onclick="sendCode()">获取验证码</button>
+<input type="text" id="authCode" placeholder="输入 6 位验证码">
+<button onclick="verify()">注册 / 登录</button>
+<p class="note" id="authMsg"></p>
+</div>
+<a class="back" href="/valuation">← 返回估值速查</a>
+</div>
+<script>
+function api(p, q) { return '/valuation/api' + p + (q ? '?' + q : ''); }
+function msg(t) { document.getElementById('authMsg').textContent = t; }
+async function sendCode() {
+  var v = document.getElementById('authEmail').value.trim();
+  if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(v)) { msg('请输正确邮箱'); return; }
+  msg('发送中...');
+  var r = await fetch(api('/auth/register', 'email=' + encodeURIComponent(v)), {method:'POST'});
+  var j = await r.json();
+  msg(r.ok ? '验证码已发送' : (j.detail || '发送失败'));
+}
+async function verify() {
+  var v = document.getElementById('authEmail').value.trim(), c = document.getElementById('authCode').value.trim();
+  if (!v || !c) { msg('请输邮箱和验证码'); return; }
+  msg('验证中...');
+  var r = await fetch(api('/auth/verify', 'email=' + encodeURIComponent(v) + '&code=' + encodeURIComponent(c)), {method:'POST'});
+  var j = await r.json();
+  if (r.ok) msg('注册成功!欢迎 ' + j.user.email + ' · 档位 ' + j.user.plan);
+  else msg(j.detail || '验证码错误');
+}
+</script>
+</body></html>"""
+
+
+@app.get("/auth", response_class=HTMLResponse)
+def auth_page():
+    return AUTH_HTML
+
+
+@app.get("/valuation/auth", response_class=HTMLResponse)
+def auth_page_prefixed():
+    return AUTH_HTML
 
 
 if __name__ == "__main__":
