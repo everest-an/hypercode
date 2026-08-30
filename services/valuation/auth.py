@@ -13,9 +13,12 @@ HyperCode 邮箱账户体系 — 核心模块(注册/登录/账户状态)
 import hashlib
 import os
 import secrets
+import smtplib
 import sqlite3
 import time
 import uuid as _uuid
+from email.mime.text import MIMEText
+from email.header import Header
 
 # ── 数据库 ──
 DB_PATH = os.environ.get("USERS_DB", "/opt/valuation/users.db")
@@ -152,3 +155,46 @@ def _row_to_dict(row: sqlite3.Row | tuple) -> dict:
     cols = ["id", "email", "uuid", "plan", "status", "trialed_at",
             "created_at", "last_seen_at"]
     return {c: row[i] for i, c in enumerate(cols)} if row else {}
+
+
+# ── 邮件发送(腾讯企业邮箱 SMTP / 通用 SMTP)──
+SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.exmail.qq.com")
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "465"))
+SMTP_USER = os.environ.get("SMTP_USER", "")        # 完整邮箱地址
+SMTP_PASS = os.environ.get("SMTP_PASS", "")        # SMTP 授权码(非登录密码)
+MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "HyperCode")
+
+
+def send_code_email(to_email: str, code: str) -> bool:
+    """通过 SMTP 发送验证码邮件。默认腾讯企业邮箱(smtp.exmail.qq.com,465/SSL)。
+    未配置 SMTP_USER/PASS 时返回 False(降级为打日志)。返回是否发送成功。"""
+    if not SMTP_USER or not SMTP_PASS:
+        print(f"[auth] SMTP 未配置,verification code {code} → {to_email}(dev mode)")
+        return False
+
+    subject = f"【{MAIL_FROM_NAME}】验证码 {code}"
+    body = (
+        f"你的验证码是:{code}\n\n"
+        f"验证码 5 分钟内有效,用于登录 {MAIL_FROM_NAME}。\n"
+        f"如果不是你本人操作,请忽略本邮件。\n\n"
+        f"{MAIL_FROM_NAME}\n"
+    )
+    msg = MIMEText(body, "plain", "utf-8")
+    msg["Subject"] = Header(subject, "utf-8")
+    msg["From"] = f"{MAIL_FROM_NAME} <{SMTP_USER}>"
+    msg["To"] = to_email
+
+    try:
+        if SMTP_PORT == 465:
+            server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20)
+        else:
+            server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
+            server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.sendmail(SMTP_USER, [to_email], msg.as_string())
+        server.quit()
+        print(f"[auth] 验证码邮件已发送 → {to_email}")
+        return True
+    except Exception as e:
+        print(f"[auth] 验证码邮件发送失败: {e}")
+        return False

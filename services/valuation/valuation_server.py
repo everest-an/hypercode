@@ -240,10 +240,8 @@ SEND_MAIL = os.environ.get("SEND_MAIL", "")  # 预留:一封邮件 API 的配置
 
 
 def _deliver_code(email: str, code: str) -> bool:
-    """发送验证码邮件。默认不实际发送(dev 模式打日志),返回 True 表示"已发出"。
-    接入 Resend 后可改成真实调用。"""
-    print(f"[auth] 验证码 {code} → {email}(开发模式,未实际发送邮件)")
-    return True
+    """发送验证码邮件(通过 auth.send_code_email 的 SMTP)。"""
+    return auth.send_code_email(email, code)
 
 
 @app.post("/api/auth/register")
