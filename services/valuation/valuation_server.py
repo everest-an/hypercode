@@ -27,13 +27,27 @@ import auth  # noqa: E402  # HyperCode 邮箱账户体系
 
 import httpx
 import uvicorn
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 try:
     import load_env  # noqa: F401  # 自动加载 .env(服务器部署用)
 except ImportError:
     pass
+
+# ── 管理面板鉴权(ADMIN_TOKEN 存服务器 .env,绝不提交 Git)──
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
+
+
+def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
+    """校验管理面板请求头:Authorization: Bearer <ADMIN_TOKEN>"""
+    if not ADMIN_TOKEN:
+        raise HTTPException(501, "管理面板未启用:缺少 ADMIN_TOKEN")
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "未授权")
+    token = authorization[7:]
+    if token.strip() != ADMIN_TOKEN:
+        raise HTTPException(403, "无效的管理令牌")
 
 # ── DeepSeek(从环境变量读 key,绝不硬编码)──
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
@@ -295,6 +309,48 @@ def user_count_prefixed():
     return {"count": auth.user_count()}
 
 
+# ── 管理面板 API ──
+@app.get("/api/admin/stats", dependencies=[Depends(require_admin)])
+def admin_stats():
+    conn = auth._db()
+    try:
+        total = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+        by_plan = {r[0]: r[1] for r in conn.execute("SELECT plan, COUNT(*) FROM users GROUP BY plan")}
+        by_status = {r[0]: r[1] for r in conn.execute("SELECT status, COUNT(*) FROM users GROUP BY status")}
+        today = conn.execute("SELECT COUNT(*) FROM users WHERE date(created_at)=date('now')").fetchone()[0]
+        latest = conn.execute("SELECT email, created_at FROM users ORDER BY created_at DESC LIMIT 1").fetchone()
+        codes = conn.execute("SELECT COUNT(*) FROM auth_codes").fetchone()[0]
+    finally:
+        conn.close()
+    return {"total": total, "by_plan": by_plan, "by_status": by_status,
+            "today": today, "codes_sent": codes,
+            "latest": {"email": latest[0], "created_at": latest[1]} if latest else None}
+
+
+@app.get("/api/admin/users", dependencies=[Depends(require_admin)])
+def admin_users(limit: int = Query(50, ge=1, le=200), order: str = Query("desc")):
+    order_sql = "DESC" if order == "asc" else "DESC"
+    conn = auth._db()
+    try:
+        rows = conn.execute(
+            f"SELECT id, email, uuid, plan, status, trialed_at, created_at, last_seen_at "
+            f"FROM users ORDER BY created_at {order_sql} LIMIT ?", (limit,)).fetchall()
+    finally:
+        conn.close()
+    cols = ["id", "email", "uuid", "plan", "status", "trialed_at", "created_at", "last_seen_at"]
+    return {"users": [dict(zip(cols, r)) for r in rows], "count": len(rows)}
+
+
+@app.get("/valuation/api/admin/stats", dependencies=[Depends(require_admin)])
+def admin_stats_prefixed():
+    return admin_stats()
+
+
+@app.get("/valuation/api/admin/users", dependencies=[Depends(require_admin)])
+def admin_users_prefixed(limit: int = Query(100, ge=1, le=200)):
+    return admin_users(limit=limit)
+
+
 # ── 注册脚本(与 HTML_TEMPLATE 分离,避免 .format 冲突)──
 REG_SCRIPT = """
 <script>
@@ -507,6 +563,100 @@ def auth_page():
 @app.get("/valuation/auth", response_class=HTMLResponse)
 def auth_page_prefixed():
     return AUTH_HTML
+
+
+# ── 管理面板页面(需 token,存 localStorage)──
+ADMIN_HTML = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理面板 — HyperCode</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px}
+h1{font-size:24px;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card .k{color:var(--muted);font-size:12px}
+.card .v{font-size:26px;font-weight:700;margin-top:4px}
+.card .d{color:var(--muted);font-size:11px;margin-top:4px}
+.tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tbl th{text-align:left;padding:12px 14px;background:rgba(255,255,255,.03);font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}
+.tbl td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px}
+.b-trial{background:#1a3a2a;color:#6fdc8c}.b-byok{background:#2a2a55;color:#9db4ff}.b-pro{background:#4a2a2a;color:#ff9d9d}
+.b-active{background:#1a3a2a;color:#6fdc8c}
+#tok{display:none}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;margin:60px auto}
+.box input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font-size:15px;margin-bottom:12px}
+.box button{width:100%;padding:12px;border:none;border-radius:8px;background:var(--fg);color:var(--bg);font-weight:600;cursor:pointer}
+.err{color:#ff9d9d;font-size:13px;margin-top:8px}
+.hidden{display:none;}
+</style></head><body>
+<div id="tokBox" class="box">
+<h1 style="font-size:20px">管理面板</h1>
+<p class="sub" style="margin-bottom:16px">请输入管理令牌</p>
+<input type="password" id="tokInput" placeholder="管理令牌">
+<button onclick="doLogin()">进入</button>
+<p class="err" id="tokErr"></p>
+</div>
+<div id="main" class="wrap hidden">
+<h1>📊 HyperCode 管理面板</h1>
+<p class="sub">注册用户与转化统计</p>
+<div class="cards" id="cards"></div>
+<table class="tbl">
+<thead><tr><th>ID</th><th>邮箱</th><th>档位</th><th>状态</th><th>注册时间</th><th>上次访问</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<script>
+var TOKEN = localStorage.getItem('admin_token') || '';
+var API = '/valuation/api/admin';
+function show(err){document.getElementById('tokErr').textContent = err || '';}
+async function doLogin(){
+  var t = document.getElementById('tokInput').value.trim();
+  if(!t){show('请输入令牌');return;}
+  localStorage.setItem('admin_token', t); TOKEN = t;
+  await loadAll();
+}
+async function api(path){
+  var r = await fetch(API + path, {headers:{'Authorization':'Bearer '+TOKEN}});
+  if(r.status===401||r.status===403){show('令牌无效,请重新输入');document.getElementById('tokBox').style.display='block';document.getElementById('main').classList.add('hidden');throw new Error('auth');}
+  if(r.status===501){show('管理面板未启用');throw new Error('501');}
+  if(!r.ok){throw new Error('err');}
+  return r.json();
+}
+async function loadAll(){
+  try{
+    var s = await api('/stats'); var u = await api('/users?limit=100');
+    document.getElementById('tokBox').style.display='none';document.getElementById('main').classList.remove('hidden');
+    var c = document.getElementById('cards');
+    c.innerHTML = '<div class="card"><div class="k">总注册</div><div class="v">'+s.total+'</div><div class="d">验证码已发 '+s.codes_sent+' 次</div></div>' +
+      '<div class="card"><div class="k">今日新增</div><div class="v">'+s.today+'</div><div class="d">当日注册</div></div>' +
+      '<div class="card"><div class="k">trial</div><div class="v">'+(s.by_plan.trial||0)+'</div><div class="d">免费试用</div></div>' +
+      '<div class="card"><div class="k">byok</div><div class="v">'+(s.by_plan.byok||0)+'</div><div class="d">自带密钥</div></div>' +
+      '<div class="card"><div class="k">pro</div><div class="v">'+(s.by_plan.pro||0)+'</div><div class="d">付费</div></div>' +
+      '<div class="card"><div class="k">未激活</div><div class="v">'+(s.by_status.inactive||0)+'</div><div class="d">无效账户</div></div>';
+    var rb = document.getElementById('rows');
+    rb.innerHTML = u.users.length ? u.users.map(function(x){
+      var pb = x.plan==='pro'?'b-pro':(x.plan==='byok'?'b-byok':'b-trial');
+      var sb = x.status==='active'?'b-active':'';
+      return '<tr><td>'+x.id+'</td><td>'+x.email+'</td><td><span class="badge '+pb+'">'+x.plan+'</span></td><td><span class="badge '+sb+'">'+x.status+'</span></td><td>'+x.created_at+'</td><td>'+(x.last_seen_at||'—')+'</td></tr>';
+    }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted)">暂无用户</td></tr>';
+  }catch(e){ if(e.message!=='auth'&&e.message!=='501') show('加载失败'); }
+}
+if(TOKEN){ document.getElementById('tokInput').value=TOKEN; loadAll(); }
+</script>
+</body></html>"""
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_page():
+    return ADMIN_HTML
 
 
 if __name__ == "__main__":
