@@ -326,9 +326,29 @@ REG_SCRIPT = """
       if (r.ok) {
         msg.textContent = '✅ 注册成功!欢迎 ' + j.user.email + ' · 档位:' + j.user.plan;
         code.value = ''; email.readOnly = true;
+        saveLogin(j.user);
+        refreshNav();
       } else { err(j.detail || '验证码错误'); }
     } catch(e) { err('网络错误'); }
   });
+
+  // ── 登录态:localStorage 记忆,供导航栏显示 ──
+  var NAV_ACCOUNT = document.getElementById('navAccount');
+  function saveLogin(u) {
+    try { localStorage.setItem('hypercode_user', JSON.stringify({email:u.email, uuid:u.uuid, plan:u.plan})); } catch(e) {}
+  }
+  function refreshNav() {
+    var u = null;
+    try { u = JSON.parse(localStorage.getItem('hypercode_user') || 'null'); } catch(e) {}
+    if (u && u.email) {
+      // 已登录:导航栏显示"我的账户",隐藏右上注册按钮
+      var acct = document.getElementById('navAccount');
+      if (acct) acct.innerHTML = '<span style="color:var(--muted)">👤 ' + u.email + '</span>';
+      var regBtn = document.querySelector('.nav .btn');
+      if (regBtn) regBtn.href = '/valuation'; regBtn.textContent = '我的账户';
+    }
+  }
+  refreshNav();
 })();
 </script>
 """
@@ -359,7 +379,14 @@ h1{{font-size:28px;margin-bottom:6px}}
 form{{display:flex;gap:8px;margin-bottom:30px}}
 input{{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font-size:15px}}
 button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);color:var(--bg);font-weight:600;cursor:pointer}}
+.nav{{display:flex;align-items:center;gap:12px;margin-bottom:26px}}
+.nav .brand{{font-weight:700;font-size:16px;color:var(--fg);text-decoration:none}}
+.nav .spacer{{flex:1}}
+.nav .btn{{background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;cursor:pointer}}
+.nav .btn:hover{{opacity:.9}}
+.nav .account{{color:var(--muted);font-size:13px}}
 </style></head><body><div class="wrap">
+<nav class="nav"><a class="brand" href="/valuation">HyperCode</a><span class="spacer"></span><span class="account" id="navAccount"></span><a class="btn" href="/auth">注册账户</a></nav>
 <h1>HyperCode 估值速查</h1>
 <p class="sub">输入 A股代码,AI 生成 DCF + Comps 估值快照。想要完整金融建模?<a href="/hypercode" style="color:var(--fg)">HyperCode</a> 内置 55 个投行技能。</p>
 <form method="get" action="/valuation">
