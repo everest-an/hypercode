@@ -326,10 +326,15 @@ def admin_stats():
         today = conn.execute("SELECT COUNT(*) FROM users WHERE date(created_at)=date('now')").fetchone()[0]
         latest = conn.execute("SELECT email, created_at FROM users ORDER BY created_at DESC LIMIT 1").fetchone()
         codes = conn.execute("SELECT COUNT(*) FROM auth_codes").fetchone()[0]
+        # 增长推荐循环:带 referrer_uuid 注册的用户数(= 被推荐来的)
+        referred = conn.execute("SELECT COUNT(*) FROM users WHERE referrer_uuid IS NOT NULL AND referrer_uuid != ''").fetchone()[0]
+        # 有推荐关系(即通过他人链接注册)的用户占比用于观察裂变健康度
+        referrals = conn.execute("SELECT COUNT(DISTINCT referrer_uuid) FROM users WHERE referrer_uuid IS NOT NULL AND referrer_uuid != ''").fetchone()[0]
     finally:
         conn.close()
     return {"total": total, "by_plan": by_plan, "by_status": by_status,
             "today": today, "codes_sent": codes,
+            "referred": referred, "referral_helpers": referrals,
             "latest": {"email": latest[0], "created_at": latest[1]} if latest else None}
 
 
@@ -728,6 +733,7 @@ async function loadAll(){
       '<div class="card"><div class="k">trial</div><div class="v">'+(s.by_plan.trial||0)+'</div><div class="d">免费试用</div></div>' +
       '<div class="card"><div class="k">byok</div><div class="v">'+(s.by_plan.byok||0)+'</div><div class="d">自带密钥</div></div>' +
       '<div class="card"><div class="k">pro</div><div class="v">'+(s.by_plan.pro||0)+'</div><div class="d">付费</div></div>' +
+      '<div class="card"><div class="k">推荐转化</div><div class="v">'+s.referred+'</div><div class="d">'+s.referral_helpers+' 人带来</div></div>' +
       '<div class="card"><div class="k">未激活</div><div class="v">'+(s.by_status.inactive||0)+'</div><div class="d">无效账户</div></div>';
     var rb = document.getElementById('rows');
     rb.innerHTML = u.users.length ? u.users.map(function(x){
