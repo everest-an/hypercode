@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
     plan TEXT NOT NULL DEFAULT 'trial',
     status TEXT NOT NULL DEFAULT 'active',
     trialed_at TEXT,
+    referrer_uuid TEXT,
     created_at TEXT DEFAULT (datetime('now')),
     last_seen_at TEXT
 );
@@ -49,6 +50,13 @@ def _db() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.executescript(_SCHEMA)
+    # 幂等列迁移:旧库可能缺新列,补齐(保证 CREATE IF NOT EXISTS 后也有新列)
+    try:
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(users)")]
+        if "referrer_uuid" not in cols:
+            conn.execute("ALTER TABLE users ADD COLUMN referrer_uuid TEXT")
+    except sqlite3.Error:
+        pass
     conn.commit()
     return conn
 
@@ -94,8 +102,9 @@ def verify_code(email: str, code: str) -> bool:
 
 
 # ── 用户注册/登录 ──
-def upsert_user(email: str) -> dict:
-    """验证码通过后,确保用户存在并标记活跃。返回用户对象。"""
+def upsert_user(email: str, referrer_uuid: str | None = None) -> dict:
+    """验证码通过后,确保用户存在并标记活跃。返回用户对象。
+    referrer_uuid: 首次注册时的推荐人 uuid,用于增长推荐循环。"""
     conn = _db()
     try:
         row = conn.execute(
@@ -113,14 +122,31 @@ def upsert_user(email: str) -> dict:
             # 防哈希碰撞:若 uuid 撞了,加后缀
             while conn.execute("SELECT 1 FROM users WHERE uuid=?", (uid,)).fetchone():
                 uid = uid + "x"
+            # 校验 referrer 是存在的活跃用户(且非自己)
+            ref = None
+            if referrer_uuid and referrer_uuid != uid:
+                refrow = conn.execute(
+                    "SELECT 1 FROM users WHERE uuid=? AND status='active'",
+                    (referrer_uuid,)).fetchone()
+                if refrow:
+                    ref = referrer_uuid
             conn.execute(
-                "INSERT INTO users (email, uuid, plan, status, last_seen_at) "
-                "VALUES (?, ?, 'trial', 'active', ?)",
-                (email.lower(), uid, now_str))
+                "INSERT INTO users (email, uuid, plan, status, referrer_uuid, last_seen_at) "
+                "VALUES (?, ?, 'trial', 'active', ?, ?)",
+                (email.lower(), uid, ref, now_str))
             conn.commit()
             user = conn.execute(
                 "SELECT * FROM users WHERE email=?", (email.lower(),)).fetchone()
         return _row_to_dict(user)
+    finally:
+        conn.close()
+
+
+def get_user_referrals(uuid: str) -> int:
+    """统计某个 uuid 带来的注册用户数(增长推荐循环)。"""
+    conn = _db()
+    try:
+        return conn.execute("SELECT COUNT(*) FROM users WHERE referrer_uuid=?", (uuid,)).fetchone()[0]
     finally:
         conn.close()
 

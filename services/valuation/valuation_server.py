@@ -275,11 +275,11 @@ def auth_register_prefixed(email: str = Query(...)):
 
 
 @app.post("/api/auth/verify")
-def auth_verify(email: str = Query(...), code: str = Query(...)):
+def auth_verify(email: str = Query(...), code: str = Query(...), ref: Optional[str] = Query(default=None)):
     email = email.strip().lower()
     if not auth.verify_code(email, code.strip()):
         raise HTTPException(400, "验证码错误或已过期")
-    user = auth.upsert_user(email)
+    user = auth.upsert_user(email, referrer_uuid=ref)
     return {"ok": True, "user": {
         "uuid": user["uuid"], "email": user["email"],
         "plan": user["plan"], "status": user["status"],
@@ -287,8 +287,14 @@ def auth_verify(email: str = Query(...), code: str = Query(...)):
 
 
 @app.post("/valuation/api/auth/verify")
-def auth_verify_prefixed(email: str = Query(...), code: str = Query(...)):
-    return auth_verify(email, code)
+def auth_verify_prefixed(email: str = Query(...), code: str = Query(...), ref: Optional[str] = Query(default=None)):
+    return auth_verify(email, code, ref)
+
+
+@app.get("/api/user/referral")
+def user_referral(uuid: str = Query(...)):
+    """查询某个 uuid 带来的注册用户数(增长推荐循环)。"""
+    return {"uuid": uuid, "referrals": auth.get_user_referrals(uuid)}
 
 
 @app.get("/api/user/me")
@@ -361,6 +367,15 @@ REG_SCRIPT = """
   var api = '/valuation/api';
   function err(e) { msg.textContent = '❌ ' + (e || '请求失败'); }
 
+  // ── 增长推荐循环:读取 URL 里的 ref=<uuid>,注册时带上 ──
+  var REF = (function() {
+    try {
+      var m = location.search.match(/(?:^|[?&])(?:ref|r)=([a-f0-9]{20,32})/i);
+      if (m) { localStorage.setItem('hypercode_ref', m[1]); return m[1]; }
+      return localStorage.getItem('hypercode_ref') || '';
+    } catch(e) { return ''; }
+  })();
+
   document.getElementById('regCodeBtn').addEventListener('click', async function() {
     var v = email.value.trim();
     if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(v)) { err('请输入正确邮箱'); return; }
@@ -377,13 +392,17 @@ REG_SCRIPT = """
     if (!v || !c) { err('请输入邮箱和验证码'); return; }
     msg.textContent = '验证中...';
     try {
-      var r = await fetch(api + '/auth/verify?email=' + encodeURIComponent(v) + '&code=' + encodeURIComponent(c), {method:'POST'});
+      var url = api + '/auth/verify?email=' + encodeURIComponent(v) + '&code=' + encodeURIComponent(c);
+      if (REF) url += '&ref=' + encodeURIComponent(REF);
+      var r = await fetch(url, {method:'POST'});
       var j = await r.json();
       if (r.ok) {
         msg.textContent = '✅ 注册成功!欢迎 ' + j.user.email + ' · 档位:' + j.user.plan;
         code.value = ''; email.readOnly = true;
         saveLogin(j.user);
         refreshNav();
+        unlockContent();
+        buildShare();
       } else { err(j.detail || '验证码错误'); }
     } catch(e) { err('网络错误'); }
   });
@@ -392,6 +411,43 @@ REG_SCRIPT = """
   var NAV_ACCOUNT = document.getElementById('navAccount');
   function saveLogin(u) {
     try { localStorage.setItem('hypercode_user', JSON.stringify({email:u.email, uuid:u.uuid, plan:u.plan})); } catch(e) {}
+  }
+  // ── 产品闭环:已登录解锁 DCF/Comps 全文 ──
+  function unlockContent() {
+    var u = null;
+    try { u = JSON.parse(localStorage.getItem('hypercode_user') || 'null'); } catch(e) {}
+    var loggedIn = u && u.email;
+    var dcfCard = document.getElementById('dcfCard');
+    var compsCard = document.getElementById('compsCard');
+    if (loggedIn) {
+      dcfCard.classList.remove('locked'); compsCard.classList.remove('locked');
+      var dLock = document.getElementById('dcfLock'); if (dLock) dLock.style.display='none';
+      var cLock = document.getElementById('compsLock'); if (cLock) cLock.style.display='none';
+      // 底部注册表单:已登录则显示"已解锁,欢迎"
+      var regForm = document.getElementById('regForm');
+      if (regForm) { regForm.style.display='none'; var rm=document.getElementById('regMsg'); if(rm) rm.textContent='✅ 已登录 '+u.email+',完整 DCF/Comps 已解锁。领模板请到 /auth。'; }
+    } else {
+      dcfCard.classList.add('locked'); compsCard.classList.add('locked');
+    }
+  }
+  // ── 增长推荐循环:登录后生成带 uuid 的邀请链接 + 分享 ──
+  function buildShare() {
+    var u = null;
+    try { u = JSON.parse(localStorage.getItem('hypercode_user') || 'null'); } catch(e) {}
+    var box = document.getElementById('shareBox');
+    if (!box) return;
+    box.style.display = 'block';
+    if (!u || !u.uuid) { box.innerHTML = '<p class="note">登录后即可生成专属邀请链接,好友通过链接注册,你就获得一次推荐。</p>'; return; }
+    var link = location.origin + '/valuation?ref=' + u.uuid;
+    var inp = document.getElementById('shareLink');
+    if (inp) inp.value = link;
+    // 查询当前推荐数
+    try {
+      fetch(api + '/user/referral?uuid=' + encodeURIComponent(u.uuid)).then(function(r){return r.json();}).then(function(j){
+        var cnt = document.getElementById('shareCount');
+        if (cnt) cnt.textContent = '已成功推荐 ' + (j.referrals||0) + ' 位好友';
+      }).catch(function(e){});
+    } catch(e) {}
   }
   function refreshNav() {
     var u = null;
@@ -405,7 +461,18 @@ REG_SCRIPT = """
     }
   }
   refreshNav();
+  unlockContent();
+  buildShare();
 })();
+// 全局复制函数(供 onclick 调用)
+function copyShare() {
+  var inp = document.getElementById('shareLink');
+  if (!inp) return;
+  inp.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  var b = document.getElementById('shareCopyBtn');
+  if (b) { var t = b.textContent; b.textContent = '✅ 已复制'; setTimeout(function(){b.textContent=t;}, 1500); }
+}
 </script>
 """
 
@@ -441,6 +508,12 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 .nav .btn{{background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;cursor:pointer}}
 .nav .btn:hover{{opacity:.9}}
 .nav .account{{color:var(--muted);font-size:13px}}
+.lock{{text-align:center;padding:22px;border:1px dashed var(--line);border-radius:10px;margin-top:8px}}
+.lock .btn{{display:inline-block;margin-top:10px}}
+.lock p{{color:var(--muted);font-size:14px}}
+.locked#dcfCard .md{{opacity:0;max-height:0;overflow:hidden}}
+.locked#compsCard .md{{opacity:0;max-height:0;overflow:hidden}}
+.card .unlocked-tip{{color:var(--muted);font-size:12px;margin-top:10px}}
 </style></head><body><div class="wrap">
 <nav class="nav"><a class="brand" href="/valuation">HyperCode</a><span class="spacer"></span><span class="account" id="navAccount"></span><a class="btn" href="/auth">注册账户</a></nav>
 <h1>HyperCode 估值速查</h1>
@@ -460,8 +533,16 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 <div><div class="k">52周低</div><div class="v">{low_52w}</div></div>
 </div>
 </div>
-<div class="card"><h2>📊 DCF 简版(AI 生成)</h2><div class="md">{dcf}</div></div>
-<div class="card"><h2>📊 Comps 对比(AI 生成)</h2><div class="md">{comps}</div></div>
+<div class="card" id="dcfCard">
+<h2>📊 DCF 简版(AI 生成)</h2>
+<div class="md" id="dcfFull">{dcf}</div>
+<div class="lock" id="dcfLock"><p>🔒 DCF 全文仅登录用户可见</p><a class="btn" href="/auth">登录解锁完整 DCF</a></div>
+</div>
+<div class="card" id="compsCard">
+<h2>📊 Comps 对比(AI 生成)</h2>
+<div class="md" id="compsFull">{comps}</div>
+<div class="lock" id="compsLock"><p>🔒 Comps 全文仅登录用户可见</p><a class="btn" href="/auth">登录解锁完整 Comps</a></div>
+</div>
 <p class="note">⚠️ {disclaimer}</p>
 <a class="cta" href="https://awareliquid.ai/hypercode">🚀 要完整 DCF/LBO 模型?下载 HyperCode</a>
 <div class="card" style="margin-top:24px">
@@ -474,6 +555,13 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 <button type="button" id="regVerifyBtn" style="margin-top:12px">注册 / 登录</button>
 </div>
 <p id="regMsg" class="note" style="min-height:18px"></p>
+</div>
+<div class="card" id="shareBox" style="display:none">
+<h2>🎁 邀请好友,解锁更多</h2>
+<p class="md" style="color:var(--muted)">把你的专属链接分享给同事/同学,好友注册后你也获得一次推荐。满 3 人可解锁 DCF Excel 模板。</p>
+<input type="text" id="shareLink" readonly style="margin-top:12px">
+<button type="button" id="shareCopyBtn" style="margin-top:10px" onclick="copyShare()">复制链接</button>
+<p class="note" id="shareCount"></p>
 </div>
 {REG_SCRIPT}
 <p class="note" style="text-align:center;margin-top:14px">{cta}</p>
