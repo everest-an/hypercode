@@ -193,6 +193,20 @@ jobs:
     if: inputs.version != ''
     runs-on: ubuntu-latest
     steps:
+      # Fetch the release-notes body FIRST. This job otherwise only downloads artifacts, and checkout@v4's
+      # `clean: false` is unreliable here: in practice it can still wipe the working tree (we've seen it
+      # `Deleting the contents of .../hypercode` then re-init). If that happened *after* Download installers,
+      # it deletes the 600 MB dist/ the next step just filled, and Create draft release then fails with
+      # "no matches found". Sparse + clean: false is kept because the body is the only file needed, but
+      # the ordering is what makes it safe: checkout runs against an empty workspace, so even a clean wipe
+      # cannot remove the installers that are downloaded afterwards.
+      - name: Fetch the release notes body
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/release-notes.md
+          sparse-checkout-cone-mode: false
+          clean: false
+
       - name: Download installers
         uses: actions/download-artifact@v4
         with:
@@ -231,20 +245,6 @@ jobs:
             if [ "$size" -lt 50000000 ]; then echo "::error::$f is only $size bytes"; missing=1; fi
           done
           exit $missing
-
-      # This job only downloads artifacts, so the repository is not otherwise present. Sparse, because the
-      # release body is the only thing needed here and a full checkout of this monorepo for one markdown
-      # file costs minutes of runner time.
-      #
-      # clean: false is load-bearing. checkout defaults to `git clean -ffdx`, which would delete the
-      # untracked dist/ the previous step just filled with 600 MB of installers, and the release would then
-      # be created with no assets.
-      - name: Fetch the release notes body
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: .github/release-notes.md
-          sparse-checkout-cone-mode: false
-          clean: false
 
       - name: Create draft release
         env:
