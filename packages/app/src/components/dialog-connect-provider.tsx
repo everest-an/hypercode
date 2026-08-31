@@ -233,7 +233,7 @@ function ProviderPickerV2(props: {
     active: undefined as string | undefined,
     connecting: undefined as string | undefined,
   })
-  const featured = ["anthropic", "openai", "google", "openrouter", "vercel"]
+  const featured = ["deepseek", "anthropic", "openai", "google", "openrouter", "vercel"]
   const custom = () => ({ id: CUSTOM_ID, name: language.t("dialog.provider.custom.label") })
   const all = createMemo(() => {
     language.locale()
@@ -330,7 +330,7 @@ function ProviderPickerV2(props: {
                       >
                         <ProviderIcon id={provider.id} class="size-4 shrink-0 text-v2-icon-icon-base" />
                         <span class="min-w-0 truncate font-[530] text-v2-text-text-base">{provider.name}</span>
-                        <Show when={false}>
+                        <Show when={provider.id === "deepseek"}>
                           <span class="min-w-0 truncate font-[440] text-v2-text-text-muted">
                             {language.t(
                               "dialog.provider.deepseek.tagline",

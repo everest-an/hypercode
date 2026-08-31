@@ -37,7 +37,10 @@ export function createPromptModelSelection(input: { agent: () => { model?: Model
   }
 
   const current = () => {
-    const key = [prompt.model.current(), input.agent()?.model, configured(), recent(), fallback()].find(
+    // 优先级:内联选择 > 最近实际使用(继承上会话) > 全局配置默认 > 首个连接 provider。
+    // 让 recent 优先于 configured,是让"新会话默认跟随上一个会话的模型/token",
+    // 而不是被全局 config 里显式设定的默认模型覆盖。recent 为空时才回退全局默认。
+    const key = [prompt.model.current(), input.agent()?.model, recent(), configured(), fallback()].find(
       (item): item is ModelKey => !!item && valid(item),
     )
     if (!key) return
