@@ -608,6 +608,147 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 </div></body></html>"""
 
 
+# ── 英文版估值页(/en/valuation)──
+EN_HTML_TEMPLATE = """<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{name} ({ticker}) Stock Valuation - AI DCF & Comps | HyperCode</title>
+<meta name="description" content="{meta_desc}">
+<link rel="canonical" href="{canonical_en}" />
+<link rel="alternate" hreflang="en" href="{canonical_en}" />
+<link rel="alternate" hreflang="zh-CN" href="{canonical_zh}" />
+<link rel="alternate" hreflang="x-default" href="{canonical_zh}" />
+<meta property="og:type" content="article">
+<meta property="og:title" content="{og_title}">
+<meta property="og:description" content="{meta_desc}">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="HyperCode">
+<meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{name_esc} ({ticker_esc}) Stock Valuation",
+  "inLanguage": "en",
+  "dateModified": "{date_iso}",
+  "datePublished": "{date_iso}",
+  "author": {{"@type": "Organization", "name": "AwareLiquid", "url": "https://awareliquid.ai"}},
+  "publisher": {{"@type": "Organization", "name": "AwareLiquid", "url": "https://awareliquid.ai"}},
+  "mainEntityOfPage": "{canonical_en}"
+}}
+</script>
+<style>
+:root{{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{background:var(--bg);color:var(--fg);font-family:-apple-system,"Segoe UI","PingFang SC",sans-serif;line-height:1.7}}
+.wrap{{max-width:720px;margin:0 auto;padding:40px 20px}}
+.nav{{display:flex;align-items:center;gap:12px;margin-bottom:26px}}
+.nav .brand{{font-weight:700;font-size:16px;color:var(--fg);text-decoration:none}}
+.nav .spacer{{flex:1}}
+.nav a{{color:var(--muted);font-size:13px;text-decoration:none}}
+h1{{font-size:28px;margin-bottom:6px}}
+.sub{{color:var(--muted);font-size:14px;margin-bottom:24px}}
+.card{{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:18px}}
+.card h2{{font-size:17px;margin-bottom:12px}}
+.grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+.grid div{{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px}}
+.grid .k{{color:var(--muted);font-size:12px}}
+.grid .v{{font-size:18px;font-weight:600}}
+.md{{white-space:pre-wrap;font-size:14px}}
+.note{{color:var(--muted);font-size:12px;margin-top:16px}}
+form{{display:flex;gap:8px;margin-bottom:24px}}
+input{{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font-size:15px}}
+button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);color:var(--bg);font-weight:600;cursor:pointer}}
+.reg{{margin-top:28px;border:1px solid var(--line);border-radius:14px;padding:24px;background:var(--card)}}
+.reg h3{{font-size:18px;margin-bottom:8px}}
+.reg .msg{{color:var(--muted);font-size:13px;margin-top:10px;min-height:18px}}
+</style>
+</head><body><div class="wrap">
+<nav class="nav"><a class="brand" href="/en/valuation">HyperCode</a><span class="spacer"></span><a href="/valuation">中文版</a></nav>
+<h1>{name} ({ticker}) Valuation</h1>
+<p class="sub">AI-generated DCF + Comps valuation snapshot. Want full financial modeling? <a href="/en/hypercode" style="color:var(--fg)">HyperCode</a> has 55+ investment banking skills built in.</p>
+<form method="get" action="/en/valuation">
+<input name="ticker" placeholder="A-share ticker, e.g. 600519" value="{ticker}" required>
+<button type="submit">Value it</button>
+</form>
+<div class="card">
+<h2>{name} · {code}</h2>
+<div class="grid">
+<div><div class="k">Price</div><div class="v">{price}</div></div>
+<div><div class="k">Change</div><div class="v">{change_pct}%</div></div>
+<div><div class="k">Market Cap</div><div class="v">{mcap}亿</div></div>
+<div><div class="k">PE</div><div class="v">{pe}</div></div>
+</div>
+</div>
+<div class="card"><h2>📊 DCF Summary (AI)</h2><div class="md">{dcf}</div></div>
+<div class="card"><h2>📊 Comps Comparison (AI)</h2><div class="md">{comps}</div></div>
+<p class="note">⚠️ {disclaimer_en}</p>
+<div class="reg">
+<h3>📩 Free: Complete DCF Model Template</h3>
+<p style="color:var(--muted);font-size:14px;margin-bottom:14px">Register to get the full DCF/LBO Excel template + daily AI market briefing. No auto-charge, unsubscribe anytime.</p>
+<input type="email" id="enEmail" placeholder="Your work email">
+<button type="button" id="enCodeBtn" style="margin-top:8px">Get code</button>
+<input type="text" id="enCode" placeholder="6-digit code" style="margin-top:8px">
+<button type="button" id="enVerifyBtn" style="margin-top:8px">Register / Login</button>
+<p class="msg" id="enMsg"></p>
+</div>
+</div>
+<script>
+(function(){{
+  var email=document.getElementById('enEmail'),code=document.getElementById('enCode'),msg=document.getElementById('enMsg');
+  function err(e){{msg.textContent='❌ '+(e||'Failed');}}
+  document.getElementById('enCodeBtn').addEventListener('click',async function(){{
+    var v=email.value.trim();
+    if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(v)){{err('Enter a valid email');return;}}
+    msg.textContent='Sending...';
+    try{{var r=await fetch('/valuation/api/auth/register?email='+encodeURIComponent(v),{{method:'POST'}});
+      var j=await r.json();
+      msg.textContent=r.ok?'✅ Code sent to your email':err(j.detail||'Failed');}}
+    catch(e){{err('Network error');}}
+  }});
+  document.getElementById('enVerifyBtn').addEventListener('click',async function(){{
+    var v=email.value.trim(),c=code.value.trim();
+    if(!v||!c){{err('Enter email and code');return;}}
+    msg.textContent='Verifying...';
+    try{{var r=await fetch('/valuation/api/auth/verify?email='+encodeURIComponent(v)+'&code='+encodeURIComponent(c),{{method:'POST'}});
+      var j=await r.json();
+      if(r.ok){{msg.textContent='✅ Welcome '+j.user.email+'! Full DCF template is on its way.';code.value='';email.readOnly=true;}}
+      else err(j.detail||'Wrong code');}}
+    catch(e){{err('Network error');}}
+  }});
+}})();
+</script>
+</body></html>"""
+
+
+@app.get("/en/valuation", response_class=HTMLResponse)
+def valuation_page_en(ticker: str = "600519"):
+    rep = build_report(ticker)
+    q = rep["quote"]
+    import html as _h
+    from datetime import date as _date
+    raw_ticker = _h.escape(ticker.strip())
+    name_esc = _h.escape(q["name"])
+    canonical_en = f"https://awareliquid.ai/en/valuation?ticker={raw_ticker}"
+    canonical_zh = f"https://awareliquid.ai/valuation?ticker={raw_ticker}"
+    meta_desc = f"{q['name']} ({raw_ticker}) AI stock valuation - DCF and Comps analysis from HyperCode. Current price {q['price']}."
+    og_title = f"{q['name']} ({raw_ticker}) Stock Valuation - AI"
+    return EN_HTML_TEMPLATE.format(
+        ticker=_h.escape(ticker),
+        name=name_esc, code=_h.escape(q["code"]),
+        price=q["price"], change_pct=q["change_pct"],
+        mcap=q["market_cap"], pe=q["pe"],
+        canonical_en=canonical_en, canonical_zh=canonical_zh,
+        meta_desc=_h.escape(meta_desc),
+        og_title=_h.escape(og_title),
+        name_esc=name_esc, ticker_esc=raw_ticker,
+        date_iso=_date.today().isoformat(),
+        dcf=_h.escape(rep["dcf"]).replace("\n", "<br>"),
+        comps=_h.escape(rep["comps"]).replace("\n", "<br>"),
+        disclaimer_en=_h.escape(rep["disclaimer"]),
+    )
+
+
 @app.get("/valuation", response_class=HTMLResponse)
 def valuation_page(ticker: str = "600519"):
     rep = build_report(ticker)
