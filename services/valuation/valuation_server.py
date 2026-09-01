@@ -332,9 +332,18 @@ def admin_stats():
         referrals = conn.execute("SELECT COUNT(DISTINCT referrer_uuid) FROM users WHERE referrer_uuid IS NOT NULL AND referrer_uuid != ''").fetchone()[0]
     finally:
         conn.close()
+    # 访问统计(由 traffic_stats.py 生成, 供 SEO 效果追踪)
+    traffic = {}
+    try:
+        import json as _json
+        with open("/opt/valuation/traffic.json", encoding="utf-8") as _f:
+            traffic = _json.load(_f)
+    except Exception:
+        traffic = {}
     return {"total": total, "by_plan": by_plan, "by_status": by_status,
             "today": today, "codes_sent": codes,
             "referred": referred, "referral_helpers": referrals,
+            "traffic": traffic,
             "latest": {"email": latest[0], "created_at": latest[1]} if latest else None}
 
 
@@ -930,7 +939,10 @@ async function loadAll(){
       '<div class="card"><div class="k">byok</div><div class="v">'+(s.by_plan.byok||0)+'</div><div class="d">自带密钥</div></div>' +
       '<div class="card"><div class="k">pro</div><div class="v">'+(s.by_plan.pro||0)+'</div><div class="d">付费</div></div>' +
       '<div class="card"><div class="k">推荐转化</div><div class="v">'+s.referred+'</div><div class="d">'+s.referral_helpers+' 人带来</div></div>' +
-      '<div class="card"><div class="k">未激活</div><div class="v">'+(s.by_status.inactive||0)+'</div><div class="d">无效账户</div></div>';
+      '<div class="card"><div class="k">未激活</div><div class="v">'+(s.by_status.inactive||0)+'</div><div class="d">无效账户</div></div>' +
+      '<div class="card"><div class="k">24h 访问</div><div class="v">'+((s.traffic&&s.traffic.total_24h)||0)+'</div><div class="d">目标页访问量</div></div>' +
+      '<div class="card"><div class="k">真人访问</div><div class="v">'+((s.traffic&&s.traffic.by_type&&s.traffic.by_type.humans)||0)+'</div><div class="d">24h 真人(SEO效果)</div></div>' +
+      '<div class="card"><div class="k">AI爬虫</div><div class="v">'+((s.traffic&&s.traffic.by_type&&s.traffic.by_type.ai_crawlers)||0)+'</div><div class="d">24h 抓取(GEO)</div></div>';
     var rb = document.getElementById('rows');
     rb.innerHTML = u.users.length ? u.users.map(function(x){
       var pb = x.plan==='pro'?'b-pro':(x.plan==='byok'?'b-byok':'b-trial');
