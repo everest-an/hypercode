@@ -486,7 +486,41 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{name} 估值速查 — HyperCode AI</title>
+<meta name="description" content="{meta_desc}">
+<link rel="canonical" href="{canonical}">
+<link rel="alternate" hreflang="zh-CN" href="{canonical}" />
+<link rel="alternate" hreflang="x-default" href="{canonical}" />
+<meta property="og:type" content="article">
+<meta property="og:title" content="{og_title}">
+<meta property="og:description" content="{og_desc}">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="HyperCode">
 <meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{name_esc}估值速查 - AI 估值分析",
+  "inLanguage": "zh-CN",
+  "dateModified": "{date_iso}",
+  "datePublished": "{date_iso}",
+  "author": {{"@type": "Organization", "name": "AwareLiquid", "url": "https://awareliquid.ai"}},
+  "publisher": {{"@type": "Organization", "name": "AwareLiquid", "url": "https://awareliquid.ai"}},
+  "mainEntityOfPage": "{canonical}",
+  "description": "{meta_desc}"
+}}
+</script>
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "zh-CN",
+  "mainEntity": [
+    {{"@type": "Question", "name": "{name_esc}({ticker_esc})估值怎么样?", "acceptedAnswer": {{"@type": "Answer", "text": "AI 生成 DCF 与 Comps 估值快照:现价 {price_esc}。估值基于假设,非投资建议,完整模型可下载 HyperCode 生成。"}}}},
+    {{"@type": "Question", "name": "DCF 和 Comps 是什么?", "acceptedAnswer": {{"@type": "Answer", "text": "DCF(现金流折现)和 Comps(可比公司)是主流估值方法,本页由 HyperCode 金融技能自动生成,深度建模可下载 HyperCode。"}}}}
+  ]
+}}
+</script>
 <style>
 :root{{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;}}
 *{{margin:0;padding:0;box-sizing:border-box}}
@@ -521,6 +555,7 @@ button{{padding:12px 20px;border:none;border-radius:8px;background:var(--fg);col
 .card .unlocked-tip{{color:var(--muted);font-size:12px;margin-top:10px}}
 </style></head><body><div class="wrap">
 <nav class="nav"><a class="brand" href="/valuation">HyperCode</a><span class="spacer"></span><span class="account" id="navAccount"></span><a class="btn" href="/auth">注册账户</a></nav>
+<p class="note" style="text-align:center;margin-bottom:0;font-size:12px">最后更新:{date_iso} · AI 生成,非投资建议</p>
 <h1>HyperCode 估值速查</h1>
 <p class="sub">输入 A股代码,AI 生成 DCF + Comps 估值快照。想要完整金融建模?<a href="/hypercode" style="color:var(--fg)">HyperCode</a> 内置 55 个投行技能。</p>
 <form method="get" action="/valuation">
@@ -580,12 +615,32 @@ def valuation_page(ticker: str = "600519"):
     import html as _h
     # 先替换 REG_SCRIPT 为双写花括号的版本,避免 .format 把 JS 里的 {} 当占位符
     tpl = HTML_TEMPLATE.replace("{REG_SCRIPT}", REG_SCRIPT.replace("{", "{{").replace("}", "}}"))
+    raw_ticker = _h.escape(ticker.strip())
+    name_esc = _h.escape(q["name"])
+    price_esc = _h.escape(str(q["price"]))
+    from datetime import date as _date
+    date_iso = _date.today().isoformat()
+    # canonical 使用请求时的原始 ticker,与快照页文件名(/snapshots/<ticker>.html)、
+    # sitemap 条目、用户实际访问的 URL 完全一致,保证 AI/搜索引擎不因前缀变体混淆。
+    canonical = f"https://awareliquid.ai/valuation?ticker={raw_ticker}"
+    # 简明可摘录的 meta description(前 ~150 字,含结论性数据便于 AI 引用)
+    price = q["price"]
+    meta_desc = f"{name_esc}({raw_ticker})估值速查 - AI 生成 DCF + Comps 估值快照。当前价 {price}。用 HyperCode 的金融技能生成完整模型。"
+    og_title = f"{name_esc}({raw_ticker})估值 - AI 估值速查"
     return tpl.format(
         ticker=_h.escape(ticker),
-        name=_h.escape(q["name"]), code=_h.escape(q["code"]),
+        name=name_esc, code=_h.escape(q["code"]),
         price=q["price"], change_pct=q["change_pct"],
         mcap=q["market_cap"], pe=q["pe"],
         high_52w=q["high_52w"], low_52w=q["low_52w"],
+        canonical=_h.escape(canonical),
+        meta_desc=_h.escape(meta_desc),
+        og_title=_h.escape(og_title),
+        og_desc=_h.escape(meta_desc),
+        name_esc=name_esc,
+        ticker_esc=raw_ticker,
+        price_esc=price_esc,
+        date_iso=date_iso,
         dcf=_h.escape(rep["dcf"]).replace("\n", "<br>"),
         comps=_h.escape(rep["comps"]).replace("\n", "<br>"),
         disclaimer=_h.escape(rep["disclaimer"]),
