@@ -961,5 +961,224 @@ def admin_page():
     return ADMIN_HTML
 
 
+# ── 国企 AI+ 落地成熟度自评系统(/aiplus)──
+AI_PLUS_HTML = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国企 AI+ 落地成熟度自评 — 对标央企 AI+ 专项行动</title>
+<meta name="description" content="免费自评你单位的 AI 落地成熟度,生成对标国资委 AI+ 专项行动的诊断报告。5 大维度、30 秒完成。">
+<link rel="canonical" href="https://awareliquid.ai/aiplus" />
+<meta property="og:title" content="国企 AI+ 落地成熟度自评系统">
+<meta property="og:description" content="免费生成 AI 落地成熟度诊断报告,对标央企 AI+ 专项行动。">
+<meta name="robots" content="index, follow">
+<style>
+:root{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;--accent:#4f9dff;--ok:#6fdc8c;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px}
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.topbar .logo{font-weight:700;font-size:15px}
+.topbar .logo span{color:var(--muted);font-weight:400}
+.topbar .tag{margin-left:auto;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--muted)}
+h1{font-size:28px;line-height:1.3;margin-bottom:10px}
+.sub{color:var(--muted);font-size:15px;margin-bottom:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:16px}
+.dim-head{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+.dim-head .no{font-size:13px;color:var(--accent);font-weight:600}
+.dim-head .name{font-size:17px;font-weight:700}
+.dim-head .hint{font-size:12px;color:var(--muted)}
+.q{margin-bottom:14px}
+.q .qtext{font-size:14px;margin-bottom:8px}
+.opts{display:flex;gap:8px}
+.opt{flex:1;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--muted);cursor:pointer;text-align:center;transition:.12s}
+.opt:hover{border-color:var(--accent);color:var(--fg)}
+.opt.sel{border-color:var(--accent);background:rgba(79,157,255,.12);color:var(--fg)}
+.submit-btn{width:100%;padding:14px;border:none;border-radius:10px;background:var(--fg);color:var(--bg);font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}
+.submit-btn:hover{opacity:.9}
+.report{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;margin-top:20px}
+.report .score-row{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.report .score{font-size:44px;font-weight:800;color:var(--accent)}
+.report .level{font-size:18px;font-weight:700}
+.report .score-sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.radar{display:flex;flex-direction:column;gap:10px;margin:18px 0 24px}
+.dim-bar{display:flex;align-items:center;gap:10px}
+.dim-bar .dname{width:80px;font-size:12px;color:var(--muted);text-align:right}
+.dim-bar .track{flex:1;height:10px;background:var(--bg);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.dim-bar .fill{height:100%;background:var(--accent);border-radius:99px;width:0;transition:.4s}
+.dim-bar .dval{width:28px;font-size:12px;color:var(--fg);text-align:left}
+.diag{margin:20px 0}
+.diag h4{font-size:15px;margin-bottom:8px}
+.diag .item{font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--line)}
+.accel{background:rgba(79,157,255,.08);border:1px solid var(--accent);border-radius:10px;padding:16px 18px;margin-top:22px}
+.accel p{font-size:14px}
+.accel a{color:var(--accent);font-weight:600}
+.lead{margin-top:24px}
+.lead input{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font-size:14px}
+.lead button{padding:12px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;font-size:14px}
+.lead .msg{font-size:12px;color:var(--muted);margin-top:8px;min-height:16px}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+.foot a{color:var(--muted)}
+</style>
+</head><body><div class="wrap">
+<div class="topbar"><div class="logo">AwareLiquid <span>· AI+ 落地评估</span></div><div class="tag">对标国资委「央企 AI+ 专项行动」</div></div>
+<h1>国企 AI+ 落地成熟度自评</h1>
+<p class="sub">5 大维度、15 道题、约 2 分钟。填完即时生成一份可汇报的诊断报告,定位你单位的 AI 落地短板。</p>
+
+<div id="quiz"></div>
+<button class="submit-btn" id="submitBtn">生成我的 AI 成熟度报告</button>
+
+<div class="report" id="report"></div>
+
+<div class="lead">
+<p style="font-size:13px;color:var(--muted);margin-bottom:8px">留邮箱,获取完整版《AI 落地成熟度报告》PDF + 同行业对标参考(可选)</p>
+<div style="display:flex;gap:8px">
+<input type="email" id="leadEmail" placeholder="工作邮箱(选填)">
+<button onclick="submitLead()">获取完整报告</button>
+</div>
+<p class="msg" id="leadMsg"></p>
+</div>
+
+<div class="foot">本自评仅供内部诊断参考,不构成任何认定依据 · <a href="https://awareliquid.ai">AwareLiquid</a></div>
+</div>
+
+<script>
+// ── 成熟度模型(5 维度 × 3 题 × 3 档)──
+var MODEL = [
+  { name: "战略与组织", hint: "AI 是否上升为单位战略", qs: [
+    { t: "是否将 AI 应用写入年度工作要点或专项规划?", opts: ["未提及", "已立项", "已列为重点"] },
+    { t: "是否有明确的 AI 责任部门或工作专班?", opts: ["无", "兼职负责", "专职专班"] },
+    { t: "是否有独立的 AI 预算或资源保障?", opts: ["无预算", "临时列支", "单列预算"] },
+  ]},
+  { name: "数据基础", hint: "数据是否可安全用于 AI", qs: [
+    { t: "核心业务数据是否已完成治理/结构化?", opts: ["未治理", "部分治理", "已结构化"] },
+    { t: "是否建立数据分级分类与脱敏规范?", opts: ["无", "有制度未落地", "已落地执行"] },
+    { t: "数据是否具备不出域/内网使用的条件?", opts: ["无要求", "部分可", "可不出域"] },
+  ]},
+  { name: "算力与模型", hint: "国产模型与私有化能力", qs: [
+    { t: "是否已接触或试点国产大模型?", opts: ["未接触", "试用中", "已采购/部署"] },
+    { t: "是否具备本地化/私有化部署条件?", opts: ["无", "规划中", "已具备"] },
+    { t: "算力资源是否满足 AI 应用需求?", opts: ["不足", "勉强", "充足"] },
+  ]},
+  { name: "场景落地", hint: "AI 是否真正用于业务", qs: [
+    { t: "是否在具体业务场景试点 AI(写作/审批/风控等)?", opts: ["无试点", "1-2 个", "3 个以上"] },
+    { t: "试点场景是否有可量化的减负/提效数据?", opts: ["无数据", "定性", "有量化"] },
+    { t: "是否有规模化推广 AI 的时间表?", opts: ["无", "计划中", "已推进"] },
+  ]},
+  { name: "安全合规", hint: "AI 应用的安全红线", qs: [
+    { t: "是否通过等保测评或商用密码应用?", opts: ["未开展", "进行中", "已通过"] },
+    { t: "是否对 AI 应用做数据安全审查?", opts: ["无", "有流程", "已审查"] },
+    { t: "是否建立 AI 应用管理制度/责任追责?", opts: ["无", "有制度", "制度+执行"] },
+  ]},
+];
+
+var LEVELS = [
+  { min: 0, name: "起步期", desc: "AI 落地尚在观望,建议先从一个高价值场景切入,建立信心。" },
+  { min: 12, name: "探索期", desc: "已有 AI 意识,但缺乏系统推进,短板集中在场景落地与合规。" },
+  { min: 20, name: "发展期", desc: "AI 已进入试点,下一步是把单点成果规模化、制度化。" },
+  { min: 28, name: "成熟期", desc: "AI 已融入核心业务,持续优化数据与安全底座即可。" },
+  { min: 36, name: "领先期", desc: "AI 落地处于行业前列,可作为标杆输出经验。" },
+];
+
+var DIM_ADVICE = {
+  "战略与组织": "把 AI 写入年度工作要点,成立专职专班,单列预算——顶层设计到位,落地才有抓手。",
+  "数据基础": "先做数据分级分类与脱敏,再谈 AI——数据不出域是国企 AI 的第一前提。",
+  "算力与模型": "优先选择支持本地化/私有化部署的国产模型,避免数据外流风险。",
+  "场景落地": "从『写材料』『文档审核』等高频、低风险场景切入,快速见效、建立信心。",
+  "安全合规": "等保测评 + 数据安全审查 + 责任制度三件套,是 AI 应用能过审的底线。",
+};
+
+// 渲染问卷
+var quiz = document.getElementById('quiz');
+MODEL.forEach(function(dim, di) {
+  var html = '<div class="card"><div class="dim-head"><span class="no">维度' + (di+1) + '</span><span class="name">' + dim.name + '</span><span class="hint">' + dim.hint + '</span></div>';
+  dim.qs.forEach(function(q, qi) {
+    html += '<div class="q"><div class="qtext">' + (qi+1) + '. ' + q.t + '</div><div class="opts">';
+    q.opts.forEach(function(o, oi) {
+      html += '<div class="opt" data-d="' + di + '" data-q="' + qi + '" data-o="' + oi + '">' + o + '</div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  quiz.innerHTML += html;
+});
+
+// 选项点击
+var answers = {}; // "di-qi" -> oi
+document.querySelectorAll('.opt').forEach(function(el) {
+  el.addEventListener('click', function() {
+    var di = el.dataset.d, qi = el.dataset.q;
+    document.querySelectorAll('.opt[data-d="'+di+'"][data-q="'+qi+'"]').forEach(function(o){o.classList.remove('sel');});
+    el.classList.add('sel');
+    answers[di + '-' + qi] = parseInt(el.dataset.o);
+  });
+});
+
+// 生成报告
+document.getElementById('submitBtn').addEventListener('click', function() {
+  var total = 0, dimScores = [];
+  MODEL.forEach(function(dim, di) {
+    var s = 0;
+    dim.qs.forEach(function(q, qi) {
+      s += answers[di + '-' + qi] || 0;
+    });
+    dimScores.push(s);
+    total += s;
+  });
+  var answered = Object.keys(answers).length;
+  if (answered < 15) {
+    alert('请完成全部 15 道题后再生成报告');
+    return;
+  }
+  var level = LEVELS[0];
+  LEVELS.forEach(function(l) { if (total >= l.min) level = l; });
+
+  var bars = MODEL.map(function(dim, di) {
+    var pct = Math.round(dimScores[di] / 6 * 100);
+    return '<div class="dim-bar"><span class="dname">' + dim.name + '</span><div class="track"><div class="fill" style="width:' + pct + '%"></div></div><span class="dval">' + pct + '%</span></div>';
+  }).join('');
+
+  // 短板诊断(分数最低的 2 个维度)
+  var sorted = dimScores.map(function(s, i) { return { s: s, name: MODEL[i].name }; }).sort(function(a,b){return a.s-b.s;});
+  var weak = sorted.slice(0, 2);
+
+  var report = '<div class="score-row"><span class="score">' + total + '</span><span class="level">/40 · ' + level.name + '</span></div>';
+  report += '<div class="score-sub">' + level.desc + '</div>';
+  report += '<h4>分维度成熟度</h4>' + bars;
+  report += '<div class="diag"><h4>关键短板与建议</h4>';
+  weak.forEach(function(w) {
+    report += '<div class="item"><strong>' + w.name + '</strong>:' + DIM_ADVICE[w.name] + '</div>';
+  });
+  report += '</div>';
+  report += '<div class="accel"><p>想加速落地?可引入<strong>数据不出域、支持私有化部署的国产 AI 工作智能体</strong>——把『写材料/文档审核/数据整理』这类高频低风险场景先跑起来。<a href="https://awareliquid.ai/hypercode">了解 HyperCode</a></p></div>';
+
+  var r = document.getElementById('report');
+  r.innerHTML = report;
+  r.style.display = 'block';
+  r.scrollIntoView({ behavior: 'smooth' });
+});
+
+function submitLead() {
+  var email = document.getElementById('leadEmail').value.trim();
+  var msg = document.getElementById('leadMsg');
+  if (!email || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) { msg.textContent = '请输入正确邮箱'; return; }
+  fetch('/valuation/api/leads?email=' + encodeURIComponent(email) + '&ticker=aiplus', { method: 'POST' })
+    .then(function(r) { return r.json().then(function(j) { return { ok: r.ok, j: j }; }); })
+    .then(function(x) { msg.textContent = x.ok ? '✅ 已收到,完整报告将发送到你邮箱' : '❌ 提交失败'; })
+    .catch(function() { msg.textContent = '网络错误'; });
+}
+</script>
+</body></html>"""
+
+
+@app.get("/aiplus", response_class=HTMLResponse)
+def aiplus_page():
+    return AI_PLUS_HTML
+
+
+@app.get("/valuation/aiplus", response_class=HTMLResponse)
+def aiplus_page_prefixed():
+    return AI_PLUS_HTML
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8787)
