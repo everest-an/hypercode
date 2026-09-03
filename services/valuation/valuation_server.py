@@ -28,7 +28,7 @@ import auth  # noqa: E402  # HyperCode 邮箱账户体系
 import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query, Header, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 
 try:
     import load_env  # noqa: F401  # 自动加载 .env(服务器部署用)
@@ -1178,6 +1178,15 @@ def aiplus_page():
 @app.get("/valuation/aiplus", response_class=HTMLResponse)
 def aiplus_page_prefixed():
     return AI_PLUS_HTML
+
+
+@app.get("/aiplus/whitepaper", response_class=HTMLResponse)
+def aiplus_whitepaper():
+    import os as _os
+    p = _os.path.join(_os.path.dirname(__file__), "whitepaper.html")
+    if _os.path.exists(p):
+        return FileResponse(p)
+    return HTMLResponse("<h1>白皮书未部署</h1>", status_code=404)
 
 
 if __name__ == "__main__":
