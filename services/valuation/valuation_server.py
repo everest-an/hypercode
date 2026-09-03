@@ -246,6 +246,64 @@ def leads_count_prefixed():
     return leads_count()
 
 
+# ── 试点邀约线索(国企 AI+ 100 家免费私有化试点)──
+_PILOT_DB_PATH = os.environ.get("PILOT_DB", "/opt/valuation/pilot.db")
+
+
+def _pilot_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(_PILOT_DB_PATH)
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS pilot ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "org TEXT NOT NULL, "
+        "contact TEXT, "
+        "title TEXT, "
+        "email TEXT NOT NULL, "
+        "created_at TEXT DEFAULT (datetime('now')))")
+    conn.commit()
+    return conn
+
+
+@app.post("/api/pilot")
+def collect_pilot(org: str = Query(..., description="单位名称"), email: str = Query(..., description="联系人邮箱"),
+                  contact: str = Query(""), title: str = Query("")):
+    org = org.strip()
+    email = email.strip().lower()
+    if not org:
+        raise HTTPException(400, "请填写单位名称")
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "邮箱格式不正确")
+    conn = _pilot_db()
+    try:
+        conn.execute("INSERT INTO pilot (org, contact, title, email) VALUES (?, ?, ?, ?)",
+                     (org, contact.strip(), title.strip(), email))
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True, "message": "已收到申请,我们将在 3 个工作日内与您联系"}
+
+
+@app.get("/api/pilot/count")
+def pilot_count():
+    conn = _pilot_db()
+    try:
+        row = conn.execute("SELECT COUNT(*) FROM pilot").fetchone()
+        return {"count": row[0]}
+    finally:
+        conn.close()
+
+
+@app.post("/valuation/api/pilot")
+def collect_pilot_prefixed(org: str = Query(...), email: str = Query(...),
+                           contact: str = Query(""), title: str = Query("")):
+    return collect_pilot(org, email, contact, title)
+
+
+@app.get("/valuation/api/pilot/count")
+def pilot_count_prefixed():
+    return pilot_count()
+
+
 # ── HyperCode 邮箱账户体系 ──
 # 方案 A:网页邮箱注册 + 验证码登录。plan/status/uuid 字段预留,便于统计与后续付费。
 
@@ -1187,6 +1245,110 @@ def aiplus_whitepaper():
     if _os.path.exists(p):
         return FileResponse(p)
     return HTMLResponse("<h1>白皮书未部署</h1>", status_code=404)
+
+
+# ── 试点邀约页(/aiplus/pilot)──
+PILOT_HTML = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国企 AI+ 免费私有化部署试点 · 首批 100 家 — 数据不出域</title>
+<meta name="description" content="面向国企/央企的首批 100 家 AI+ 落地试点:免费私有化部署,数据永不出域。从写材料、文档审核等高频场景切入,30 分钟见效。">
+<link rel="canonical" href="https://awareliquid.ai/aiplus/pilot" />
+<meta property="og:title" content="国企 AI+ 免费私有化部署试点 · 首批 100 家">
+<meta property="og:description" content="数据不出域,免费私有化部署,首批 100 家限时申请。">
+<meta name="robots" content="index, follow">
+<style>
+:root{--bg:#0e0e10;--fg:#f5f5f7;--muted:#9a9aa5;--line:#26262c;--card:#16161a;--accent:#4f9dff;--gold:#e6b450;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.8;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:48px 22px}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:32px;font-size:14px}
+.topbar .logo{font-weight:700}
+.topbar .logo span{color:var(--muted);font-weight:400}
+.topbar .back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:13px}
+.badge{display:inline-block;font-size:12px;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:3px 14px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.35;margin-bottom:12px;letter-spacing:-.5px}
+.sub{color:var(--muted);font-size:16px;margin-bottom:36px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:16px}
+.card h3{font-size:16px;margin-bottom:8px}
+.card p{font-size:14px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:560px){.cards{grid-template-columns:1fr}}
+.cards .card{text-align:center;padding:20px}
+.cards .big{font-size:26px;font-weight:800;color:var(--accent)}
+.cards .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.note{background:rgba(79,157,255,.06);border:1px solid var(--accent);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:14px}
+.note strong{color:var(--fg)}
+form{display:flex;flex-direction:column;gap:12px}
+input{padding:13px 16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font-size:15px}
+button{padding:14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+button:hover{opacity:.9}
+.msg{font-size:13px;color:var(--muted);min-height:18px}
+.disc{font-size:12px;color:var(--muted);margin-top:24px;line-height:1.7}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+.foot a{color:var(--muted)}
+</style>
+</head><body><div class="wrap">
+<div class="topbar"><div class="logo">AwareLiquid <span>· AI+ 试点</span></div><a class="back" href="/aiplus">← 自评系统</a></div>
+
+<span class="badge">首批 · 限 100 家 · 先到先得</span>
+<h1>国企 AI+ 免费私有化部署试点</h1>
+<p class="sub">数据不出域,免费帮你把 AI 用进真业务。首批 100 家,30 分钟见效。</p>
+
+<div class="cards">
+<div class="card"><div class="big">100</div><div class="lbl">试点名额(首批)</div></div>
+<div class="card"><div class="big">0 元</div><div class="lbl">私有化部署费用</div></div>
+<div class="card"><div class="big">30 分钟</div><div class="lbl">首个场景见效</div></div>
+<div class="card"><div class="big">不出域</div><div class="lbl">数据本地运行</div></div>
+</div>
+
+<div class="note"><strong>我们押上成本,证明这件事可行:</strong>首批 100 家单位,免费私有化部署,数据永不出域。你只需要提供一个高频场景(写材料/文档审核/数据整理),我们帮你跑出量化效果。</div>
+
+<div class="card">
+<h3>申请试点</h3>
+<p style="margin-bottom:16px">填写以下信息,我们将在 3 个工作日内与您联系。</p>
+<form id="pilotForm">
+<input type="text" id="org" placeholder="单位名称 *" required>
+<input type="text" id="contact" placeholder="联系人姓名">
+<input type="text" id="title" placeholder="部门 / 职位">
+<input type="email" id="email" placeholder="工作邮箱 *" required>
+<button type="submit">提交试点申请</button>
+</form>
+<p class="msg" id="msg"></p>
+</div>
+
+<p class="disc">说明:试点为内测邀约,私有化部署能力正在分批开放,按申请顺序排期。填写信息仅用于试点联系,不用于其他用途。</p>
+
+<div class="foot">© 2026 AwareLiquid · <a href="/aiplus/whitepaper">了解 AI+ 落地三道坎</a></div>
+</div>
+
+<script>
+document.getElementById('pilotForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var org = document.getElementById('org').value.trim();
+  var contact = document.getElementById('contact').value.trim();
+  var title = document.getElementById('title').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var msg = document.getElementById('msg');
+  if (!org || !email) { msg.textContent = '请填写单位名称和工作邮箱'; return; }
+  msg.textContent = '提交中...';
+  fetch('/valuation/api/pilot?org=' + encodeURIComponent(org) + '&email=' + encodeURIComponent(email) + '&contact=' + encodeURIComponent(contact) + '&title=' + encodeURIComponent(title), { method: 'POST' })
+    .then(function(r) { return r.json().then(function(j) { return { ok: r.ok, j: j }; }); })
+    .then(function(x) { msg.textContent = x.ok ? '✅ 已收到申请,我们将在 3 个工作日内与您联系' : '❌ ' + (x.j.detail || '提交失败'); })
+    .catch(function() { msg.textContent = '❌ 网络错误,请稍后重试'; });
+});
+</script>
+</body></html>"""
+
+
+@app.get("/aiplus/pilot", response_class=HTMLResponse)
+def aiplus_pilot():
+    return PILOT_HTML
+
+
+@app.get("/valuation/aiplus/pilot", response_class=HTMLResponse)
+def aiplus_pilot_prefixed():
+    return PILOT_HTML
 
 
 if __name__ == "__main__":
