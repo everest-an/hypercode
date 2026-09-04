@@ -1,0 +1,30 @@
+# HyperCode 内网私有化部署包
+#
+# 一键启动一个 OpenAI 兼容的内网大模型推理服务,
+# 供 HyperCode 通过自定义 baseURL 接入,数据全程不出内网。
+#
+# 用法:
+#   docker compose up -d          # 启动推理服务(默认 11434 端口)
+#   docker compose exec ollama ollama pull qwen2.5:14b   # 拉取国产模型
+#
+# 然后用 HyperCode 的「自定义 Provider」填入:
+#   baseURL = http://<本机内网IP>:11434/v1
+#   model   = qwen2.5:14b
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: hypercode-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"      # OpenAI 兼容端点(仅内网,勿暴露公网)
+    volumes:
+      - ollama-data:/root/.ollama   # 模型持久化
+    # 可选:限制资源,避免抢占宿主机
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 16g
+
+volumes:
+  ollama-data:
