@@ -129,6 +129,17 @@ const getBase = (appId: string): Configuration => ({
   dmg: {
     sign: true,
   },
+  mas: {
+    // Mac App Store build: App Sandbox enforced, signed with Apple Distribution cert.
+    // Uses its own entitlements (sandbox + network + user-selected files) — the dmg
+    // entitlements allow disable-library-validation etc. which MAS rejects.
+    entitlements: "resources/entitlements.mas.plist",
+    entitlementsInherit: "resources/entitlements.mas.plist",
+    hardenedRuntime: false,
+    category: "public.app-category.developer-tools",
+    // MAS requires "production" provisioning profile via Xcode/Transporter; electron-builder
+    // only needs the cert + entitlements here.
+  },
   protocols: {
     name: "HyperCode",
     schemes: ["hypercode"],

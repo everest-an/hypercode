@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Mac App Store 强制要求:App Sandbox -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <!-- Electron/V8 运行时必需(MAS 允许) -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <!-- 网络访问(调 DeepSeek API 等) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    <!-- 读写用户选择的文件(HyperCode 读写项目文件) -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+</dict>
+</plist>
