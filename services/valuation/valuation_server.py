@@ -304,6 +304,74 @@ def pilot_count_prefixed():
     return pilot_count()
 
 
+# ── 行为埋点(快照页转化追踪)──
+_TRACK_DB = os.environ.get("TRACK_DB", "/opt/valuation/track.db")
+
+
+def _track_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(_TRACK_DB)
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS events ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "event TEXT NOT NULL, "
+        "page TEXT, "
+        "created_at TEXT DEFAULT (datetime('now')))")
+    conn.commit()
+    return conn
+
+
+@app.post("/api/track")
+def track_event(event: str = Query(..., description="事件名: pageview/cta_click/reg_form_show/reg_submit/reg_success"),
+                page: str = Query("")):
+    conn = _track_db()
+    try:
+        conn.execute("INSERT INTO events (event, page) VALUES (?, ?)", (event, page))
+        conn.commit()
+    finally:
+        conn.close()
+    return {"ok": True}
+
+
+@app.get("/api/track/stats")
+def track_stats():
+    conn = _track_db()
+    try:
+        rows = conn.execute(
+            "SELECT event, COUNT(*) FROM events GROUP BY event ORDER BY COUNT(*) DESC").fetchall()
+        total = conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+    finally:
+        conn.close()
+    return {"total": total, "by_event": {r[0]: r[1] for r in rows}}
+
+
+@app.post("/valuation/api/track")
+def track_event_prefixed(event: str = Query(...), page: str = Query("")):
+    return track_event(event, page)
+
+
+@app.get("/valuation/api/track/stats")
+def track_stats_prefixed():
+    return track_stats()
+
+
+# ── 一键注册(降门槛: 只填邮箱, 不验码直接建用户)──
+@app.post("/api/quick-signup")
+def quick_signup(email: str = Query(..., description="邮箱"), ref: Optional[str] = Query(default=None)):
+    email = email.strip().lower()
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "邮箱格式不正确")
+    user = auth.upsert_user(email, referrer_uuid=ref)
+    return {"ok": True, "user": {
+        "uuid": user["uuid"], "email": user["email"],
+        "plan": user["plan"], "status": user["status"],
+    }, "message": "注册成功"}
+
+
+@app.post("/valuation/api/quick-signup")
+def quick_signup_prefixed(email: str = Query(...), ref: Optional[str] = Query(default=None)):
+    return quick_signup(email, ref)
+
+
 # ── HyperCode 邮箱账户体系 ──
 # 方案 A:网页邮箱注册 + 验证码登录。plan/status/uuid 字段预留,便于统计与后续付费。
 
