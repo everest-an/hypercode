@@ -158,6 +158,22 @@ const main = Effect.gen(function* () {
     "userData",
     onboardingTestRoot ? join(onboardingTestRoot, "desktop") : join(app.getPath("appData"), appId),
   )
+  // Mac App Store (MAS) runs under App Sandbox, which redirects writes to os.homedir() into the app's
+  // container. The engine resolves its config/cache through xdg-basedir, which falls back to os.homedir()
+  // when XDG_* is unset — so under MAS the desktop and the engine can end up on *different* paths and the
+  // desktop-staged config/cache is silently never read. Point XDG_* at the sandboxed userData/cache dirs
+  // (already inside the container via app.getPath) so both sides agree. Unchanged for dmg/CI builds.
+  if (process.mas) {
+    const dataHome = app.getPath("userData")
+    // No getPath("cache") in Electron; put the cache under userData so it stays inside the sandbox container.
+    const cacheHome = join(dataHome, "cache")
+    if (!onboardingTestRoot) {
+      process.env.XDG_DATA_HOME = join(dataHome, "data")
+      process.env.XDG_CONFIG_HOME = join(dataHome, "config")
+      process.env.XDG_CACHE_HOME = cacheHome
+      process.env.XDG_STATE_HOME = join(dataHome, "state")
+    }
+  }
   if (onboardingTestRoot) app.setPath("sessionData", join(onboardingTestRoot, "session"))
   // Logging and the crash reporter come first, before anything that can throw. They used to sit after
   // initializeOldLayoutEligibility, whose first act is to open the settings store — so the one failure that
