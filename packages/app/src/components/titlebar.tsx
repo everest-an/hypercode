@@ -24,6 +24,7 @@ import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
 import { LayoutRoute, useLayout } from "@/context/layout"
 import { usePlatform } from "@/context/platform"
 import { useCommand } from "@/context/command"
+import { useDirectoryPicker } from "@/components/directory-picker"
 import { useLanguage } from "@/context/language"
 import { useSettings } from "@/context/settings"
 import { WindowsAppMenu } from "./windows-app-menu"
@@ -72,6 +73,7 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
+  const pickDirectory = useDirectoryPicker()
   const useV2Titlebar = createMemo(() => settings.general.newLayoutDesigns())
   const mobile = createMediaQuery("(max-width: 767px)")
   const bottom = createMemo(() => useV2Titlebar() && mobile() && settings.general.mobileTitlebarPosition() === "bottom")
@@ -329,8 +331,26 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                 const project = layout.projects.list()[0]
                 directory = project?.worktree
               }
+              // Use the unconditionally-registered /vault/:dir route (not the `/?vault=`
+              // search param) so the vault opens under both the old and new layouts.
+              const go = (dir: string) => navigate(`/vault/${base64Encode(dir)}`)
+              // No current directory to infer (e.g. no session/project selected, or on a
+              // fresh home). Falling through would do nothing and look like a dead button,
+              // so let the user pick a folder to open as a vault instead.
+              const current = server.current
+              if (!directory && current) {
+                pickDirectory({
+                  server: current,
+                  title: "Open Vault",
+                  onSelect: (result) => {
+                    const selected = Array.isArray(result) ? result[0] : result
+                    if (selected) go(selected)
+                  },
+                })
+                return
+              }
               if (!directory) return
-              navigate(`/?vault=${base64Encode(directory)}`)
+              go(directory)
             }
 
             command.register("titlebar-home", () => [

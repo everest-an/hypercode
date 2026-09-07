@@ -367,7 +367,10 @@ function VaultCommands() {
           onSelect: (result) => {
             const directory = Array.isArray(result) ? result[0] : result
             if (!directory) return
-            navigate(`/?vault=${base64Encode(directory)}`)
+            // Use the unconditionally-registered /vault/:dir route so the vault opens
+            // under both the old and new layouts (the `/?vault=` param is only handled
+            // by the NewHome route, which requires newLayoutDesigns).
+            navigate(`/vault/${base64Encode(directory)}`)
           },
         })
       },
