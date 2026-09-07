@@ -54,6 +54,7 @@ import { cleanupStoreFiles } from "./store-cleanup"
 import { onStoreRecovery } from "./store"
 import { startBackgroundCli } from "./background-cli"
 import { setNativeTranslations } from "./native-translations"
+import { getLicenseStatus } from "./license-state"
 
 const APP_NAMES: Record<string, string> = {
   dev: "HyperCode Dev",
@@ -369,6 +370,18 @@ const main = Effect.gen(function* () {
   const updateTimer = setInterval(() => void updater.check(), 10 * 60 * 1000)
   updateTimer.unref()
   app.once("will-quit", () => clearInterval(updateTimer))
+  // Subscription license state at boot: seeds machine id + trial start on first run and, when a key is
+  // stored, verifies it against the billing backend in the background. Non-blocking and non-fatal — an
+  // unreachable or unconfigured billing endpoint must never hold up launch (grace handling is in license.ts).
+  void getLicenseStatus()
+    .then((status) =>
+      logger.log("license state at boot", {
+        decision: status.decision,
+        hasKey: status.hasKey,
+        needsAttention: status.needsAttention,
+      }),
+    )
+    .catch((error) => logger.warn("failed to read license state at boot", error))
   yield* Effect.promise(() => startNetLog()).pipe(
     Effect.catch((error) =>
       Effect.sync(() => {

@@ -48,6 +48,37 @@ export type FatalRendererError = {
   os?: string
 }
 
+/**
+ * HyperCode 订阅许可证决策(与 main/license.ts 决策模型对应)。
+ *   licensed → 有效 key 校验通过, 含套餐与到期时间;
+ *   trial    → 试用期(可剩负天, 表示后端不可达/未配置时的宽限, 由 UI 提示);
+ *   expired  → 试用已过且校验明确失败。
+ */
+export type LicenseDecision =
+  | { mode: "licensed"; plan: string; expiresAt: string | null }
+  | { mode: "trial"; daysLeft: number }
+  | { mode: "expired" }
+
+/** 与 main/license.ts VerifyResult 对应, 渲染层用于展示错误/引导。 */
+export type LicenseVerifyKind =
+  | "valid"
+  | "invalid"
+  | "not-active"
+  | "unconfigured"
+  | "unreachable"
+  | "not-tried"
+
+export type LicenseStatus = {
+  decision: LicenseDecision
+  hasKey: boolean
+  machineId: string
+  keySuffix: string | null
+  verifyKind: LicenseVerifyKind
+  verifyError: string | null
+  /** 渲染层是否该显示"订阅引导"(试用剩余 <= 2 天或已过期)。 */
+  needsAttention: boolean
+}
+
 export type ElectronAPI = {
   killSidecar: () => Promise<void>
   installCli: () => Promise<string>
@@ -63,6 +94,9 @@ export type ElectronAPI = {
   isOldLayoutEligible: () => Promise<boolean>
   getDisplayBackend: () => Promise<LinuxDisplayBackend | null>
   setDisplayBackend: (backend: LinuxDisplayBackend | null) => Promise<void>
+  licenseGetStatus: () => Promise<LicenseStatus>
+  licenseActivate: (key: string) => Promise<LicenseStatus>
+  licenseClear: () => Promise<LicenseStatus>
   checkAppExists: (appName: string) => Promise<boolean>
   resolveAppPath: (appName: string) => Promise<string | null>
   storeGet: (name: string, key: string) => Promise<string | null>

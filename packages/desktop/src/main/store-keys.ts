@@ -5,3 +5,8 @@ export const OLD_LAYOUT_ELIGIBLE_KEY = "oldLayoutEligible"
 export const WSL_SERVERS_KEY = "wslServers"
 export const PINCH_ZOOM_ENABLED_KEY = "pinchZoomEnabled"
 export const WINDOW_IDS_KEY = "windowIds"
+// HyperCode subscription license (Stripe). Stored in the settings store.
+export const LICENSE_KEY_KEY = "licenseKey"
+export const LICENSE_MACHINE_ID_KEY = "licenseMachineId"
+export const LICENSE_TRIAL_START_KEY = "licenseTrialStart"
+export const LICENSE_VERIFY_BASE_URL = "https://awareliquid.ai/billing"

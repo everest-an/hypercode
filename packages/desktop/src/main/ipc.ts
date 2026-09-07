@@ -12,6 +12,11 @@ import { setForceFocus } from "./debug"
 import { assertAttachmentBudget, createPickedFileAuthorizations } from "./attachment-picker"
 import { getStore, removeStoreFileIfEmpty } from "./store"
 import {
+  activateLicenseKey,
+  clearLicenseKey,
+  getLicenseStatus,
+} from "./license-state"
+import {
   getPinchZoomEnabled,
   getWindowID,
   openExternalURL,
@@ -80,6 +85,9 @@ export function registerIpcHandlers(deps: Deps) {
     deps.finishFirstLaunchOnboarding(createDefaultProject),
   )
   ipcMain.handle("is-old-layout-eligible", () => deps.isOldLayoutEligible())
+  ipcMain.handle("license-get-status", () => getLicenseStatus())
+  ipcMain.handle("license-activate", (_event: IpcMainInvokeEvent, key: string) => activateLicenseKey(key))
+  ipcMain.handle("license-clear", () => clearLicenseKey())
   ipcMain.handle("get-display-backend", () => deps.getDisplayBackend())
   ipcMain.handle("set-display-backend", (_event: IpcMainInvokeEvent, backend: string | null) =>
     deps.setDisplayBackend(backend),
