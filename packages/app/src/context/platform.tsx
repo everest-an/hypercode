@@ -5,6 +5,7 @@ import type { DesktopMenuAction } from "../desktop-menu"
 import { ServerConnection } from "./server"
 import type { WslServersPlatform } from "../wsl/types"
 import type { UpdaterPlatform } from "../updater"
+import type { LicensePlatform } from "../license"
 import type { DraftStore } from "@/utils/draft-store"
 
 type PickerPaths = string | string[] | null
@@ -85,6 +86,9 @@ type PlatformBase = {
 
   /** Application-global desktop updater */
   updater?: UpdaterPlatform
+
+  /** HyperCode Pro subscription license state (desktop only) */
+  license?: LicensePlatform
 
   /** Fetch override */
   fetch?: typeof fetch

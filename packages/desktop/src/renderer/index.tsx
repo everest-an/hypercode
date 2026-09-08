@@ -244,6 +244,12 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
       install: () => window.api.updater.install(),
     },
 
+    license: {
+      getStatus: () => window.api.licenseGetStatus(),
+      activate: (key) => window.api.licenseActivate(key),
+      clear: () => window.api.licenseClear(),
+    },
+
     exportDebugLogs: () => window.api.exportDebugLogs(),
 
     setForceFocus: (enabled) => window.api.setForceFocus(enabled),
