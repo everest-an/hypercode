@@ -921,7 +921,6 @@ export const dict = {
   "settings.license.activate.placeholder": "HC-XXXX-XXXX-XXXX-XXXX",
   "settings.license.activate.label": "许可证密钥",
   "settings.license.activate.button": "激活",
-  "settings.license.activate.success": "许可证已激活",
   "settings.license.activate.error": "该密钥无法激活——请检查后重试",
   "settings.license.manage": "获取 HyperCode Pro",
   "settings.license.remove": "移除许可证",

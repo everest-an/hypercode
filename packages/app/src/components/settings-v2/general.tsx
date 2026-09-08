@@ -310,25 +310,24 @@ export const SettingsGeneralV2: Component<{
 
   const [licenseKeyInput, setLicenseKeyInput] = createSignal("")
   const [licenseBusy, setLicenseBusy] = createSignal(false)
-  const [licenseMessage, setLicenseMessage] = createSignal<"ok" | "error" | null>(null)
+  const [licenseError, setLicenseError] = createSignal<string | null>(null)
 
   const activateLicense = async () => {
     const api = platform.license
     const key = licenseKeyInput().trim()
     if (!api || !key || licenseBusy()) return
     setLicenseBusy(true)
-    setLicenseMessage(null)
+    setLicenseError(null)
     try {
       const next = await api.activate(key)
       if (next.decision.mode === "licensed") {
         setLicenseKeyInput("")
-        setLicenseMessage("ok")
       } else {
-        setLicenseMessage("error")
+        setLicenseError(language.t("settings.license.activate.error"))
       }
       await refetchLicense()
     } catch {
-      setLicenseMessage("error")
+      setLicenseError(language.t("settings.license.activate.error"))
     } finally {
       setLicenseBusy(false)
     }
@@ -337,6 +336,7 @@ export const SettingsGeneralV2: Component<{
   const clearLicense = async () => {
     const api = platform.license
     if (!api) return
+    setLicenseError(null)
     await api.clear()
     await refetchLicense()
   }
@@ -355,8 +355,8 @@ export const SettingsGeneralV2: Component<{
 
   const licenseDetail = createMemo(() => {
     const status = licenseStatus()
-    const message = licenseMessage()
-    if (message) return language.t(message === "ok" ? "settings.license.activate.success" : "settings.license.activate.error")
+    const error = licenseError()
+    if (error) return error
     if (!status) return ""
     if (status.decision.mode === "licensed") {
       return language.t("settings.license.status.active.detail", { plan: status.decision.plan })
