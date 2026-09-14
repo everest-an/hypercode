@@ -121,6 +121,19 @@ const dict: Record<string, string> = {
   "prompt.example.23": "Create a minimal reproduction",
   "prompt.example.24": "Suggest naming improvements",
   "prompt.example.25": "What should we test next?",
+  "settings.general.section.license": "License",
+  "settings.license.status.active": "HyperCode Pro is active",
+  "settings.license.status.active.detail": "Plan: {{plan}}",
+  "settings.license.status.trial": "Trial · {{days}} days left",
+  "settings.license.status.trial.zero": "Trial ended",
+  "settings.license.status.expired": "Trial expired — subscribe to continue",
+  "settings.license.status.unlicensed": "No license yet",
+  "settings.license.activate.placeholder": "HC-XXXX-XXXX-XXXX-XXXX",
+  "settings.license.activate.label": "License key",
+  "settings.license.activate.button": "Activate",
+  "settings.license.activate.error": "That key could not be activated — check it and try again",
+  "settings.license.manage": "Get HyperCode Pro",
+  "settings.license.remove": "Remove license",
 }
 
 const plurals = new Intl.PluralRules("en-US")
