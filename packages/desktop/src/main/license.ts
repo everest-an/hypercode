@@ -13,7 +13,18 @@
  *     200 {valid:true, plan, expires_at} | 401 invalid | 402 not active/expired | 503 not configured
  */
 
+import { createHmac, timingSafeEqual } from "node:crypto"
+
 export const TRIAL_DAYS = 7
+
+/**
+ * 试用状态本地签名密钥。
+ *
+ * 注意: 它随 app 一起编译分发, 因此只能抬高篡改门槛(挡住"手改 JSON 改试用日期"这类
+ * 零门槛破解), 不是密码学保险箱 —— 有能力的攻击者仍可从 asar 中提取。
+ * 换密钥会使旧签名失效, 故仅在需要强制重置试用状态时才轮换。
+ */
+const TRIAL_SIGNING_SECRET = "hc.trial.v1.9f3a2b7c5e1d8046"
 
 export type VerifyResult =
   | { kind: "valid"; plan: string; expiresAt: string | null }
@@ -105,4 +116,17 @@ export async function parseVerifyResponse(response: Response): Promise<VerifyRes
   if (response.status === 402) return { kind: "not-active" }
   if (response.status === 503) return { kind: "unconfigured" }
   return { kind: "unreachable" }
+}
+
+/** 试用状态签名(hex HMAC-SHA256)。用于检测本地试用记录是否被手工篡改。 */
+export function signTrialState(value: string, secret: string = TRIAL_SIGNING_SECRET): string {
+  return createHmac("sha256", secret).update(value).digest("hex")
+}
+
+/** 校验试用状态签名。空值/长度不符/内容不符均判为无效(视为被篡改)。 */
+export function verifyTrialState(value: string, signature: string, secret: string = TRIAL_SIGNING_SECRET): boolean {
+  if (!value || !signature) return false
+  const expected = signTrialState(value, secret)
+  if (expected.length !== signature.length) return false
+  return timingSafeEqual(Buffer.from(expected, "utf8"), Buffer.from(signature, "utf8"))
 }

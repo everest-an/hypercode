@@ -24,7 +24,9 @@ import {
   decideLicense,
   generateMachineId,
   parseVerifyResponse,
+  signTrialState,
   trialDaysLeft,
+  verifyTrialState,
   type LicenseDecision,
   type VerifyResult,
 } from "./license"
@@ -42,6 +44,9 @@ export type LicenseStatus = {
 
 const VERIFY_TIMEOUT_MS = 8000
 
+/** 篡改判定后的试用起点: 取 epoch, 使试用立即视为早已过期。 */
+const TRIAL_TAMPERED_AT = new Date(0)
+
 function store() {
   return getStore()
 }
@@ -54,14 +59,60 @@ function getOrCreateMachineId(): string {
   return id
 }
 
-function getOrCreateTrialStart(): Date {
+/** 写入带签名的试用起点({v: ISO, sig: HMAC})。 */
+function writeTrialStart(start: Date) {
+  const value = start.toISOString()
+  store().set(LICENSE_TRIAL_START_KEY, JSON.stringify({ v: value, sig: signTrialState(value) }))
+}
+
+/**
+ * 读取试用起点并做完整性校验:
+ *   - 无记录           → 首次安装, 开始试用
+ *   - 旧版明文 ISO     → 迁移补签(避免升级时把老用户误判为篡改)
+ *   - 签名校验通过     → 采用
+ *   - 有记录但校验失败 → 被判为手工改过 → 试用视为已过期
+ *
+ * 边界: 整体删除该键与"全新安装"不可区分, 故本地校验只能挡住"改日期",
+ * 挡不住"删文件重置"(那需要在服务端侧留存记录)。
+ */
+function readTrialStart(): { start: Date; tampered: boolean } {
   const raw = store().get(LICENSE_TRIAL_START_KEY)
-  if (typeof raw === "string" && raw) {
-    const d = new Date(raw)
-    if (!Number.isNaN(d.getTime())) return d
+
+  if (typeof raw !== "string" || raw.length === 0) {
+    const start = new Date()
+    writeTrialStart(start)
+    return { start, tampered: false }
   }
-  const start = new Date()
-  store().set(LICENSE_TRIAL_START_KEY, start.toISOString())
+
+  // 旧版明文 ISO(未签名)→ 迁移补签
+  if (!raw.startsWith("{")) {
+    const legacy = new Date(raw)
+    const start = Number.isNaN(legacy.getTime()) ? new Date() : legacy
+    writeTrialStart(start)
+    return { start, tampered: false }
+  }
+
+  // 已签名格式 → 校验
+  try {
+    const parsed = JSON.parse(raw) as { v?: unknown; sig?: unknown }
+    if (typeof parsed.v === "string" && typeof parsed.sig === "string" && verifyTrialState(parsed.v, parsed.sig)) {
+      const d = new Date(parsed.v)
+      if (!Number.isNaN(d.getTime())) return { start: d, tampered: false }
+    }
+  } catch {
+    // 落到下方 tampered 分支
+  }
+
+  return { start: TRIAL_TAMPERED_AT, tampered: true }
+}
+
+function getOrCreateTrialStart(): Date {
+  const { start, tampered } = readTrialStart()
+  if (tampered) {
+    getLogger().warn("license trial state failed integrity check - treating trial as expired", {
+      key: LICENSE_TRIAL_START_KEY,
+    })
+  }
   return start
 }
 

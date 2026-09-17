@@ -4,7 +4,9 @@ import {
   decideLicense,
   generateMachineId,
   parseVerifyResponse,
+  signTrialState,
   trialDaysLeft,
+  verifyTrialState,
   TRIAL_DAYS,
   type DecisionInput,
   type VerifyResult,
@@ -157,5 +159,45 @@ describe("parseVerifyResponse", () => {
   })
   test("500 unreachable", async () => {
     expect(await parseVerifyResponse(fakeResponse(500, null))).toEqual({ kind: "unreachable" })
+  })
+})
+
+describe("signTrialState / verifyTrialState", () => {
+  const value = "2026-09-07T00:00:00.000Z"
+
+  test("signature is stable 64-char hex", () => {
+    const sig = signTrialState(value)
+    expect(sig).toMatch(/^[0-9a-f]{64}$/)
+    expect(signTrialState(value)).toBe(sig)
+  })
+
+  test("accepts a valid signature", () => {
+    expect(verifyTrialState(value, signTrialState(value))).toBe(true)
+  })
+
+  test("rejects a modified value (date moved)", () => {
+    const sig = signTrialState(value)
+    expect(verifyTrialState("2026-09-08T00:00:00.000Z", sig)).toBe(false)
+  })
+
+  test("rejects a modified signature", () => {
+    const sig = signTrialState(value)
+    const tampered = (sig[0] === "0" ? "1" : "0") + sig.slice(1)
+    expect(verifyTrialState(value, tampered)).toBe(false)
+  })
+
+  test("rejects empty inputs", () => {
+    expect(verifyTrialState("", signTrialState(value))).toBe(false)
+    expect(verifyTrialState(value, "")).toBe(false)
+  })
+
+  test("rejects a wrong-length signature", () => {
+    expect(verifyTrialState(value, "abc")).toBe(false)
+  })
+
+  test("a signature from another secret does not validate", () => {
+    const foreign = signTrialState(value, "other-secret")
+    expect(verifyTrialState(value, foreign)).toBe(false)
+    expect(verifyTrialState(value, foreign, "other-secret")).toBe(true)
   })
 })
