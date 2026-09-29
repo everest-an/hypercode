@@ -30,9 +30,9 @@ import { WorkspaceService } from "./workspace.ts";
  * it is a configured value rather than caller text; without one there is no verified window to
  * hand the result to, and the page keeps the manual instruction instead of guessing.
  */
-export function callbackPage(heading: string, returnOrigin?: string) {
+export function callbackPage(heading: string, returnOrigin?: string, connected = true) {
   const handback = returnOrigin
-    ? `<script>try{window.opener?.postMessage({type:"hypercode:google-connected"},${JSON.stringify(
+    ? `<script>try{window.opener?.postMessage({type:"hypercode:google-connected",ok:${connected}},${JSON.stringify(
         returnOrigin,
       ).replace(/<\//g, "<\\/")});}catch(e){}window.close();</script>`
     : "";
@@ -137,7 +137,10 @@ export async function createApp(
     return c.json(session);
   });
   app.get("/api/google/callback", async (c) => {
-    if (c.req.query("error")) return c.html(callbackPage("Google connection cancelled"), 400);
+    if (c.req.query("error")) {
+      const returnOrigin = await google.returnOrigin(c.req.query("state") ?? "");
+      return c.html(callbackPage("Google connection cancelled", returnOrigin, false), 400);
+    }
     const state = c.req.query("state"),
       code = c.req.query("code");
     if (!state || !code) throw new AppError("Google callback is incomplete");

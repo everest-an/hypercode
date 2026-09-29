@@ -12,9 +12,9 @@ export function isGoogleHandback(event: { origin: string; data: unknown }, appOr
 }
 
 /**
- * Resolves true when the callback window hands the result back, false when the person closed it
- * without finishing. Without this the workspace would keep showing the pre-connect state until
- * the person happened to press refresh.
+ * Resolves true when the callback window hands a completed sign-in back, false when it reports a
+ * cancelled one or the person closed it without finishing. Without this the workspace would keep
+ * showing the pre-connect state until the person happened to press refresh.
  */
 export function waitForGoogleHandback(popup: Window): Promise<boolean> {
   return new Promise((resolve) => {
@@ -28,7 +28,8 @@ export function waitForGoogleHandback(popup: Window): Promise<boolean> {
       resolve(connected);
     };
     function onMessage(event: MessageEvent) {
-      if (isGoogleHandback(event, window.location.origin)) finish(true);
+      if (!isGoogleHandback(event, window.location.origin)) return;
+      finish((event.data as { ok?: boolean }).ok !== false);
     }
     window.addEventListener("message", onMessage);
     watch = setInterval(() => {

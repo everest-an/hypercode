@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { test } from "node:test";
-import type { Config } from "../apps/server/src/config.ts";
 import { callbackPage } from "../apps/server/src/app.ts";
+import type { Config } from "../apps/server/src/config.ts";
 import { createStore } from "../apps/server/src/db.ts";
 import { GoogleAuth } from "../apps/server/src/google-auth.ts";
 import { encryptSecret } from "../packages/integrations/src/vault.ts";
@@ -263,11 +263,30 @@ test("a connect remembers the app window the callback should hand the result bac
 
 test("the callback page hands back only when there is a window to hand to", () => {
   const handed = callbackPage("Google is connected", "http://localhost:8081");
-  assert.match(handed, /postMessage\(\{type:"hypercode:google-connected"\},"http:\/\/localhost:8081"\)/);
+  assert.match(
+    handed,
+    /postMessage\(\{type:"hypercode:google-connected",ok:true\},"http:\/\/localhost:8081"\)/,
+  );
   assert.match(handed, /window\.close\(\)/);
   const alone = callbackPage("Google is connected");
   assert.ok(!alone.includes("<script>"), alone);
   assert.match(alone, /refresh your workspace/);
+});
+
+test("a declined consent still hands back and closes, so the workspace is not left waiting", async (t) => {
+  const db = await createStore();
+  t.after(() => db.close());
+  const auth = new GoogleAuth(db, oauthConfig());
+  const stateId =
+    new URL(
+      (await auth.connect("decline-user", false, "http://localhost:8081")).url,
+    ).searchParams.get("state") ?? "";
+  assert.equal(await auth.returnOrigin(stateId), "http://localhost:8081");
+  const page = callbackPage("Google connection cancelled", "http://localhost:8081", false);
+  assert.match(page, /ok:false/);
+  assert.match(page, /window\.close\(\)/);
+  assert.equal(await auth.returnOrigin(stateId), undefined, "the state is spent either way");
+  assert.equal(await auth.returnOrigin("no-such-state"), undefined);
 });
 
 test("a hostile origin cannot break out of the callback page's inline script", () => {

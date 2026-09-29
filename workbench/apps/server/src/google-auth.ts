@@ -193,6 +193,11 @@ export class GoogleAuth {
     );
     return { returnOrigin: state.returnOrigin };
   }
+  /** The origin recorded for a flow Google closed without issuing a code (the person declined). */
+  async returnOrigin(stateId: string): Promise<string | undefined> {
+    const state = await this.db.take<OAuthState>("system", "oauth", stateId);
+    return state && state.expiresAt >= Date.now() ? state.returnOrigin : undefined;
+  }
   async accessToken(owner: string, expectedConnectionId?: string): Promise<string> {
     const tokens = await this.tokens(owner);
     if (!tokens) throw new AppError("Google is disconnected", 409);
