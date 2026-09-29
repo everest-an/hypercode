@@ -1181,8 +1181,7 @@ export function ConnectionsScreen({ query = "" }: { query?: string }) {
     setError("");
     // Opened inside the click gesture on purpose: the auth URL only exists after the await
     // below, and a window opened outside the gesture is what popup blockers swallow.
-    const popup =
-      Platform.OS === "web" ? window.open("about:blank", "hypercode-google") : null;
+    const popup = Platform.OS === "web" ? window.open("about:blank", "hypercode-google") : null;
     try {
       const result = await api.request<{ url: string | null; connected?: boolean }>(
         "/api/google/connect",
@@ -1384,6 +1383,12 @@ export function ConnectionsScreen({ query = "" }: { query?: string }) {
                 label="Rich Threads"
                 value={w.runtime.richThreads ? "HyperCode Intelligence" : "Not connected"}
               />
+              {w.degraded && w.degraded.length > 0 && (
+                <SettingsLine
+                  label="Google reads"
+                  value={`Cached · ${w.degraded.map((d) => d.source).join(", ")} · ${w.degraded[0].message}`}
+                />
+              )}
               <Button
                 small
                 icon={ArrowDownToLine}

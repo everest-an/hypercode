@@ -9,7 +9,7 @@ import type {
   ProposalInput,
   Workspace,
 } from "../../../packages/domain/src/index.ts";
-import { GoogleClient } from "../../../packages/integrations/src/google.ts";
+import { GoogleApiError, GoogleClient } from "../../../packages/integrations/src/google.ts";
 import { createSamplePdf } from "../../../packages/integrations/src/pdf.ts";
 import type { ActionService } from "./actions.ts";
 import { agentConfigured } from "./agent.ts";
@@ -19,8 +19,28 @@ import { AppError } from "./errors.ts";
 import type { Files } from "./files.ts";
 import type { GoogleAuth } from "./google-auth.ts";
 
+/** Google's own message is the useful one; anything else still has to say which leg failed. */
+function googleFailure(reason: unknown) {
+  return reason instanceof Error ? reason.message.slice(0, 200) : "Google read failed";
+}
+
+/** Only a quota refusal means "stop asking for a while"; other failures surface immediately. */
+function rateLimited(result: PromiseSettledResult<unknown>) {
+  return (
+    result.status === "rejected" &&
+    result.reason instanceof GoogleApiError &&
+    (result.reason.status === 403 || result.reason.status === 429)
+  );
+}
+
 export class WorkspaceService {
   private seeding = new Map<string, Promise<void>>();
+  /**
+   * A Google rate limit is a stop sign, not a retry signal: the client polls every 3s, and each
+   * poll costs ~155 quota units. Inside the window the snapshot serves the last cache instead.
+   */
+  readonly googlePausedUntil = new Map<string, number>();
+  private static readonly googlePauseMs = 30_000;
   constructor(
     private readonly db: Store,
     private readonly config: Config,
@@ -259,15 +279,43 @@ export class WorkspaceService {
     await this.db.put(owner, "settings", { id: "seeded", value: true });
   }
   async snapshot(owner: string, query?: string): Promise<Workspace> {
-    let mail: Mail[], events: CalendarEvent[];
+    let mail: Mail[] = [],
+      events: CalendarEvent[] = [];
+    const degraded: { source: "mail" | "events"; message: string }[] = [];
     const connected = await this.connected(owner);
     if (this.config.mode === "live" && connected) {
       const connection = await this.connection(owner);
       if (!connection) throw new AppError("Google is disconnected", 409);
-      const google = this.google(owner, connection.id);
-      [mail, events] = await Promise.all([google.listMail(query), google.listEvents()]);
-      mail = await this.cacheMail(owner, mail, connection.id);
-      for (const event of events) await this.db.put(owner, "events", event);
+      if (Date.now() < (this.googlePausedUntil.get(owner) ?? 0)) {
+        // 退避窗口内不打 Google：读上次缓存，并把"这是缓存"如实告诉调用方
+        mail = await this.db.list<Mail>(owner, "mail");
+        events = await this.db.list<CalendarEvent>(owner, "events");
+        degraded.push(
+          { source: "mail", message: "Google reads paused after a rate limit" },
+          { source: "events", message: "Google reads paused after a rate limit" },
+        );
+      } else {
+        const google = this.google(owner, connection.id);
+        const [mailResult, eventsResult] = await Promise.allSettled([
+          google.listMail(query),
+          google.listEvents(),
+        ]);
+        if (mailResult.status === "fulfilled")
+          mail = await this.cacheMail(owner, mailResult.value, connection.id);
+        else {
+          mail = await this.db.list<Mail>(owner, "mail");
+          degraded.push({ source: "mail", message: googleFailure(mailResult.reason) });
+        }
+        if (eventsResult.status === "fulfilled") {
+          events = eventsResult.value;
+          for (const event of events) await this.db.put(owner, "events", event);
+        } else {
+          events = await this.db.list<CalendarEvent>(owner, "events");
+          degraded.push({ source: "events", message: googleFailure(eventsResult.reason) });
+        }
+        if (rateLimited(mailResult) || rateLimited(eventsResult))
+          this.googlePausedUntil.set(owner, Date.now() + WorkspaceService.googlePauseMs);
+      }
     } else if (this.config.mode === "sample" && connected) {
       mail = await this.db.list<Mail>(owner, "mail");
       events = await this.db.list<CalendarEvent>(owner, "events");
@@ -292,6 +340,7 @@ export class WorkspaceService {
       browsers: await this.db.list<BrowserSession>(owner, "browsers"),
       actions: await this.db.list<ActionProposal>(owner, "actions"),
       activity: await this.db.list<ActivityEntry>(owner, "activity"),
+      ...(degraded.length ? { degraded } : {}),
       connections: [
         {
           id: "google",

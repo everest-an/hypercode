@@ -186,6 +186,11 @@ export interface Workspace {
     openbotConfigured: boolean;
     richThreads?: boolean;
   };
+  /**
+   * Sources whose last live read failed. Their lists above then hold the last cached copy, so the
+   * rest of the workspace (browsers, files, activity) still renders instead of the whole page dying.
+   */
+  degraded?: { source: "mail" | "events"; message: string }[];
 }
 
 /** Provider-independent boundary: OpenBot/AG-UI runs never dictate presentation. */
