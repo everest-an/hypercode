@@ -32,3 +32,6 @@ UPCOMING_CHANGELOG.md
 logs/
 *.bun-build
 tsconfig.tsbuildinfo
+# 改名器的跑批输出（带时间戳与本机绝对路径），每次运行重生成
+hc-agui/tools/.hypercode-rename.json
+hc-agui/tools/renamed-manifest.json
