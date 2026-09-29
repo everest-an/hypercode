@@ -30,7 +30,7 @@ const missingKeyMessage =
   "HyperCode requires CPK_INTELLIGENCE_API_KEY. " +
   "Run `npx copilotkit@latest login` and `npx copilotkit@latest project select`, " +
   "then set the generated server-only key. " +
-  "See https://docs.copilotkit.ai/intelligence/connect-your-runtime";
+  "See the HyperCode workbench section of workbench/README.md";
 
 test("every API mode rejects a missing or blank Intelligence key", () => {
   for (const mode of [sampleConfig, liveConfig()]) {

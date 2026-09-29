@@ -58,7 +58,7 @@ export const intelligenceKeyRequiredMessage =
   "HyperCode requires CPK_INTELLIGENCE_API_KEY. " +
   "Run `npx copilotkit@latest login` and `npx copilotkit@latest project select`, " +
   "then set the generated server-only key. " +
-  "See https://docs.copilotkit.ai/intelligence/connect-your-runtime";
+  "See the HyperCode workbench section of workbench/README.md";
 
 export function required(name: string, message: string, value = process.env[name]): string {
   if (!value?.trim()) throw new Error(message);

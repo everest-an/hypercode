@@ -325,7 +325,7 @@ export class WorkspaceService {
         configured: agentConfigured(this.config),
         openbotConfigured: false,
         // 本地线程模式下会话活在 InMemoryAgentRunner 里，不是 Intelligence 持久线程；
-        // 写死 true 会让 Apps 屏对着你说"CopilotKit Intelligence"，那是状态造假
+        // 写死 true 会让 Apps 屏对着你说"HyperCode Intelligence"，那是状态造假
         richThreads: this.config.threadsMode !== "local",
       },
     };
