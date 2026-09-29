@@ -21,6 +21,27 @@ import { Files } from "./files.ts";
 import { GoogleAuth } from "./google-auth.ts";
 import { WorkspaceService } from "./workspace.ts";
 
+/**
+ * The consent round trip happens in a window the app opened, so the result has to reach the app
+ * window that still holds the live session — a fresh page load would lose it, which is why the
+ * old "go back and refresh yourself" page was the only thing that could be said here.
+ *
+ * `returnOrigin` is only ever set from an origin the deployment allowlisted at connect time, so
+ * it is a configured value rather than caller text; without one there is no verified window to
+ * hand the result to, and the page keeps the manual instruction instead of guessing.
+ */
+export function callbackPage(heading: string, returnOrigin?: string) {
+  const handback = returnOrigin
+    ? `<script>try{window.opener?.postMessage({type:"hypercode:google-connected"},${JSON.stringify(
+        returnOrigin,
+      ).replace(/<\//g, "<\\/")});}catch(e){}window.close();</script>`
+    : "";
+  const hint = returnOrigin
+    ? "You can return to HyperCode."
+    : "Return to HyperCode and refresh your workspace.";
+  return `<h1>${heading}</h1>${handback}<p>${hint}</p>`;
+}
+
 export async function createApp(
   db: Store,
   config: Config,
@@ -116,15 +137,12 @@ export async function createApp(
     return c.json(session);
   });
   app.get("/api/google/callback", async (c) => {
-    if (c.req.query("error"))
-      return c.html("<h1>Google connection cancelled</h1><p>You can return to HyperCode.</p>", 400);
+    if (c.req.query("error")) return c.html(callbackPage("Google connection cancelled"), 400);
     const state = c.req.query("state"),
       code = c.req.query("code");
     if (!state || !code) throw new AppError("Google callback is incomplete");
-    await google.callback(state, code);
-    return c.html(
-      "<h1>Google is connected</h1><p>Return to HyperCode and refresh your workspace.</p>",
-    );
+    const { returnOrigin } = await google.callback(state, code);
+    return c.html(callbackPage("Google is connected", returnOrigin));
   });
   app.use("/api/*", async (c, next) => {
     const signedRoute =
@@ -279,7 +297,15 @@ export async function createApp(
       });
       return c.json({ url: null, connected: true });
     }
-    return c.json(await google.connect(c.get("owner"), body.capability === "write"));
+    // Only a deployment-allowlisted origin may become the hand-back target.
+    const origin = c.req.header("origin");
+    return c.json(
+      await google.connect(
+        c.get("owner"),
+        body.capability === "write",
+        origin && origins.has(origin) ? origin : undefined,
+      ),
+    );
   });
   app.post("/api/google/disconnect", async (c) => {
     if (config.mode === "sample")

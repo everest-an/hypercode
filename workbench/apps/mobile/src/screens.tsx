@@ -40,6 +40,7 @@ import type {
 } from "../../../packages/domain/src";
 import { API_URL } from "./api";
 import { localDateTime, zonedInstant } from "./date-time";
+import { waitForGoogleHandback } from "./google-return";
 import {
   Button,
   Card,
@@ -1178,14 +1179,25 @@ export function ConnectionsScreen({ query = "" }: { query?: string }) {
   async function connect(capability: "read" | "write") {
     setBusy(true);
     setError("");
+    // Opened inside the click gesture on purpose: the auth URL only exists after the await
+    // below, and a window opened outside the gesture is what popup blockers swallow.
+    const popup =
+      Platform.OS === "web" ? window.open("about:blank", "hypercode-google") : null;
     try {
       const result = await api.request<{ url: string | null; connected?: boolean }>(
         "/api/google/connect",
         { capability },
       );
       if (result.url) {
-        await Linking.openURL(result.url);
-        notify("Finish connecting in your browser, then refresh your workspace.");
+        if (popup) {
+          popup.location.href = result.url;
+          const connected = await waitForGoogleHandback(popup);
+          await refresh();
+          notify(connected ? "Google is connected." : "Google sign-in was cancelled.");
+        } else {
+          await Linking.openURL(result.url);
+          notify("Finish connecting in your browser, then refresh your workspace.");
+        }
       } else {
         await refresh();
         notify(

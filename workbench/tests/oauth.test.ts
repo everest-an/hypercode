@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { test } from "node:test";
 import type { Config } from "../apps/server/src/config.ts";
+import { callbackPage } from "../apps/server/src/app.ts";
 import { createStore } from "../apps/server/src/db.ts";
 import { GoogleAuth } from "../apps/server/src/google-auth.ts";
 import { encryptSecret } from "../packages/integrations/src/vault.ts";
@@ -238,4 +239,39 @@ test("an in-flight refresh cannot restore credentials after disconnect", async (
   release.resolve();
   await assert.rejects(refresh, /disconnected/i);
   assert.equal(await auth.tokens("refresh-disconnect"), null);
+});
+
+test("a connect remembers the app window the callback should hand the result back to", async (t) => {
+  const db = await createStore();
+  t.after(() => db.close());
+  const auth = new GoogleAuth(db, oauthConfig());
+  const stateIdOf = async (owner: string, origin?: string) =>
+    new URL((await auth.connect(owner, false, origin)).url).searchParams.get("state") ?? "";
+  const handed = await db.get<{ returnOrigin?: string }>(
+    "system",
+    "oauth",
+    await stateIdOf("handback-user", "http://localhost:8081"),
+  );
+  assert.equal(handed?.returnOrigin, "http://localhost:8081");
+  const plain = await db.get<{ returnOrigin?: string }>(
+    "system",
+    "oauth",
+    await stateIdOf("plain-user"),
+  );
+  assert.equal(plain?.returnOrigin, undefined, "no origin means no hand-back window");
+});
+
+test("the callback page hands back only when there is a window to hand to", () => {
+  const handed = callbackPage("Google is connected", "http://localhost:8081");
+  assert.match(handed, /postMessage\(\{type:"hypercode:google-connected"\},"http:\/\/localhost:8081"\)/);
+  assert.match(handed, /window\.close\(\)/);
+  const alone = callbackPage("Google is connected");
+  assert.ok(!alone.includes("<script>"), alone);
+  assert.match(alone, /refresh your workspace/);
+});
+
+test("a hostile origin cannot break out of the callback page's inline script", () => {
+  const page = callbackPage("Google is connected", '</script><img src=x onerror="alert(1)">');
+  assert.ok(!page.includes("</script><img"), page);
+  assert.equal(page.match(/<\/script>/g)?.length, 1, "exactly one real closing tag");
 });

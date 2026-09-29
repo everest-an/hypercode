@@ -26,6 +26,8 @@ interface OAuthState {
   verifier: string;
   scopes: string[];
   generation: string;
+  /** The app window to hand the result back to. Only an allowlisted origin is ever stored. */
+  returnOrigin?: string;
 }
 interface Credential {
   id: string;
@@ -97,7 +99,7 @@ export class GoogleAuth {
       }
     }
   }
-  async connect(owner: string, write: boolean) {
+  async connect(owner: string, write: boolean, returnOrigin?: string) {
     if (!this.configured())
       throw new AppError(
         "Configure GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and TOKEN_ENCRYPTION_KEY to connect Google",
@@ -128,6 +130,7 @@ export class GoogleAuth {
       verifier,
       scopes,
       generation,
+      ...(returnOrigin ? { returnOrigin } : {}),
     });
     const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     url.search = new URLSearchParams({
@@ -188,6 +191,7 @@ export class GoogleAuth {
       },
       state.generation,
     );
+    return { returnOrigin: state.returnOrigin };
   }
   async accessToken(owner: string, expectedConnectionId?: string): Promise<string> {
     const tokens = await this.tokens(owner);
