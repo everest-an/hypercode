@@ -127,3 +127,30 @@ If you are working on a project that's related to OpenCode and is using "opencod
 ---
 
 **Join our community** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+
+---
+
+## HyperCode 工作台（`workbench/`）
+
+本仓除编码 agent 外还带一个耐久任务工作台：在聊天里派活，任务变成有状态、可审批、可回看
+的条目，并配 Web/移动端界面、持久浏览器会话、Linux 终端与文件操作。
+
+```sh
+cd workbench
+pnpm install                       # 仓里 pin 了 pnpm@11.19.0（见 package.json 的 packageManager）
+                                   # 实测用 pnpm 9.4.0 会把 pnpm-lock.yaml 整份重解、并把
+                                   # autoInstallPeers 从 true 翻成 false —— 别提交那种 churn
+cp .env.example .env               # 填模型凭证；不接任何云服务时保持 HYPERCODE_THREADS=local
+node scripts/hypercode.mjs doctor  # 自检：端口 / 密钥 / 引擎 / 垫片是否就位
+node scripts/hypercode.mjs start --web
+```
+
+- `hc-agui/` 是本仓 agent 的 AG-UI 出口：把 `hypercode run --format json` 的 NDJSON 翻成
+  AG-UI 事件流。`workbench` 里 `SHIM_DIR` 的默认值就指到这里，无需配置。
+- 三把尺在 `hc-agui/`：`verify.ts`（离线 13 项，含负控）、`verify-live.ts`（真模型正向）、
+  `verify-local.ts`（不接任何云 key 的全链，通过则打印 `LOCAL GREEN`）。
+- `workbench/` 自带 pnpm workspace，**刻意不挂进根部的 Bun workspace glob（`packages/*`）**，
+  以免两套包管理互相解析。
+- 工作台代码派生自 [CopilotKit OpenMuse](https://github.com/CopilotKit/openmuse)（MIT），
+  上游署名与许可证保留在 `workbench/LICENSE`；相对上游的逐枚改动见
+  [`workbench/docs/CHANGES-HYPERCODE.md`](workbench/docs/CHANGES-HYPERCODE.md)。
