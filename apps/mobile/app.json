@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "HyperCode",
+    "slug": "hypercode",
+    "scheme": "hypercode",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": { "supportsTablet": true, "bundleIdentifier": "app.hypercode.mobile" },
+    "android": { "package": "app.hypercode.mobile" },
+    "web": { "bundler": "metro", "name": "HyperCode — a little room for everything" },
+    "plugins": [
+      "expo-document-picker",
+      "@config-plugins/react-native-blob-util",
+      "@config-plugins/react-native-pdf"
+    ]
+  }
+}
