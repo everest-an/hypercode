@@ -8,18 +8,18 @@
     "momus":             { "displayName": "Reviewer",   "description": "Reviews plans and deliverables", "models": ["deepseek/deepseek-v4-pro"] },
     "prometheus":        { "displayName": "Planner",    "description": "Exploratory task planning", "models": ["deepseek/deepseek-v4-pro"] },
     "metis":             { "displayName": "Analyst",    "description": "Requirement and ambiguity analysis", "models": ["deepseek/deepseek-v4-pro"] },
-    "librarian":         { "displayName": "Researcher", "description": "External documentation and reference research", "models": ["deepseek/deepseek-v4-flash"] },
-    "explore":           { "displayName": "Scout",      "description": "Codebase exploration and location", "models": ["deepseek/deepseek-v4-flash"] },
+    "librarian":         { "displayName": "Researcher", "description": "External documentation and reference research", "models": ["deepseek/deepseek-flash"] },
+    "explore":           { "displayName": "Scout",      "description": "Codebase exploration and location", "models": ["deepseek/deepseek-flash"] },
     "hephaestus":        { "displayName": "Builder",    "description": "Default build and implementation agent", "models": ["deepseek/deepseek-v4-pro"] },
-    "atlas":             { "displayName": "Mapper",     "description": "Code map and navigation", "models": ["deepseek/deepseek-v4-flash"] },
-    "multimodal-looker": { "displayName": "Looker",     "description": "Image and document content analysis", "models": ["deepseek/deepseek-v4-flash"] }
+    "atlas":             { "displayName": "Mapper",     "description": "Code map and navigation", "models": ["deepseek/deepseek-flash"] },
+    "multimodal-looker": { "displayName": "Looker",     "description": "Image and document content analysis", "models": ["deepseek/deepseek-flash"] }
   },
   // 模型路由:全部走 DeepSeek(主力 v4-pro,轻量 v4-flash)。
   // 注:category 名称需与 omo 内置默认对齐,上线前实测校准。
   "categories": {
     "ultrabrain": { "models": ["deepseek/deepseek-v4-pro"] },
     "deep":       { "models": ["deepseek/deepseek-v4-pro"] },
-    "quick":      { "models": ["deepseek/deepseek-v4-flash"] }
+    "quick":      { "models": ["deepseek/deepseek-flash"] }
   },
   "codegraph": { "enabled": false },
   "telemetry": { "enabled": false },
