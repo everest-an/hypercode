@@ -28,11 +28,13 @@ describe("trialDaysLeft", () => {
   })
   test("counts down from start", () => {
     const start = new Date("2026-09-01T00:00:00Z")
-    expect(trialDaysLeft(new Date("2026-09-07T00:00:00Z"), start)).toBe(1) // day 7 -> 1 left
+    // 6 days elapsed inside the trial window
+    expect(trialDaysLeft(new Date("2026-09-07T00:00:00Z"), start)).toBe(TRIAL_DAYS - 6)
   })
   test("negative when expired", () => {
-    const start = new Date("2026-08-25T00:00:00Z") // 13 days ago
-    expect(trialDaysLeft(new Date("2026-09-07T00:00:00Z"), start)).toBe(-6)
+    const now = new Date("2026-09-07T00:00:00Z")
+    const start = new Date(now.getTime() - (TRIAL_DAYS + 6) * 24 * 60 * 60 * 1000) // TRIAL_DAYS + 6 days ago
+    expect(trialDaysLeft(now, start)).toBe(-6)
   })
 })
 
@@ -61,7 +63,7 @@ describe("decideLicense", () => {
 
   test("trial within window when no key", () => {
     const d = decideLicense(makeInput({ verify: { kind: "not-tried" } }))
-    expect(d).toEqual({ mode: "trial", daysLeft: 7 })
+    expect(d).toEqual({ mode: "trial", daysLeft: TRIAL_DAYS })
   })
 
   test("trial when key invalid but trial still active", () => {
@@ -78,9 +80,11 @@ describe("decideLicense", () => {
   })
 
   test("expired when trial over and key invalid", () => {
-    const start = new Date("2026-08-20T00:00:00Z") // 18 days ago
+    const now = new Date("2026-09-07T00:00:00Z")
+    const start = new Date(now.getTime() - (TRIAL_DAYS + 10) * 24 * 60 * 60 * 1000) // past the trial window
     const d = decideLicense(
       makeInput({
+        now,
         trialStartedAt: start,
         hasKey: true,
         verify: { kind: "invalid" },
@@ -90,7 +94,8 @@ describe("decideLicense", () => {
   })
 
   test("not locked when trial over but billing unreachable (grace)", () => {
-    const start = new Date("2026-08-20T00:00:00Z") // expired
+    const now = new Date("2026-09-07T00:00:00Z")
+    const start = new Date(now.getTime() - (TRIAL_DAYS + 10) * 24 * 60 * 60 * 1000) // past the trial window
     for (const verify of [
       { kind: "unconfigured" },
       { kind: "unreachable" },
@@ -98,6 +103,7 @@ describe("decideLicense", () => {
     ] as VerifyResult[]) {
       const d = decideLicense(
         makeInput({
+          now,
           trialStartedAt: start,
           hasKey: false,
           verify,
@@ -109,9 +115,11 @@ describe("decideLicense", () => {
   })
 
   test("hard expired only when backend confirmed and no valid key", () => {
-    const start = new Date("2026-08-20T00:00:00Z") // expired
+    const now = new Date("2026-09-07T00:00:00Z")
+    const start = new Date(now.getTime() - (TRIAL_DAYS + 10) * 24 * 60 * 60 * 1000) // past the trial window
     const d = decideLicense(
       makeInput({
+        now,
         trialStartedAt: start,
         hasKey: false,
         verify: { kind: "not-active" },

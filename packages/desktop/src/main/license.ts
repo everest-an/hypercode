@@ -2,7 +2,7 @@
  * license.ts — HyperCode 订阅许可证决策的纯逻辑核心(无 Electron 依赖, 可单测)。
  *
  * 决策模型(轻量校验 + 试用期, 先个人后企业):
- *   - 首次启动记录 trialStartedAt(7 天试用窗口)。
+ *   - 首次启动记录 trialStartedAt(30 天试用窗口)。
  *   - 用户输入 license key → 调 billing /verify → valid → licensed。
  *   - billing 未配置/不可达(configured=false / 网络失败)→ 不锁死: 维持当前决策,
  *     新用户按试用放行(grace)。这是"轻量校验防君子"的默认行为。
@@ -15,7 +15,7 @@
 
 import { createHmac, timingSafeEqual } from "node:crypto"
 
-export const TRIAL_DAYS = 7
+export const TRIAL_DAYS = 30
 
 /**
  * 试用状态本地签名密钥。

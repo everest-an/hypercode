@@ -40,6 +40,7 @@ import { Dynamic } from "solid-js/web"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import { CommandProvider, useCommand, type CommandOption } from "@/context/command"
 import { useDirectoryPicker } from "@/components/directory-picker"
+import { LicenseNotice } from "@/components/license-notice"
 import { CommentsProvider } from "@/context/comments"
 import { FileProvider } from "@/context/file"
 import { ServerSDKProvider } from "@/context/server-sdk"
@@ -607,6 +608,7 @@ export function AppInterface(props: {
       <SharedProviders>
         {props.children}
         {shellProps.children}
+        <LicenseNotice />
       </SharedProviders>
     </QueryProvider>
   )

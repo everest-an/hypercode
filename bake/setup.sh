@@ -78,20 +78,20 @@ fi
 
 echo " [3/4] 配置 AI 模型"
 echo
-echo "   HyperCode 需要你的 DeepSeek API key:"
-echo "   1. 浏览器打开 https://platform.deepseek.com"
-echo "   2. 免费注册,左侧 API keys 创建并复制"
+echo "   HyperCode 需要你的 HyperCode key(微信扫码领取):"
+echo "   1. 浏览器打开 https://www.trust3.pro"
+echo "   2. 微信扫码注册即领 30 天试用;在 API 密钥 页创建并复制"
 echo "   3. 回到这里,粘贴 key 后按回车"
 echo "   (key 只保存在你自己电脑上,不会上传)"
 echo
-printf "   粘贴你的 DeepSeek API key (输入不显示,粘贴后直接回车): "
+printf "   粘贴你的 HyperCode key (输入不显示,粘贴后直接回车): "
 DSKEY=""
 if ! IFS= read -rs DSKEY; then DSKEY=""; fi
 echo
 
 echo
 echo " [4/4] 验证并保存..."
-# 去掉粘贴时常见的首尾空白/换行(DeepSeek key 本身不含空白字符)
+# 去掉粘贴时常见的首尾空白/换行(key 本身不含空白字符)
 DSKEY="$(printf '%s' "$DSKEY" | tr -d '[:space:]')"
 if [ -z "$DSKEY" ]; then
   echo " [!] 你没有输入 key(直接按了回车)。请重新运行本向导。" >&2
@@ -100,8 +100,8 @@ fi
 case "$DSKEY" in
   sk-*) ;;
   *)
-    echo " [!] key 格式不对:DeepSeek 的 key 以 sk- 开头。" >&2
-    echo "     请回到 https://platform.deepseek.com 重新复制完整的 key。" >&2
+    echo " [!] key 格式不对:HyperCode 的 key 以 sk- 开头。" >&2
+    echo "     请回到 https://www.trust3.pro 的 API 密钥 页重新复制完整的 key。" >&2
     exit 1
     ;;
 esac
@@ -110,14 +110,14 @@ esac
 # 于是废 key / 空 key 都会被当成"验证通过"写进配置。
 # key 通过 stdin 的 curl config 传入,不出现在 argv 里(ps 看不到)。
 HTTP_CODE="$(printf 'header = "Authorization: Bearer %s"\n' "$DSKEY" \
-  | curl -s -m 25 -o /dev/null -w '%{http_code}' --config - https://api.deepseek.com/models || true)"
+  | curl -s -m 25 -o /dev/null -w '%{http_code}' --config - https://api.trust3.pro/v1/models || true)"
 if [ "$HTTP_CODE" != "200" ]; then
   echo >&2
   if [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]; then
-    echo " [!] key 验证失败:DeepSeek 拒绝了这个 key(HTTP $HTTP_CODE)。" >&2
+    echo " [!] key 验证失败:HyperCode 通道拒绝了这个 key(HTTP $HTTP_CODE)。" >&2
     echo "     请检查 key 是否复制完整、账户是否欠费。" >&2
   else
-    echo " [!] key 验证失败:连不上 DeepSeek(HTTP $HTTP_CODE)。" >&2
+    echo " [!] key 验证失败:连不上 HyperCode 通道(HTTP $HTTP_CODE)。" >&2
     echo "     请检查网络后重新运行本向导。" >&2
   fi
   exit 1

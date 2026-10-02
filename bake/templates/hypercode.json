@@ -1,13 +1,13 @@
 {
   // HyperCode 引擎配置 —— 由安装向导自动生成,请勿手改(要换 key 直接重跑安装向导)。
   "plugin": ["oh-my-openagent"],
-  // 模型:DeepSeek(自带 key,全体子代理共享)
+  // 模型:HyperCode 通道(trust3 网关,全体子代理共享;key 由微信扫码领取)
   "provider": {
     "deepseek": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "DeepSeek",
       "options": {
-        "baseURL": "https://api.deepseek.com/v1",
+        "baseURL": "https://api.trust3.pro/v1",
         "apiKey": "__HC_API_KEY__"
       },
       "models": {

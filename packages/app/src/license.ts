@@ -40,5 +40,27 @@ export type LicensePlatform = {
   clear(): Promise<LicenseStatus>
 }
 
-/** 桌面端订阅购买/管理落地页(官网定价区). */
-export const LICENSE_PURCHASE_URL = "https://awareliquid.ai/en/hypercode#pricing"
+/**
+ * What the subscribe prompt should show, derived from a raw LicenseStatus.
+ *
+ * The desktop main process already computes `needsAttention` (trial ending soon
+ * or expired). This maps it to the two renderer surfaces:
+ *   - "expiring": slim banner while the trial still has days left (<= 2)
+ *   - "expired":  banner + a launch dialog (no valid license / trial over)
+ */
+export type LicenseNotice = { kind: "none" } | { kind: "expiring"; daysLeft: number } | { kind: "expired" }
+
+export function resolveLicenseNotice(status: LicenseStatus | undefined): LicenseNotice {
+  if (!status || !status.needsAttention) return { kind: "none" }
+  if (status.decision.mode === "expired") return { kind: "expired" }
+  if (status.decision.mode === "trial") {
+    return status.decision.daysLeft > 0 ? { kind: "expiring", daysLeft: status.decision.daysLeft } : { kind: "expired" }
+  }
+  return { kind: "none" }
+}
+
+/**
+ * 桌面端订阅购买/管理落地页。
+ * 指向 trust3 微信支付页:新用户微信扫码注册即领 30 天试用,付费走微信。
+ */
+export const LICENSE_PURCHASE_URL = "https://www.trust3.pro/purchase"
