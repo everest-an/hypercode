@@ -24,7 +24,10 @@ permissions:
 
 jobs:
   liveness:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    # 用 ubuntu-latest，不要改成本仓其它工作流常见的 blacksmith-* 标签：
+    # 那些标签是从上游继承来的，本仓没有配置 Blacksmith，用它们会让 job 永远排队而不执行。
+    # 本任务很轻（几次网络请求），标准 runner 足够。见 PR 讨论。
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
