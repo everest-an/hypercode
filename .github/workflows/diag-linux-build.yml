@@ -1,0 +1,58 @@
+name: diag-linux-build
+
+# 一次性诊断（用完即删）：查清 Linux 上 @opencode-ai/app#build 为何无法解析
+# packages/sdk/js/src/v2/client.ts 里的 "./gen/types.gen.js"。
+# 本地（Windows）能解析，CI（Linux）不能；已排除 bun 版本、Vite 缓存、缺生成文件、Vite alias。
+# on: push 使它在任意分支推送时立即运行，无需开 PR。
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+
+      - name: 环境与链接布局
+        run: |
+          echo "bun : $(bun --version)"
+          echo "node: $(node --version)"
+          echo
+          echo "===== node_modules/@opencode-ai ====="
+          ls -la node_modules/@opencode-ai/ 2>&1 || true
+          echo
+          echo "===== realpath node_modules/@opencode-ai/sdk ====="
+          readlink -f node_modules/@opencode-ai/sdk 2>&1 || true
+          echo
+          echo "===== packages/app/node_modules/@opencode-ai ====="
+          ls -la packages/app/node_modules/@opencode-ai/ 2>&1 || true
+          echo
+          echo "===== packages/sdk/js/src/v2/gen 目录 ====="
+          ls -la packages/sdk/js/src/v2/gen/ 2>&1 || true
+          echo
+          echo "===== src 下是否存在 .js ====="
+          find packages/sdk/js/src -name '*.js' 2>&1 | head -20 || true
+          echo
+          echo "===== sdk exports ====="
+          node -p "JSON.stringify(require('./packages/sdk/js/package.json').exports, null, 2)"
+
+      - name: 构建并抓 Vite 解析决策
+        continue-on-error: true
+        run: |
+          cd packages/app
+          DEBUG=vite:resolve bun run build > /tmp/build.log 2>&1 || true
+          echo "===== 与 types.gen 相关的解析记录 ====="
+          grep -i 'types\.gen' /tmp/build.log | head -80 || true
+          echo
+          echo "===== 构建输出结尾 40 行 ====="
+          tail -40 /tmp/build.log
