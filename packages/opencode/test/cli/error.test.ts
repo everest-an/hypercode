@@ -73,8 +73,9 @@ describe("cli.error", () => {
     const expected = [
       "Model not found: anthropic/claude-sonet-4",
       "Did you mean: claude-sonnet-4",
-      "Try: `opencode models` to list available models",
-      "Or check your config (opencode.json) provider/model names",
+      // The CLI names the binary and config after the fork's app name.
+      "Try: `hypercode models` to list available models",
+      "Or check your config (hypercode.json) provider/model names",
     ].join("\n")
 
     expect(FormatError({ name: "ProviderModelNotFoundError", data })).toBe(expected)

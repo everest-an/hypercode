@@ -1,7 +1,14 @@
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
 import path from "path"
+import { Global } from "@opencode-ai/core/global"
 import { cliIt } from "../lib/cli-process"
+
+// The app name is a fork-level rename target, so read it from Global instead of
+// hardcoding the upstream "opencode". Hardcoding is why these assertions broke after
+// the rename: the CLI writes <home>/.config/<app>/<app>.json.
+const app = path.basename(Global.Path.config)
+const configFile = (home: string) => path.join(home, ".config", app, `${app}.json`)
 
 describe("opencode mcp add (non-interactive subprocess)", () => {
   cliIt.concurrent(
@@ -22,7 +29,7 @@ describe("opencode mcp add (non-interactive subprocess)", () => {
         opencode.expectExit(result, 0)
 
         const config = yield* Effect.promise(() =>
-          Bun.file(path.join(home, ".config", "opencode", "opencode.json")).json(),
+          Bun.file(configFile(home)).json(),
         )
         expect(config.mcp.github).toEqual({
           type: "remote",
@@ -58,7 +65,7 @@ describe("opencode mcp add (non-interactive subprocess)", () => {
         opencode.expectExit(result, 0)
 
         const config = yield* Effect.promise(() =>
-          Bun.file(path.join(home, ".config", "opencode", "opencode.json")).json(),
+          Bun.file(configFile(home)).json(),
         )
         expect(config.mcp.local).toEqual({
           type: "local",

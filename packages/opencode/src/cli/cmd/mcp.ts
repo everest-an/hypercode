@@ -415,7 +415,7 @@ async function resolveConfigPath(baseDir: string, global = false) {
     }
   }
 
-  // Default to opencode.json if none exist
+  // Default to the preferred config name if none exist
   return candidates[0]
 }
 

@@ -4,8 +4,9 @@ import stripAnsi from "strip-ansi"
 import { defaultConsoleUrl, formatAccountLabel, formatOrgLine } from "../../src/cli/cmd/account"
 
 describe("console account display", () => {
-  test("uses opencode.ai/console as the default login URL", () => {
-    expect(defaultConsoleUrl).toBe("https://opencode.ai/console")
+  test("uses the HyperCode console as the default login URL", () => {
+    // The fork points the console at its own domain; upstream used opencode.ai/console.
+    expect(defaultConsoleUrl).toBe("https://awareliquid.ai")
   })
 
   test("includes the account url in account labels", () => {
