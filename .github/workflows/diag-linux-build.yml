@@ -39,6 +39,7 @@ jobs:
       - name: B) turbo 全量构建（不设 GITHUB_ACTIONS）
         continue-on-error: true
         run: |
+          set +e
           bun turbo run build > /tmp/b.log 2>&1
           echo "B exit=$?"
           echo "--- 失败特征 ---"
@@ -49,6 +50,7 @@ jobs:
       - name: C) turbo 全量构建（GITHUB_ACTIONS=false，与 CI 同）
         continue-on-error: true
         run: |
+          set +e
           GITHUB_ACTIONS=false bun turbo run build > /tmp/c.log 2>&1
           echo "C exit=$?"
           echo "--- 失败特征 ---"
