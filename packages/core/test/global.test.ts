@@ -6,7 +6,11 @@ import { Global } from "@opencode-ai/core/global"
 
 describe("global paths", () => {
   test("tmp path is under the system temp directory", () => {
-    expect(Global.Path.tmp).toBe(path.join(os.tmpdir(), "opencode"))
+    // The app name is a fork-level rename target, so read it from another Global path
+    // instead of hardcoding "opencode" again — hardcoding is exactly why this broke
+    // when the fork renamed the app.
+    const app = path.basename(Global.Path.config)
+    expect(Global.Path.tmp).toBe(path.join(os.tmpdir(), app))
     expect(Global.make().tmp).toBe(Global.Path.tmp)
   })
 
