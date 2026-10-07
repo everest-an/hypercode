@@ -1,5 +1,9 @@
 name: test
 
+# 用 ubuntu-latest / windows-latest 而不用上游的 blacksmith-* 标签：本仓是个人帐号下的
+# 公开仓库，没有也无法安装 Blacksmith（它只支持组织），那些 job 会永远排队而不执行。
+# 公开仓库的 GitHub-hosted runner 免费不限量，此处无需换回。
+
 on:
   push:
     branches:
@@ -28,9 +32,9 @@ jobs:
       matrix:
         settings:
           - name: linux
-            host: blacksmith-4vcpu-ubuntu-2404
+            host: ubuntu-latest
           - name: windows
-            host: blacksmith-4vcpu-windows-2025
+            host: windows-latest
     runs-on: ${{ matrix.settings.host }}
     defaults:
       run:
@@ -86,9 +90,9 @@ jobs:
       matrix:
         settings:
           - name: linux
-            host: blacksmith-4vcpu-ubuntu-2404
+            host: ubuntu-latest
           - name: windows
-            host: blacksmith-4vcpu-windows-2025
+            host: windows-latest
     runs-on: ${{ matrix.settings.host }}
     env:
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
