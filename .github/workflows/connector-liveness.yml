@@ -1,0 +1,79 @@
+name: connector-liveness
+
+# 办公连接器会“上锈”：Atlassian 的 /v1/sse 就是在 2026-06-30 被停掉的，
+# 出货产品若还指着旧 URL，客户第一次接入就失败，而这边没有任何信号。
+#
+# 三个触发点各管一件事：
+#   pull_request → 目录被改动时立刻验，打错 URL/包名会在 PR 检查里当场变红
+#   schedule     → 每周扫一次，抓厂商那边的端点搬家与包变动
+#   workflow_dispatch → 发版前手动跑一次
+#
+# 定时失败在 GitHub 上默认是**不通知**的，所以失败时必须主动留痕（见最后的 report 步骤）。
+
+on:
+  pull_request:
+    paths:
+      - "bake/skills/hc-tools/hc-office/references/connectors.md"
+      - "bake/verify/connectors-liveness.mjs"
+  schedule:
+    - cron: "0 3 * * 1" # 每周一 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  liveness:
+    # 用 ubuntu-latest，不要改成本仓其它工作流常见的 blacksmith-* 标签：
+    # 那些标签是从上游继承来的，本仓没有配置 Blacksmith，用它们会让 job 永远排队而不执行。
+    # 本任务很轻（几次网络请求），标准 runner 足够。见 PR 讨论。
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write # 定时失败时留痕
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+
+      - name: Probe connectors
+        # pipefail 必须显式开：否则管道的退出码取自 tee，探针的失败会被吞掉。
+        run: |
+          set -o pipefail
+          bun bake/verify/connectors-liveness.mjs 2>&1 | tee liveness-report.txt
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: connector-liveness-report
+          path: liveness-report.txt
+          retention-days: 30
+
+      - name: Open or update the tracking issue
+        # 只在定时任务失败时留痕；PR 失败本身就会出现在 PR 检查里，不必再开 issue。
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: 办公连接器活性异常
+        run: |
+          {
+            echo "自动化巡检发现连接器异常，最近一次结果："
+            echo
+            echo '```'
+            cat liveness-report.txt 2>/dev/null || echo "（未生成报告）"
+            echo '```'
+            echo
+            echo "处理方式见 \`bake/skills/hc-tools/hc-office/references/connectors.md\` 第五节与第七节。"
+            echo "修好后关闭本 issue；下次巡检正常即不会再新增。"
+          } > issue-body.txt
+
+          EXISTING=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file issue-body.txt
+          else
+            gh issue create --title "$TITLE" --body-file issue-body.txt
+          fi
