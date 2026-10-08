@@ -259,6 +259,11 @@ const unixNoLLMServer = process.platform !== "win32" ? noLLMServer.instance : no
 // Config that registers a custom "test" provider with a "test-model" model
 // so provider model lookup succeeds inside the loop.
 const cfg = {
+  // Pin the model to the mock provider. Without this the session resolves an ambient
+  // default (the catalog's first provider), so requests leave for a real API, the mock
+  // server sees zero hits, and the loop tests fail on an auth error instead of exercising
+  // the loop.
+  model: "test/test-model",
   provider: {
     test: {
       name: "Test",
