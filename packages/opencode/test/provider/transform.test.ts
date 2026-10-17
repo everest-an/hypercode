@@ -6,7 +6,7 @@ import { ProviderV2 } from "@opencode-ai/core/provider"
 import { ModelV2 } from "@opencode-ai/core/model"
 import { ModelsDev } from "@opencode-ai/core/models-dev"
 import { generateText, jsonSchema, type ModelMessage } from "ai"
-import { createAmazonBedrock, type AmazonBedrockLanguageModelOptions } from "@ai-sdk/amazon-bedrock"
+import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock"
 import { createAnthropic } from "@ai-sdk/anthropic"
 import { createVertexAnthropic } from "@ai-sdk/google-vertex/anthropic"
 
@@ -3884,7 +3884,7 @@ describe("ProviderTransform.reasoningVariants", () => {
     }
     expect(variants?.none).toEqual({
       reasoningConfig: { type: "enabled", maxReasoningEffort: "none" },
-    } satisfies AmazonBedrockLanguageModelOptions)
+    })
     const sent: unknown[] = []
     const provider = createAmazonBedrock({
       apiKey: "test-key",
