@@ -1259,4 +1259,12 @@ export const dict = {
   "license.notice.dialog.later": "稍後再說",
   "license.notice.dismiss": "關閉",
   "license.notice.dialog.subscribe": "訂閱 HyperCode Pro",
+  "settings.gateway.title": "算力通道",
+  "settings.gateway.description": "在官網付費儲值。點「連接」後，金鑰會自動寫入本應用，無需手動複製。",
+  "settings.gateway.connect": "一鍵連接",
+  "settings.gateway.connecting": "等待瀏覽器中確認...",
+  "settings.gateway.connected": "已連接——本應用現在可以使用帳號餘額。",
+  "settings.gateway.expired": "已逾時，請重新發起連接。",
+  "settings.gateway.failed": "連接失敗，請重試。",
+  "settings.gateway.topUp": "儲值 / 訂閱",
 } satisfies Partial<Record<Keys, string>>

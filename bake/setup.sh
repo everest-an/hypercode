@@ -78,16 +78,37 @@ fi
 
 echo " [3/4] 配置 AI 模型"
 echo
-echo "   HyperCode 需要你的 HyperCode key(微信扫码领取):"
-echo "   1. 浏览器打开 https://www.trust3.pro"
-echo "   2. 微信扫码注册即领 30 天试用;在 API 密钥 页创建并复制"
-echo "   3. 回到这里,粘贴 key 后按回车"
-echo "   (key 只保存在你自己电脑上,不会上传)"
+echo "   HyperCode 会自动打开授权页,登录后点一下「授权」——"
+echo "   密钥由服务端直接写入本机,你不需要复制任何 API Key。"
+echo "   (没有浏览器、或想手动粘贴: 设 HYPERCODE_SETUP_MANUAL=1 后重新运行)"
 echo
-printf "   粘贴你的 HyperCode key (输入不显示,粘贴后直接回车): "
+# 先试配对(用户不碰 key), 不行再回退到手动粘贴。两条路都落到同一个 DSKEY。
 DSKEY=""
-if ! IFS= read -rs DSKEY; then DSKEY=""; fi
-echo
+HC_PAIR="$HC_DIR/pair.sh"
+if [ -f "$HC_DIR/bake/pair.sh" ]; then
+  HC_PAIR="$HC_DIR/bake/pair.sh"
+fi
+if [ "${HYPERCODE_SETUP_MANUAL:-}" != "1" ] && [ -f "$HC_PAIR" ]; then
+  # key 经由 stdout 捕获, 不进 argv(curl 命令行在 ps 里可见, key 不能出现在那里)。
+  DSKEY="$(bash "$HC_PAIR")" || DSKEY=""
+fi
+
+if [ -z "$DSKEY" ]; then
+  # 自动化入口: 设 HYPERCODE_SETUP_KEY 就直接用它, 不进交互提示。
+  DSKEY="${HYPERCODE_SETUP_KEY:-}"
+fi
+
+if [ -z "$DSKEY" ]; then
+  echo "   HyperCode 需要你的 HyperCode key(微信扫码领取):"
+  echo "   1. 浏览器打开 ${HYPERCODE_SITE:-https://www.trust3.pro}"
+  echo "   2. 微信扫码注册即领 30 天试用;在 API 密钥 页创建并复制"
+  echo "   3. 回到这里,粘贴 key 后按回车"
+  echo "   (key 只保存在你自己电脑上,不会上传)"
+  echo
+  printf "   粘贴你的 HyperCode key (输入不显示,粘贴后直接回车): "
+  if ! IFS= read -rs DSKEY; then DSKEY=""; fi
+  echo
+fi
 
 echo
 echo " [4/4] 验证并保存..."
@@ -101,7 +122,7 @@ case "$DSKEY" in
   sk-*) ;;
   *)
     echo " [!] key 格式不对:HyperCode 的 key 以 sk- 开头。" >&2
-    echo "     请回到 https://www.trust3.pro 的 API 密钥 页重新复制完整的 key。" >&2
+    echo "     请回到 ${HYPERCODE_SITE:-https://www.trust3.pro} 的 API 密钥 页重新复制完整的 key。" >&2
     exit 1
     ;;
 esac
@@ -110,7 +131,7 @@ esac
 # 于是废 key / 空 key 都会被当成"验证通过"写进配置。
 # key 通过 stdin 的 curl config 传入,不出现在 argv 里(ps 看不到)。
 HTTP_CODE="$(printf 'header = "Authorization: Bearer %s"\n' "$DSKEY" \
-  | curl -s -m 25 -o /dev/null -w '%{http_code}' --config - https://api.trust3.pro/v1/models || true)"
+  | curl -s -m 25 -o /dev/null -w '%{http_code}' --config - "${HYPERCODE_GATEWAY:-https://api.trust3.pro}/v1/models" || true)"
 if [ "$HTTP_CODE" != "200" ]; then
   echo >&2
   if [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]; then

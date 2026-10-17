@@ -5,7 +5,7 @@ import type { DesktopMenuAction } from "../desktop-menu"
 import { ServerConnection } from "./server"
 import type { WslServersPlatform } from "../wsl/types"
 import type { UpdaterPlatform } from "../updater"
-import type { LicensePlatform } from "../license"
+import type { LicensePlatform, GatewayPlatform } from "../license"
 import type { DraftStore } from "@/utils/draft-store"
 
 type PickerPaths = string | string[] | null
@@ -89,6 +89,9 @@ type PlatformBase = {
 
   /** HyperCode Pro subscription license state (desktop only) */
   license?: LicensePlatform
+
+  /** Gateway pairing: obtain an API key from the site without the user pasting one (desktop only) */
+  gateway?: GatewayPlatform
 
   /** Fetch override */
   fetch?: typeof fetch

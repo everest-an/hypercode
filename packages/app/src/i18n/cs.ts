@@ -1199,4 +1199,12 @@ export const dict = {
   "license.notice.dialog.later": "Later",
   "license.notice.dismiss": "Dismiss",
   "license.notice.dialog.subscribe": "Subscribe to HyperCode Pro",
+  "settings.gateway.title": "Compute channel",
+  "settings.gateway.description": "Pay and top up on the website. Connecting hands this app a key automatically, so you never copy one.",
+  "settings.gateway.connect": "Connect",
+  "settings.gateway.connecting": "Waiting for approval in your browser...",
+  "settings.gateway.connected": "Connected - this app can use your account credits now.",
+  "settings.gateway.expired": "Timed out. Start the connection again.",
+  "settings.gateway.failed": "Could not connect. Please try again.",
+  "settings.gateway.topUp": "Top up / Subscribe",
 }

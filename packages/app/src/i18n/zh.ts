@@ -1263,4 +1263,12 @@ export const dict = {
   "license.notice.dialog.later": "稍后再说",
   "license.notice.dismiss": "关闭",
   "license.notice.dialog.subscribe": "订阅 HyperCode Pro",
+  "settings.gateway.title": "算力通道",
+  "settings.gateway.description": "在官网付费充值。点「连接」后，密钥会自动写入本应用，无需手动复制。",
+  "settings.gateway.connect": "一键连接",
+  "settings.gateway.connecting": "等待浏览器中确认...",
+  "settings.gateway.connected": "已连接——本应用现在可以使用账号余额。",
+  "settings.gateway.expired": "已超时，请重新发起连接。",
+  "settings.gateway.failed": "连接失败，请重试。",
+  "settings.gateway.topUp": "充值 / 订阅",
 } satisfies Partial<Record<Keys, string>>

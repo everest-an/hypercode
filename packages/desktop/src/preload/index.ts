@@ -98,6 +98,7 @@ const api: ElectronAPI = {
   licenseGetStatus: () => ipcRenderer.invoke("license-get-status"),
   licenseActivate: (key) => ipcRenderer.invoke("license-activate", key),
   licenseClear: () => ipcRenderer.invoke("license-clear"),
+  gatewayConnect: () => ipcRenderer.invoke("gateway-connect"),
   checkAppExists: (appName) => ipcRenderer.invoke("check-app-exists", appName),
   resolveAppPath: (appName) => ipcRenderer.invoke("resolve-app-path", appName),
   storeGet: (name, key) => ipcRenderer.invoke("store-get", name, key),

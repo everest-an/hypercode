@@ -64,3 +64,18 @@ export function resolveLicenseNotice(status: LicenseStatus | undefined): License
  * 指向 trust3 微信支付页:新用户微信扫码注册即领 30 天试用,付费走微信。
  */
 export const LICENSE_PURCHASE_URL = "https://www.trust3.pro/purchase"
+
+/**
+ * Gateway pairing capability (desktop only).
+ *
+ * The user pays and manages their account on the site; connecting hands this install an API key without
+ * the user ever seeing one. Mirrors `GatewayConnectResult` in packages/desktop/src/preload/types.ts.
+ */
+export type GatewayConnectResult =
+  | { status: "connected" }
+  | { status: "expired" }
+  | { status: "cancelled"; reason: string }
+
+export type GatewayPlatform = {
+  connect(): Promise<GatewayConnectResult>
+}

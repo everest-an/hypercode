@@ -10,16 +10,23 @@ HyperCode —— 最强大的 AI 编程软件与工作助手
 二、安装(macOS)
   终端执行: bash setup.sh
 
-三、配置模型(安装向导已自动完成)
-  HyperCode 采用"自带 key"模式:你的 DeepSeek API key
-  由全部子代理共享,一次配置全局生效。
+三、连接算力(安装向导已自动完成)
+  HyperCode 默认走"HyperCode 通道":付费和账号在官网(trust3.pro),
+  算力由中转站提供,全部子代理共享同一把密钥。
 
-  安装向导第 3 步已经帮你写好了。想换 key 时有两种方式:
+  安装向导第 3 步会**自动打开授权页**,你登录后点一次「授权此设备」,
+  密钥就由服务端直接写入本机 —— 你不需要看到、也不需要复制任何 API Key。
 
-  方式一(推荐):重新运行安装向导,粘贴新 key。
+  自动化 / 无浏览器环境(SSH、CI、远程安装)三种开关:
+    HYPERCODE_SETUP_MANUAL=1   跳过自动连接,走手动粘贴
+    HYPERCODE_SETUP_KEY=sk-xxx 直接传入密钥,不弹任何提示(配合上一项)
+    HYPERCODE_NO_BROWSER=1     不尝试打开浏览器,只打印授权链接
+  例:HYPERCODE_SETUP_MANUAL=1 HYPERCODE_SETUP_KEY=sk-xxx bash setup.sh
+
+  想换 key 或改用自带 key 时:
+  方式一(推荐):重新运行安装向导。
     向导只会更新 apiKey 这一个字段,你自己加的
     provider / model / plugin 配置不会被覆盖。
-
   方式二:手动编辑配置文件
   1. 打开配置目录(Windows 和 macOS 是同一个位置,
      引擎用 XDG 规范定位,不是 %APPDATA%):
@@ -29,7 +36,7 @@ HyperCode —— 最强大的 AI 编程软件与工作助手
      (如果设了 XDG_CONFIG_HOME,则是 $XDG_CONFIG_HOME/hypercode/;
       设了 OPENCODE_CONFIG_DIR 则以它为准)
   2. 编辑 hypercode.json,把 deepseek 的 apiKey 填好:
-     "apiKey": "sk-你的DeepSeek密钥"
+     "apiKey": "sk-你的密钥"
   3. 保存后运行: hypercode
 
 四、开始使用

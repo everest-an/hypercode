@@ -16,6 +16,9 @@ import {
   clearLicenseKey,
   getLicenseStatus,
 } from "./license-state"
+import { connectGateway } from "./gateway-connect"
+import { configDir, dataDir } from "./engine-paths"
+import { getLogger } from "./logging"
 import {
   getPinchZoomEnabled,
   getWindowID,
@@ -88,6 +91,17 @@ export function registerIpcHandlers(deps: Deps) {
   ipcMain.handle("license-get-status", () => getLicenseStatus())
   ipcMain.handle("license-activate", (_event: IpcMainInvokeEvent, key: string) => activateLicenseKey(key))
   ipcMain.handle("license-clear", () => clearLicenseKey())
+  // "One-click connect": pairs this install with the user's trust3 account and stores the key the site
+  // hands back, so a paying user never sees an API key. Payment itself stays on the site.
+  ipcMain.handle("gateway-connect", () =>
+    connectGateway({
+      fetchImpl: (url, init) => fetch(url, init),
+      configDir: configDir(),
+      dataDir: dataDir(),
+      openExternal: (url) => shell.openExternal(url),
+      log: getLogger(),
+    }),
+  )
   ipcMain.handle("get-display-backend", () => deps.getDisplayBackend())
   ipcMain.handle("set-display-backend", (_event: IpcMainInvokeEvent, backend: string | null) =>
     deps.setDisplayBackend(backend),

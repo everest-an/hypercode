@@ -1205,4 +1205,12 @@ export const dict = {
   "license.notice.dialog.later": "Later",
   "license.notice.dismiss": "Dismiss",
   "license.notice.dialog.subscribe": "Subscribe to HyperCode Pro",
+  "settings.gateway.title": "コンピュートチャネル",
+  "settings.gateway.description": "サイトで支払い・チャージします。「接続」を押すとキーが自動でこのアプリに書き込まれ、コピーは不要です。",
+  "settings.gateway.connect": "接続する",
+  "settings.gateway.connecting": "ブラウザでの承認を待っています...",
+  "settings.gateway.connected": "接続しました — このアプリでアカウントの残高を利用できます。",
+  "settings.gateway.expired": "タイムアウトしました。もう一度接続してください。",
+  "settings.gateway.failed": "接続できませんでした。もう一度お試しください。",
+  "settings.gateway.topUp": "チャージ / サブスクリプション",
 }

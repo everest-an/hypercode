@@ -24,6 +24,18 @@ export function cacheDir() {
   return path.join(os.homedir(), ".cache", APP)
 }
 
+/**
+ * Where the engine keeps durable state, most importantly `auth.json`.
+ *
+ * Same xdg-basedir rule as configDir: `$XDG_DATA_HOME` or `~/.local/share`, then the app name — on every
+ * platform, including Windows and macOS. Provider credentials written anywhere else are simply never read.
+ */
+export function dataDir() {
+  const xdg = process.env["XDG_DATA_HOME"]
+  if (xdg) return path.join(xdg, APP)
+  return path.join(os.homedir(), ".local", "share", APP)
+}
+
 // A copy of Npm.sanitize (packages/core/src/npm.ts:43-48) rather than an import, because the desktop main
 // process does not bundle the engine. If the two ever disagree the cache directory moves and every seeded
 // package silently turns into a cold network install, so keep them character-for-character identical.
