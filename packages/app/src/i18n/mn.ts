@@ -527,7 +527,7 @@ export const dict = {
 "help.guide.title": "Quick start",
   "help.feedback": "Feedback and support:",
 "help.guide.step1.title": "Connect a model provider",
-"help.guide.step1.body": "Open Settings → Models, pick DeepSeek and paste your API key. No key yet? Visit trust3.pro — scan with WeChat to claim a 30-day trial key.",
+"help.guide.step1.body": "Open Settings > Compute channel and click Connect - no key to copy. You can also sign in at trust3.pro and create a key under API Keys.",
 "help.guide.step2.title": "Add and manage projects",
 "help.guide.step2.body": "On the home page click Add Project and choose your project folder. Switch between projects from the sidebar.",
 "help.guide.step3.title": "Explore the knowledge graph",
@@ -1211,5 +1211,5 @@ export const dict = {
   "settings.gateway.connected": "Connected - this app can use your account credits now.",
   "settings.gateway.expired": "Timed out. Start the connection again.",
   "settings.gateway.failed": "Could not connect. Please try again.",
-  "settings.gateway.topUp": "Top up / Subscribe",
+  "settings.gateway.topUp": "Top up",
 }

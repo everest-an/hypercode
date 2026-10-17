@@ -567,7 +567,7 @@ export const dict = {
 "help.guide.title": "快速上手",
   "help.feedback": "反馈与支持:",
 "help.guide.step1.title": "配置模型服务商(API Key)",
-"help.guide.step1.body": "打开 设置 → 模型,选择 DeepSeek 并粘贴你的 API Key。还没有 Key?访问 trust3.pro 微信扫码领取。",
+"help.guide.step1.body": "打开 设置 > 算力通道,点「一键连接」即可,无需复制 key。也可以访问 trust3.pro 登录后在「API 密钥」页创建。",
 "help.guide.step2.title": "添加与管理项目",
 "help.guide.step2.body": "在主页点击 添加项目,选择你的项目文件夹;在左侧列表切换多个项目。",
 "help.guide.step3.title": "查看知识图谱",
@@ -1270,5 +1270,5 @@ export const dict = {
   "settings.gateway.connected": "已连接——本应用现在可以使用账号余额。",
   "settings.gateway.expired": "已超时，请重新发起连接。",
   "settings.gateway.failed": "连接失败，请重试。",
-  "settings.gateway.topUp": "充值 / 订阅",
+  "settings.gateway.topUp": "充值",
 } satisfies Partial<Record<Keys, string>>

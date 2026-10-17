@@ -99,9 +99,9 @@ if [ -z "$DSKEY" ]; then
 fi
 
 if [ -z "$DSKEY" ]; then
-  echo "   HyperCode 需要你的 HyperCode key(微信扫码领取):"
-  echo "   1. 浏览器打开 ${HYPERCODE_SITE:-https://www.trust3.pro}"
-  echo "   2. 微信扫码注册即领 30 天试用;在 API 密钥 页创建并复制"
+  echo "   HyperCode 需要你的 HyperCode key:"
+  echo "   1. 浏览器打开 ${HYPERCODE_SITE:-https://www.trust3.pro} 注册并登录"
+  echo "   2. 在「API 密钥」页创建并复制 key"
   echo "   3. 回到这里,粘贴 key 后按回车"
   echo "   (key 只保存在你自己电脑上,不会上传)"
   echo

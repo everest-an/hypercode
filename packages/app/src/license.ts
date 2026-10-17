@@ -60,8 +60,9 @@ export function resolveLicenseNotice(status: LicenseStatus | undefined): License
 }
 
 /**
- * 桌面端订阅购买/管理落地页。
- * 指向 trust3 微信支付页:新用户微信扫码注册即领 30 天试用,付费走微信。
+ * 桌面端充值/订阅落地页。
+ * 指向 trust3 的充值与订阅页;具体开放哪些支付方式与套餐由站点配置决定,
+ * 客户端不假设(微信登录/订阅入口在站点侧是可开关的)。
  */
 export const LICENSE_PURCHASE_URL = "https://www.trust3.pro/purchase"
 

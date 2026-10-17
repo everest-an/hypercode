@@ -65,9 +65,9 @@ rem 自动化入口: 设 HYPERCODE_SETUP_KEY 就直接用它, 不进交互提示
 rem (管道喂 stdin 不可靠 —— [1/4]/[2/4] 的 powershell 子进程可能先把管道读空)
 set "HC_API_KEY=%HYPERCODE_SETUP_KEY%"
 if defined HC_API_KEY goto HAVEKEY
-echo    HyperCode 需要你的 HyperCode key(微信扫码领取):
-echo    1. 打开浏览器访问 %HC_SITE%
-echo    2. 微信扫码注册即领 30 天试用;在"API 密钥"页创建并复制 key
+echo    HyperCode 需要你的 HyperCode key:
+echo    1. 打开浏览器访问 %HC_SITE% 注册并登录
+echo    2. 在"API 密钥"页创建并复制 key
 echo    3. 回到这里,粘贴 key 后按回车
 echo    (key 只保存在你自己电脑上,不会上传)
 echo.
