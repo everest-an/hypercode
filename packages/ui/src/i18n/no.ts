@@ -52,7 +52,7 @@ export const dict: Record<Keys, string> = {
 
   "dialog.usageExceeded.freeTier.title": "Gratisgrensen er nådd",
   "dialog.usageExceeded.freeTier.description":
-    "Abonner på OpenCode Go for $10/måned for pålitelig tilgang til de beste modellene med åpen kildekode.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Abonner",
   "dialog.usageExceeded.accountRateLimit.title": "Go-grensen er nådd",
   "dialog.usageExceeded.accountRateLimit.description":

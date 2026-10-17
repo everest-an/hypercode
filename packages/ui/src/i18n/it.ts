@@ -71,7 +71,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.error.addCredits": "Aggiungi crediti",
   "dialog.usageExceeded.freeTier.title": "Limite gratuito raggiunto",
   "dialog.usageExceeded.freeTier.description":
-    "Abbonati a OpenCode Go per 10 $ al mese e accedi in modo affidabile ai migliori modelli open source.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Iscriviti",
   "dialog.usageExceeded.accountRateLimit.title": "Limite Go raggiunto",
   "dialog.usageExceeded.accountRateLimit.description":

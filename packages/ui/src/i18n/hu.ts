@@ -71,7 +71,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.error.addCredits": "Adjon hozzá krediteket",
   "dialog.usageExceeded.freeTier.title": "Elérte a szabad korlátot",
   "dialog.usageExceeded.freeTier.description":
-    "Iratkozzon fel az OpenCode Go szolgáltatásra havi 10 dollárért, hogy megbízható hozzáférést kapjon a legjobb nyílt forráskódú modellekhez.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Iratkozz fel",
   "dialog.usageExceeded.accountRateLimit.title": "Elérte a Go korlátját",
   "dialog.usageExceeded.accountRateLimit.description":

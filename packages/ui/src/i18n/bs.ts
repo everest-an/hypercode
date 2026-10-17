@@ -78,7 +78,7 @@ export const dict = {
 
   "dialog.usageExceeded.freeTier.title": "Dostignut besplatan limit",
   "dialog.usageExceeded.freeTier.description":
-    "Pretplati se na OpenCode Go za $10/mjesec i ostvari pouzdan pristup najboljim modelima otvorenog koda.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Pretplati se",
   "dialog.usageExceeded.accountRateLimit.title": "Dostignut Go limit",
   "dialog.usageExceeded.accountRateLimit.description":

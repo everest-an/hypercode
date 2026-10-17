@@ -69,7 +69,7 @@ export const dict = {
   "ui.sessionTurn.error.addCredits": "Кредит нэмэх",
   "dialog.usageExceeded.freeTier.title": "Үнэгүй хязгаарт хүрсэн",
   "dialog.usageExceeded.freeTier.description":
-    "OpenCode Go-д сард 10 доллараар бүртгүүлж, нээлттэй эхийн шилдэг загваруудад найдвартай хандаарай.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Бүртгүүлэх",
   "dialog.usageExceeded.accountRateLimit.title": "Явах хязгаарт хүрсэн",
   "dialog.usageExceeded.accountRateLimit.description":

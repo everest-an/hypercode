@@ -69,7 +69,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.error.addCredits": "Karz goşuň",
   "dialog.usageExceeded.freeTier.title": "Mugt çäk ýetdi",
   "dialog.usageExceeded.freeTier.description":
-    "Iň oňat açyk çeşme modellerine ygtybarly girmek üçin aýda 10 $ töläp, OpenCode Go-a ýazylyň.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Abuna ýazylyň",
   "dialog.usageExceeded.accountRateLimit.title": "Çäklendirildi",
   "dialog.usageExceeded.accountRateLimit.description":

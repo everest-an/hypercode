@@ -74,7 +74,7 @@ export const dict: Record<string, string> = {
 
   "dialog.usageExceeded.freeTier.title": "Batas gratis tercapai",
   "dialog.usageExceeded.freeTier.description":
-    "Berlangganan OpenCode Go seharga $10/bulan untuk akses andal ke model sumber terbuka terbaik.",
+    "The free usage allowance for this provider has been exhausted. Add credits on the HyperCode website or switch to a different model to continue.",
   "dialog.usageExceeded.freeTier.actionLabel": "Berlangganan",
   "dialog.usageExceeded.accountRateLimit.title": "Batas Go tercapai",
   "dialog.usageExceeded.accountRateLimit.description":
