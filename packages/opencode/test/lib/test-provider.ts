@@ -8,6 +8,7 @@
 //   - test/server/httpapi-sdk.test.ts  (in-process SDK tests)
 export function testProviderConfig(llmUrl: string) {
   return {
+    model: "test/test-model",
     formatter: false,
     lsp: false,
     provider: {

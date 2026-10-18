@@ -95,6 +95,7 @@ const it = testEffect(
 )
 
 const providerCfg = (url: string) => ({
+  model: "test/test-model",
   provider: {
     test: {
       name: "Test",
@@ -186,4 +187,5 @@ it.live("tool execution produces non-empty session diff (snapshot race)", () =>
     }),
     { git: true, config: providerCfg },
   ),
+  30_000,
 )
