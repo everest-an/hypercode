@@ -32,21 +32,57 @@ if errorlevel 1 goto BAKEFAIL
 
 echo  [3/4] 配置 AI 模型
 echo.
-echo    HyperCode 需要你的 HyperCode key(微信扫码领取):
-echo    1. 打开浏览器访问 https://www.trust3.pro
-echo    2. 微信扫码注册即领 30 天试用;在"API 密钥"页创建并复制 key
+echo    HyperCode 会自动打开授权页,登录后点一下「授权」——
+echo    密钥由服务端直接写入本机,你不需要复制任何 API Key。
+echo    (没有浏览器、或想手动粘贴: 设 HYPERCODE_SETUP_MANUAL=1 后重新运行)
+echo.
+set "HC_SITE=%HYPERCODE_SITE%"
+if not defined HC_SITE set "HC_SITE=https://www.trust3.pro"
+set "HC_API_KEY="
+if "%HYPERCODE_SETUP_MANUAL%"=="1" goto MANUALKEY
+set "HC_PAIR=%HC_DIR%\bake\pair.ps1"
+if not exist "%HC_PAIR%" set "HC_PAIR=%HC_DIR%\pair.ps1"
+if not exist "%HC_PAIR%" goto MANUALKEY
+rem key 只经临时文件回传: 命令行参数会被 Win32_Process.CommandLine 读走
+set "HC_KEY_FILE=%TEMP%\hypercode-pair-%RANDOM%%RANDOM%.txt"
+rem stderr 不重定向 —— 进度直接显示给用户; stdout 里只该有 key
+rem < nul: 配对这一步绝不能碰 stdin。否则它会把管道里的输入(例如自动化安装预填的 key)读空,
+rem 后面 set /p 就只能读到 EOF, 用户看到"你没有输入 key"。
+powershell -NoProfile -ExecutionPolicy Bypass -File "%HC_PAIR%" < nul > "%HC_KEY_FILE%"
+if errorlevel 1 goto PAIRFAILED
+set /p HC_API_KEY=<"%HC_KEY_FILE%"
+del "%HC_KEY_FILE%" >nul 2>&1
+if defined HC_API_KEY goto HAVEKEY
+
+:PAIRFAILED
+del "%HC_KEY_FILE%" >nul 2>&1
+echo.
+echo    [!] 自动连接没成功(原因见上)。改成手动粘贴,一样能用。
+echo.
+
+:MANUALKEY
+rem 自动化入口: 设 HYPERCODE_SETUP_KEY 就直接用它, 不进交互提示。
+rem (管道喂 stdin 不可靠 —— [1/4]/[2/4] 的 powershell 子进程可能先把管道读空)
+set "HC_API_KEY=%HYPERCODE_SETUP_KEY%"
+if defined HC_API_KEY goto HAVEKEY
+echo    HyperCode 需要你的 HyperCode key:
+echo    1. 打开浏览器访问 %HC_SITE% 注册并登录
+echo    2. 在"API 密钥"页创建并复制 key
 echo    3. 回到这里,粘贴 key 后按回车
 echo    (key 只保存在你自己电脑上,不会上传)
 echo.
-set "HC_API_KEY="
 set /p HC_API_KEY="  粘贴你的 HyperCode key: "
+
+:HAVEKEY
 
 echo.
 echo  [4/4] 验证并保存...
 rem key 通过环境变量 HC_API_KEY 传给 powershell,绝不拼进命令行
 rem (命令行任何本地进程都能用 Win32_Process.CommandLine 读到,而且引号会被注入破坏)
 rem 退出码: 0=通过 2=空 3=前缀不对 4=接口拒绝/网络失败
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$k=$env:HC_API_KEY; if($null -eq $k){exit 2}; $k=$k.Trim(); if($k.Length -eq 0){exit 2}; if(-not $k.StartsWith('sk-')){exit 3}; try{[Net.ServicePointManager]::SecurityProtocol=3072}catch{}; $h=@{Authorization=('Bearer '+$k)}; try{$r=Invoke-WebRequest -UseBasicParsing -TimeoutSec 25 -Uri 'https://api.trust3.pro/v1/models' -Headers $h}catch{exit 4}; if($r.StatusCode -ne 200){exit 4}; exit 0"
+set "HC_GATEWAY=%HYPERCODE_GATEWAY%"
+if not defined HC_GATEWAY set "HC_GATEWAY=https://api.trust3.pro"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$k=$env:HC_API_KEY; if($null -eq $k){exit 2}; $k=$k.Trim(); if($k.Length -eq 0){exit 2}; if(-not $k.StartsWith('sk-')){exit 3}; try{[Net.ServicePointManager]::SecurityProtocol=3072}catch{}; $h=@{Authorization=('Bearer '+$k)}; try{$r=Invoke-WebRequest -UseBasicParsing -TimeoutSec 25 -Uri ($env:HC_GATEWAY + '/v1/models') -Headers $h}catch{exit 4}; if($r.StatusCode -ne 200){exit 4}; exit 0"
 set "HC_RC=%ERRORLEVEL%"
 if "%HC_RC%"=="2" goto KEYEMPTY
 if "%HC_RC%"=="3" goto KEYPREFIX
@@ -104,7 +140,7 @@ goto END
 :KEYPREFIX
 echo.
 echo  [!] key 格式不对:HyperCode 的 key 以 sk- 开头。
-echo      请回到 https://www.trust3.pro 的"API 密钥"页重新复制完整的 key。
+echo      请回到 %HC_SITE% 的"API 密钥"页重新复制完整的 key。
 echo.
 goto END
 

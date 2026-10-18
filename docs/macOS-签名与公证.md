@@ -1,9 +1,19 @@
 # macOS 签名与公证
 
-> 当前状态:**未签名**。mac 用户下载后双击会看到「"HyperCode"已损坏,无法打开。您应该将它移到废纸篓」。
-> 这不是升级问题——是**根本打不开**。本文是把它修好需要做的全部事情。
+> 当前状态:**流水线已修好,缺的只是证书 Secrets**。
+> 修好之前, mac 用户下载后双击会看到「"HyperCode"已损坏,无法打开。您应该将它移到废纸篓」——
+> 这不是升级问题,是**根本打不开**。
+>
+> 2026-10-16 已落地的代码改动(`.github/workflows/build-desktop.yml`):
+> 1. 删掉两个 mac 打包步骤里的 `CSC_IDENTITY_AUTO_DISCOVERY: "false"`(Windows 那处**保留**)
+> 2. 两个架构各加硬门禁 `codesign --verify` / `spctl --assess` / `xcrun stapler validate`,
+>    签名被跳过时构建**失败**而不是绿着过去
+> 3. 带版本号的发布构建若缺 `APPLE_ID` secret,在打包前就报错退出
+> 4. x64 产物补上 payload 校验(此前只验 arm64 目录)
+>
+> 也就是说:剩下要做的只有下面「写入 Secrets」一节。在那之前 mac 安装包仍然是坏的。
 
-## 为什么现在是坏的
+## 为什么当时是坏的
 
 CI 日志逐字为证(每个 mac 构建都有,两个架构各一次):
 
@@ -76,17 +86,22 @@ Settings → Secrets and variables → Actions → New repository secret:
 
 > app 专用密码若泄漏:https://appleid.apple.com → App-Specific Passwords → 撤销重生。
 
-## 写好之后要改的代码
+## 代码侧(2026-10-16 已完成,留档说明改了什么)
 
-1. **删掉** `build-desktop.yml` 中两个 mac 打包步骤的 `CSC_IDENTITY_AUTO_DISCOVERY: "false"`(Windows 那处保留)
-2. 每个 mac 打包步骤后加**硬门禁**,因为当前流水线把「跳过签名」当 warn 且 exit 0:
+1. ✅ **删掉** `build-desktop.yml` 中两个 mac 打包步骤的 `CSC_IDENTITY_AUTO_DISCOVERY: "false"`(Windows 那处保留)
+2. ✅ 每个 mac 打包步骤后加**硬门禁**,因为流水线原先把「跳过签名」当 warn 且 exit 0:
 
 ```bash
 codesign --verify --deep --strict --verbose=2 dist/mac-arm64/HyperCode.app
 spctl --assess --type execute -vv dist/mac-arm64/HyperCode.app
+xcrun stapler validate dist/mac-arm64/HyperCode.app   # 只有它证明公证真的贴上去了
 ```
 
-3. x64 产物目前**完全没验证**:`build-desktop.yml` 只对 `dist/mac-arm64/...` 跑 `verify-package.ts`,而 x64 落在 `dist/mac`(无 `-x64` 后缀)。两处都要验。
+   门禁带 `if: env.APPLE_ID_SECRET != ''`,所以没有证书的 push 构建仍可产出未签名 artifact,
+   而一旦证书就位,任何一次「静默跳过签名」都会让构建变红。
+
+3. ✅ x64 产物此前**完全没验证**,现已补上(注意 x64 落在 `dist/mac`,无 `-x64` 后缀)。
+4. ✅ 带版本号的发布构建若缺 `APPLE_ID` secret,在打包前直接失败并列出缺哪些 secret。
 
 `packages/desktop/resources/entitlements.plist` 已存在且正确——含 `com.apple.security.cs.disable-library-validation`,捆绑的 oh-my-openagent 里有第三方原生二进制,在 hardened runtime 下需要它。
 

@@ -178,3 +178,146 @@ export function addRootArrayEntry(text: string, key: string, entry: string): str
 export function rootKeys(text: string): string[] {
   return scan(text).members.map((member) => member.name)
 }
+
+/** Offset of the `}` closing the object that starts at `start`, or undefined when it never closes. */
+function objectEnd(text: string, start: number): number | undefined {
+  let depth = 0
+  let i = start
+  while (i < text.length) {
+    const char = text[i]
+    if (char === '"') {
+      i = skipString(text, i)
+      continue
+    }
+    if (char === "/" && (text[i + 1] === "/" || text[i + 1] === "*")) {
+      i = skipTrivia(text, i)
+      continue
+    }
+    if (char === "{") depth++
+    if (char === "}") {
+      depth--
+      if (depth === 0) return i
+    }
+    i++
+  }
+  return undefined
+}
+
+/**
+ * Direct members of the object spanning `[start, end)`. Depth is tracked so a key nested inside a member's
+ * value — `provider.deepseek.options` when asked about `provider` — is not reported as a member of it.
+ */
+function scanObjectMembers(text: string, start: number, end: number): RootMember[] {
+  const members: RootMember[] = []
+  let depth = 0
+  let i = skipTrivia(text, start)
+  while (i < end) {
+    const char = text[i]
+    if (char === '"') {
+      const after = skipString(text, i)
+      if (depth === 0) {
+        const afterKey = skipTrivia(text, after)
+        if (text[afterKey] === ":") {
+          const valueStart = skipTrivia(text, afterKey + 1)
+          members.push({ name: text.slice(i + 1, after - 1), valueStart })
+          i = valueStart
+          continue
+        }
+      }
+      i = after
+      continue
+    }
+    if (char === "{" || char === "[") {
+      depth++
+      i++
+      continue
+    }
+    if (char === "}" || char === "]") {
+      depth--
+      i++
+      continue
+    }
+    i = skipTrivia(text, i + 1)
+  }
+  return members
+}
+
+/** Index of the last character in `[start, end)` that is neither whitespace nor comment. */
+function lastSignificant(text: string, start: number, end: number): number | undefined {
+  let last: number | undefined
+  let i = start
+  while (i < end) {
+    const next = skipTrivia(text, i)
+    if (next > i) {
+      i = next
+      continue
+    }
+    if (text[i] === '"') {
+      const after = skipString(text, i)
+      last = after - 1
+      i = after
+      continue
+    }
+    last = i
+    i++
+  }
+  return last
+}
+
+/** Member names of the root-level object at `rootKey`, or undefined when it is not an object. */
+function rootObjectMembers(text: string, rootKey: string): RootMember[] | undefined {
+  const parsed = scan(text)
+  const root = parsed.members.find((candidate) => candidate.name === rootKey)
+  if (!root || text[root.valueStart] !== "{") return undefined
+  const end = objectEnd(text, root.valueStart)
+  if (end === undefined) return undefined
+  return scanObjectMembers(text, root.valueStart + 1, end)
+}
+
+/** True when the root-level object at `rootKey` already declares `member`. */
+export function hasRootObjectMember(text: string, rootKey: string, member: string): boolean {
+  const members = rootObjectMembers(text, rootKey)
+  return members?.some((candidate) => candidate.name === member) ?? false
+}
+
+/**
+ * Put `value` (already-serialised JSONC text) inside the root-level object at `rootKey` as `member`,
+ * creating either level when it is missing.
+ *
+ * Returns undefined when the edit cannot be made safely — no root object, `rootKey` holds something that
+ * is not an object, or the object never closes. Callers treat that as "leave the user's file alone".
+ * An already-present `member` also returns undefined: the user's file wins over us.
+ */
+export function addRootObjectMember(
+  text: string,
+  rootKey: string,
+  member: string,
+  value: string,
+): string | undefined {
+  const parsed = scan(text)
+  if (parsed.bodyStart === undefined) return undefined
+  const newline = text.includes("\r\n") ? "\r\n" : "\n"
+  const root = parsed.members.find((candidate) => candidate.name === rootKey)
+
+  if (!root) {
+    const body = `${newline}  ${JSON.stringify(rootKey)}: {${newline}    ${JSON.stringify(member)}: ${value}${newline}  }`
+    const insertion = parsed.empty ? `${body}${newline}` : `${body},`
+    return `${text.slice(0, parsed.bodyStart)}${insertion}${text.slice(parsed.bodyStart)}`
+  }
+
+  if (text[root.valueStart] !== "{") return undefined
+  const end = objectEnd(text, root.valueStart)
+  if (end === undefined) return undefined
+
+  const existing = scanObjectMembers(text, root.valueStart + 1, end)
+  if (existing.some((candidate) => candidate.name === member)) return undefined
+
+  if (existing.length === 0) {
+    return `${text.slice(0, end)}${newline}    ${JSON.stringify(member)}: ${value}${newline}  ${text.slice(end)}`
+  }
+
+  // The previous member has to end in a comma; a file written by hand may or may not have one there.
+  const last = lastSignificant(text, root.valueStart + 1, end)
+  const comma = last !== undefined && text[last] === "," ? "" : ","
+  return `${text.slice(0, end)}${comma}${newline}    ${JSON.stringify(member)}: ${value}${newline}  ${text.slice(end)}`
+}

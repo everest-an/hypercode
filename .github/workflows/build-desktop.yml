@@ -26,6 +26,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Windows PowerShell 5.1 decodes a .ps1 as ANSI unless it carries a UTF-8 BOM, so any script with
+      # non-ASCII text (every installer script here has Chinese messages) fails to parse for real users
+      # while looking perfectly fine in an editor. Both bake/pair.ps1 and script/setup-apple-signing.ps1
+      # were written that way. The installers run on user machines and have no test suite of their own,
+      # so this gate has to exist here.
+      - name: Assert every PowerShell script parses under Windows PowerShell
+        shell: powershell
+        run: |
+          $failed = @()
+          Get-ChildItem -Path . -Recurse -File -Filter *.ps1 |
+            Where-Object { $_.FullName -notmatch '\\node_modules\\|\\plugin-payload\\|\\dist\\|\\out\\' } |
+            ForEach-Object {
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$errors) | Out-Null
+              if ($errors.Count -gt 0) {
+                $failed += "$($_.FullName): $($errors[0].Message) (line $($errors[0].Extent.StartLineNumber))"
+              }
+            }
+          if ($failed.Count -gt 0) { $failed | ForEach-Object { Write-Host "::error::$_" }; exit 1 }
+          Write-Host "all PowerShell scripts parse"
+
       - name: Setup Node (native installs)
         uses: actions/setup-node@v4
         with:
@@ -127,7 +148,18 @@ jobs:
           # build hangs instead of failing cleanly. Keep this at 4096.
           NODE_OPTIONS: "--max-old-space-size=4096"
 
-      - name: Configure signing (optional, only when Apple credentials exist)
+      # A release without Apple credentials is not "an unsigned release", it is a broken one: on Apple
+      # Silicon an unsigned arm64 Mach-O is refused outright, so the dmg installs and then the app will
+      # not open. Fail here instead of shipping it, and only for release builds -- push builds stay
+      # artifact-only and may legitimately lack credentials.
+      - name: Require Apple credentials for release builds
+        if: inputs.version != '' && env.APPLE_ID_SECRET == ''
+        run: |
+          echo "::error::Release build requested but APPLE_ID secret is missing. Add MAC_CERT_P12_BASE64," \
+               "MAC_CERT_PASSWORD, APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID first."
+          exit 1
+
+      - name: Configure signing (only when Apple credentials exist)
         if: env.APPLE_ID_SECRET != ''
         run: |
           echo "HC_NOTARIZE=1" >> "$GITHUB_ENV"
@@ -151,8 +183,24 @@ jobs:
         run: bun run package:mac -- --arm64 --publish never
         env:
           OPENCODE_CHANNEL: prod
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          # Do NOT set CSC_IDENTITY_AUTO_DISCOVERY here. With "false", findIdentity() returns null
+          # before it ever consults the imported certificate, so codesign never runs, notarization is
+          # skipped with it, and electron-builder still exits 0. (The Windows job keeps its "false":
+          # that platform signs through a custom signtool callback instead, which is unaffected.)
           HYPERCODE_VERSION: ${{ inputs.version }}
+
+      # The pipeline used to treat "skipped signing" as a warning with exit 0, so a green build proved
+      # nothing. These assertions are the proof: an unsigned arm64 app cannot execute on Apple Silicon,
+      # and stapler validate is the only check that proves notarization actually stapled.
+      - name: Assert macOS Apple Silicon is signed and notarized
+        if: env.APPLE_ID_SECRET != ''
+        working-directory: packages/desktop
+        run: |
+          set -euo pipefail
+          APP="dist/mac-arm64/HyperCode.app"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          spctl --assess --type execute -vv "$APP"
+          xcrun stapler validate "$APP"
 
       - name: Bundle plugin payload (x64)
         working-directory: packages/desktop
@@ -163,13 +211,29 @@ jobs:
         run: bun run package:mac -- --x64 --publish never
         env:
           OPENCODE_CHANNEL: prod
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          # See the Apple Silicon step: auto-discovery stays enabled so the imported certificate is used.
           HYPERCODE_VERSION: ${{ inputs.version }}
 
+      - name: Assert macOS Intel is signed and notarized
+        if: env.APPLE_ID_SECRET != ''
+        working-directory: packages/desktop
+        run: |
+          set -euo pipefail
+          APP="dist/mac/HyperCode.app"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          spctl --assess --type execute -vv "$APP"
+          xcrun stapler validate "$APP"
+
       # See the Windows job.
-      - name: Verify packaged payload
+      - name: Verify packaged payload (arm64)
         working-directory: packages/desktop
         run: bun ./scripts/verify-package.ts "dist/mac-arm64/HyperCode.app/Contents/Resources"
+
+      # The Intel build lands in dist/mac (no -x64 suffix) and was previously never verified at all,
+      # so a broken x64 payload could ship on the strength of the arm64 check alone.
+      - name: Verify packaged payload (x64)
+        working-directory: packages/desktop
+        run: bun ./scripts/verify-package.ts "dist/mac/HyperCode.app/Contents/Resources"
 
       - name: Upload dmg
         uses: actions/upload-artifact@v4

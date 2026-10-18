@@ -250,6 +250,10 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
       clear: () => window.api.licenseClear(),
     },
 
+    gateway: {
+      connect: () => window.api.gatewayConnect(),
+    },
+
     exportDebugLogs: () => window.api.exportDebugLogs(),
 
     setForceFocus: (enabled) => window.api.setForceFocus(enabled),

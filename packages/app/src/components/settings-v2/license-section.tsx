@@ -60,6 +60,32 @@ export const SettingsLicenseV2: Component = () => {
     await refetchLicense()
   }
 
+  const gatewayAvailable = createMemo(() => platform.platform === "desktop" && Boolean(platform.gateway))
+  const [gatewayBusy, setGatewayBusy] = createSignal(false)
+  const [gatewayMessage, setGatewayMessage] = createSignal<string | null>(null)
+
+  /**
+   * Pairing can take as long as the user needs in the browser, so the button reports its own outcome
+   * instead of the component holding a global "connected" state it cannot actually observe: the engine
+   * reads the credential we wrote, not this component.
+   */
+  const connectGateway = async () => {
+    const api = platform.gateway
+    if (!api || gatewayBusy()) return
+    setGatewayBusy(true)
+    setGatewayMessage(null)
+    try {
+      const result = await api.connect()
+      if (result.status === "connected") setGatewayMessage(language.t("settings.gateway.connected"))
+      else if (result.status === "expired") setGatewayMessage(language.t("settings.gateway.expired"))
+      else setGatewayMessage(language.t("settings.gateway.failed"))
+    } catch {
+      setGatewayMessage(language.t("settings.gateway.failed"))
+    } finally {
+      setGatewayBusy(false)
+    }
+  }
+
   const licenseTitle = createMemo(() => {
     const status = licenseStatus()
     if (!status) return language.t("settings.license.status.unlicensed")
@@ -126,6 +152,33 @@ export const SettingsLicenseV2: Component = () => {
                   onClick={() => void activateLicense()}
                 >
                   {language.t("settings.license.activate.button")}
+                </ButtonV2>
+              </div>
+            </SettingsRowV2>
+          </Show>
+
+          {/*
+            Compute is bought on the site and used here. Connecting opens the approval page in the browser
+            and stores the key the site hands back, so the user never copies an API key — the row shows the
+            outcome rather than a key for them to paste somewhere else.
+          */}
+          <Show when={gatewayAvailable()}>
+            <SettingsRowV2
+              title={language.t("settings.gateway.title")}
+              description={gatewayMessage() ?? language.t("settings.gateway.description")}
+            >
+              <div class="flex w-full items-center justify-end gap-2 sm:w-auto">
+                <ButtonV2
+                  size="normal"
+                  variant="contrast"
+                  data-action="settings-gateway-connect"
+                  disabled={gatewayBusy()}
+                  onClick={() => void connectGateway()}
+                >
+                  {gatewayBusy() ? language.t("settings.gateway.connecting") : language.t("settings.gateway.connect")}
+                </ButtonV2>
+                <ButtonV2 size="small" variant="neutral" onClick={() => platform.openExternal(LICENSE_PURCHASE_URL)}>
+                  {language.t("settings.gateway.topUp")}
                 </ButtonV2>
               </div>
             </SettingsRowV2>

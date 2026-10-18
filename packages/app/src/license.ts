@@ -60,7 +60,23 @@ export function resolveLicenseNotice(status: LicenseStatus | undefined): License
 }
 
 /**
- * 桌面端订阅购买/管理落地页。
- * 指向 trust3 微信支付页:新用户微信扫码注册即领 30 天试用,付费走微信。
+ * 桌面端充值/订阅落地页。
+ * 指向 trust3 的充值与订阅页;具体开放哪些支付方式与套餐由站点配置决定,
+ * 客户端不假设(微信登录/订阅入口在站点侧是可开关的)。
  */
 export const LICENSE_PURCHASE_URL = "https://www.trust3.pro/purchase"
+
+/**
+ * Gateway pairing capability (desktop only).
+ *
+ * The user pays and manages their account on the site; connecting hands this install an API key without
+ * the user ever seeing one. Mirrors `GatewayConnectResult` in packages/desktop/src/preload/types.ts.
+ */
+export type GatewayConnectResult =
+  | { status: "connected" }
+  | { status: "expired" }
+  | { status: "cancelled"; reason: string }
+
+export type GatewayPlatform = {
+  connect(): Promise<GatewayConnectResult>
+}

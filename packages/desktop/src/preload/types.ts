@@ -79,6 +79,17 @@ export type LicenseStatus = {
   needsAttention: boolean
 }
 
+/**
+ * Outcome of the gateway pairing flow (main/gateway-connect.ts).
+ *
+ * `cancelled` covers both "the user never approved in time" and "approved, but the key could not be
+ * stored" — the second reason is reported through `reason` so a retry does not silently mint another key.
+ */
+export type GatewayConnectResult =
+  | { status: "connected" }
+  | { status: "expired" }
+  | { status: "cancelled"; reason: string }
+
 export type ElectronAPI = {
   killSidecar: () => Promise<void>
   installCli: () => Promise<string>
@@ -97,6 +108,11 @@ export type ElectronAPI = {
   licenseGetStatus: () => Promise<LicenseStatus>
   licenseActivate: (key: string) => Promise<LicenseStatus>
   licenseClear: () => Promise<LicenseStatus>
+  /**
+   * Pairs this install with the user's trust3 account: opens the approval page and stores the API key the
+   * site hands back. Shape must stay in sync with `ConnectResult` in main/gateway-connect.ts.
+   */
+  gatewayConnect: () => Promise<GatewayConnectResult>
   checkAppExists: (appName: string) => Promise<boolean>
   resolveAppPath: (appName: string) => Promise<string | null>
   storeGet: (name: string, key: string) => Promise<string | null>
