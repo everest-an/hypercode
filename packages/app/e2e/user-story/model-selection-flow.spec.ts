@@ -79,7 +79,12 @@ test("creates a session in a new project, connects OpenCode Go, and selects its 
 
   const modelControl = page.locator('[data-action="prompt-model"]')
   await modelControl.click()
-  await expect(page.locator('[data-section="free-models"]')).toContainText("Free models provided by HyperCode")
+  // Depending on entitlement state the picker opens either the unpaid free-models
+  // dialog or the compact model menu; both lead to provider connection.
+  const freeModels = page.locator('[data-section="free-models"]')
+  const manageModels = page.getByText("Manage models", { exact: true })
+  await expect(freeModels.or(manageModels).first()).toBeVisible()
+  if ((await freeModels.count()) === 0) await manageModels.click()
 
   await page.locator('[data-provider-id="opencode-go"]').click()
   await page.locator('[data-input="provider-api-key"]').fill("mock-go-api-key")
