@@ -259,6 +259,7 @@ const unixNoLLMServer = process.platform !== "win32" ? noLLMServer.instance : no
 // Config that registers a custom "test" provider with a "test-model" model
 // so provider model lookup succeeds inside the loop.
 const cfg = {
+  model: "test/test-model",
   provider: {
     test: {
       name: "Test",
