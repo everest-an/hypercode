@@ -84,7 +84,10 @@ test("creates a session in a new project, connects OpenCode Go, and selects its 
   const freeModels = page.locator('[data-section="free-models"]')
   const manageModels = page.getByText("Manage models", { exact: true })
   await expect(freeModels.or(manageModels).first()).toBeVisible()
-  if ((await freeModels.count()) === 0) await manageModels.click()
+  if ((await freeModels.count()) === 0) {
+    await manageModels.click()
+    await page.getByText("Connect provider", { exact: true }).click()
+  }
 
   await page.locator('[data-provider-id="opencode-go"]').click()
   await page.locator('[data-input="provider-api-key"]').fill("mock-go-api-key")
