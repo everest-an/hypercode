@@ -118,8 +118,8 @@ const getBase = (appId: string): Configuration => ({
   mac: {
     category: "public.app-category.developer-tools",
     icon: `resources/icons/icon.png`,
-    // Signing/notarization gated by HC_NOTARIZE (CI sets it to 1 when Apple credentials exist)
-    hardenedRuntime: process.env.HC_NOTARIZE === "1",
+    // HC_SIGN turns on Developer ID signing; HC_NOTARIZE is opt-in because a first notarization can take hours.
+    hardenedRuntime: process.env.HC_SIGN === "1" || process.env.HC_NOTARIZE === "1",
     gatekeeperAssess: false,
     entitlements: "resources/entitlements.plist",
     entitlementsInherit: "resources/entitlements.plist",

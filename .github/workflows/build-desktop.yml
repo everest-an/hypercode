@@ -8,6 +8,11 @@ on:
         description: "Version (optional)"
         required: false
         type: string
+      notarize:
+        description: "Notarize the macOS build (a first notarization can take many hours)"
+        required: false
+        type: boolean
+        default: false
   push:
     branches:
       - dev
@@ -162,7 +167,8 @@ jobs:
       - name: Configure signing (only when Apple credentials exist)
         if: env.APPLE_ID_SECRET != ''
         run: |
-          echo "HC_NOTARIZE=1" >> "$GITHUB_ENV"
+          echo "HC_SIGN=1" >> "$GITHUB_ENV"
+          echo "HC_NOTARIZE=${{ inputs.notarize == true && '1' || '0' }}" >> "$GITHUB_ENV"
           echo "CSC_LINK=${{ secrets.MAC_CERT_P12_BASE64 }}" >> "$GITHUB_ENV"
           echo "CSC_KEY_PASSWORD=${{ secrets.MAC_CERT_PASSWORD }}" >> "$GITHUB_ENV"
           echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> "$GITHUB_ENV"
@@ -192,15 +198,17 @@ jobs:
       # The pipeline used to treat "skipped signing" as a warning with exit 0, so a green build proved
       # nothing. These assertions are the proof: an unsigned arm64 app cannot execute on Apple Silicon,
       # and stapler validate is the only check that proves notarization actually stapled.
-      - name: Assert macOS Apple Silicon is signed and notarized
+      - name: Assert macOS Apple Silicon is signed
         if: env.APPLE_ID_SECRET != ''
         working-directory: packages/desktop
         run: |
           set -euo pipefail
           APP="dist/mac-arm64/HyperCode.app"
           codesign --verify --deep --strict --verbose=2 "$APP"
-          spctl --assess --type execute -vv "$APP"
-          xcrun stapler validate "$APP"
+          if [ "$HC_NOTARIZE" = "1" ]; then
+            spctl --assess --type execute -vv "$APP"
+            xcrun stapler validate "$APP"
+          fi
 
       - name: Bundle plugin payload (x64)
         working-directory: packages/desktop
@@ -214,15 +222,17 @@ jobs:
           # See the Apple Silicon step: auto-discovery stays enabled so the imported certificate is used.
           HYPERCODE_VERSION: ${{ inputs.version }}
 
-      - name: Assert macOS Intel is signed and notarized
+      - name: Assert macOS Intel is signed
         if: env.APPLE_ID_SECRET != ''
         working-directory: packages/desktop
         run: |
           set -euo pipefail
           APP="dist/mac/HyperCode.app"
           codesign --verify --deep --strict --verbose=2 "$APP"
-          spctl --assess --type execute -vv "$APP"
-          xcrun stapler validate "$APP"
+          if [ "$HC_NOTARIZE" = "1" ]; then
+            spctl --assess --type execute -vv "$APP"
+            xcrun stapler validate "$APP"
+          fi
 
       # See the Windows job.
       - name: Verify packaged payload (arm64)
