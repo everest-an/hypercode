@@ -56,7 +56,9 @@ export namespace RipgrepBinary {
         const dir = yield* fs.makeTempDirectoryScoped({ directory: Global.Path.bin, prefix: "ripgrep-" })
 
         if (config.extension === "zip") {
-          const result = yield* run("tar", ["-xf", archive, "-C", dir])
+          const systemTar = path.join(process.env.SystemRoot ?? "C:\\Windows", "System32", "tar.exe")
+          const tar = (yield* fs.isFile(systemTar).pipe(Effect.orElseSucceed(() => false))) ? systemTar : "tar"
+          const result = yield* run(tar, ["-xf", archive, "-C", dir])
           if (result.code !== 0)
             throw new Error(
               result.stderr.trim() || result.stdout.trim() || `ripgrep extraction failed with code ${result.code}`,
