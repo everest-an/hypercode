@@ -261,6 +261,14 @@ const scenarios: Scenario[] = [
       headers: ctx.headers(),
     }))
     .status(204, undefined, "status"),
+  http.protected
+    .patch("/api/permission/saved/{id}", "v2.permission.saved.update")
+    .at((ctx) => ({
+      path: route("/api/permission/saved/{id}", { id: "psv_httpapi_missing" }),
+      headers: ctx.headers(),
+      body: { action: "read", resource: "src/*" },
+    }))
+    .status(404, undefined, "status"),
   http.protected.get("/provider", "provider.list").json(),
   http.protected.get("/provider/auth", "provider.auth").json(),
   http.protected
