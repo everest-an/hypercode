@@ -20,9 +20,6 @@ on:
 permissions:
   contents: read
 
-env:
-  HYPERCODE_PLUGIN_VERSION: "5.1.34"
-
 jobs:
   build-win:
     runs-on: windows-latest
@@ -83,10 +80,6 @@ jobs:
         working-directory: packages/desktop
         run: bun ./scripts/bundle-plugin.ts
 
-      - name: Package plugin payload
-        working-directory: packages/desktop
-        run: bun ./scripts/package-plugin.ts --platform win32 --arch x64 --version "${{ env.HYPERCODE_PLUGIN_VERSION }}" --out plugin-assets
-
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
         run: bun run package:win -- --publish never
@@ -117,7 +110,6 @@ jobs:
             packages/desktop/dist/*.exe
             packages/desktop/dist/*.blockmap
             packages/desktop/dist/latest.yml
-            packages/desktop/plugin-assets/*
           if-no-files-found: error
 
   build-mac:
@@ -186,10 +178,6 @@ jobs:
         working-directory: packages/desktop
         run: bun ./scripts/bundle-plugin.ts --platform darwin --arch arm64
 
-      - name: Package plugin payload (arm64)
-        working-directory: packages/desktop
-        run: bun ./scripts/package-plugin.ts --platform darwin --arch arm64 --version "${{ env.HYPERCODE_PLUGIN_VERSION }}" --out plugin-assets
-
       - name: Package macOS Apple Silicon (dmg + zip)
         working-directory: packages/desktop
         run: bun run package:mac -- --arm64 --publish never
@@ -217,10 +205,6 @@ jobs:
       - name: Bundle plugin payload (x64)
         working-directory: packages/desktop
         run: bun ./scripts/bundle-plugin.ts --platform darwin --arch x64
-
-      - name: Package plugin payload (x64)
-        working-directory: packages/desktop
-        run: bun ./scripts/package-plugin.ts --platform darwin --arch x64 --version "${{ env.HYPERCODE_PLUGIN_VERSION }}" --out plugin-assets
 
       - name: Package macOS Intel (dmg + zip)
         working-directory: packages/desktop
@@ -258,7 +242,6 @@ jobs:
           path: |
             packages/desktop/dist/*.dmg
             packages/desktop/dist/*.zip
-            packages/desktop/plugin-assets/*
           if-no-files-found: error
 
   # Assembles the installers into a *draft* release on the public download repo. Draft is the point: the
@@ -294,50 +277,6 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Generate plugin manifest
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          node - <<'NODE'
-          const fs = require("node:fs")
-          const path = require("node:path")
-          const dir = "dist"
-          const version = process.env.VERSION.replace(/^v/, "")
-          const tag = `v${version}`
-          const fragments = fs
-            .readdirSync(dir)
-            .filter((file) => file.startsWith("plugin-fragment-") && file.endsWith(".json"))
-          if (fragments.length === 0) {
-            console.error("::error::no plugin fragment found")
-            process.exit(1)
-          }
-          const assets = {}
-          let pluginVersion = ""
-          for (const file of fragments) {
-            const fragment = JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"))
-            pluginVersion = fragment.version
-            if (!fs.existsSync(path.join(dir, fragment.file))) {
-              console.error(`::error::missing plugin asset ${fragment.file}`)
-              process.exit(1)
-            }
-            assets[fragment.platform] = {
-              file: fragment.file,
-              sha256: fragment.sha256,
-              url: `https://github.com/AwareLiquid/HyperCode/releases/download/${tag}/${fragment.file}`,
-            }
-          }
-          const [major, minor] = version.split(".").map(Number)
-          const manifest = {
-            schema: 1,
-            plugin: "oh-my-openagent",
-            version: pluginVersion,
-            compatibleApp: { min: version, maxExclusive: `${major}.${minor + 1}.0` },
-            assets,
-          }
-          fs.writeFileSync(path.join(dir, "plugin-manifest.json"), JSON.stringify(manifest, null, 2) + "\n")
-          console.log("plugin manifest", manifest)
-          NODE
-
       - name: Verify the expected assets exist
         run: |
           cd dist
@@ -346,11 +285,9 @@ jobs:
           # The blockmap is what lets an update fetch only the changed blocks. Without it electron-updater
           # logs "Cannot download differentially, fallback to full download" and pulls the whole ~190 MB
           # installer every time - which still works, so its absence is invisible except in the logs.
-          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml hypercode-desktop-win-x64.exe.blockmap plugin-manifest.json; do
+          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml hypercode-desktop-win-x64.exe.blockmap; do
             if [ ! -f "$f" ]; then echo "::error::missing asset $f"; missing=1; fi
           done
-          plugin_zips=$(ls plugin-payload-*.zip 2>/dev/null | wc -l)
-          if [ "$plugin_zips" -lt 3 ]; then echo "::error::expected 3 plugin payloads, found $plugin_zips"; missing=1; fi
           # A manifest naming a file that is not in the release updates nobody: electron-updater resolves
           # `path` against the release assets and 404s, which is indistinguishable from having no manifest at
           # all. Both names come from electron-builder's artifactName, so they can only drift by accident --
@@ -404,7 +341,5 @@ jobs:
             dist/hypercode-desktop-mac-arm64.dmg \
             dist/hypercode-desktop-mac-x64.dmg \
             dist/latest.yml \
-            dist/hypercode-desktop-win-x64.exe.blockmap \
-            dist/plugin-manifest.json \
-            dist/plugin-payload-*.zip
+            dist/hypercode-desktop-win-x64.exe.blockmap
           echo "::notice::Draft release $tag created. Verify the installers, then publish it to go live."
