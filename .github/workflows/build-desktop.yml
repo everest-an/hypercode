@@ -195,6 +195,12 @@ jobs:
           # that platform signs through a custom signtool callback instead, which is unaffected.)
           HYPERCODE_VERSION: ${{ inputs.version }}
 
+      # electron-builder writes latest-mac.yml per packaging pass, so the two architectures overwrite each
+      # other. Keep each one under an arch-specific name and merge them in the release job.
+      - name: Keep the arm64 mac update manifest
+        working-directory: packages/desktop
+        run: mv dist/latest-mac.yml dist/latest-mac-arm64.yml
+
       # The pipeline used to treat "skipped signing" as a warning with exit 0, so a green build proved
       # nothing. These assertions are the proof: an unsigned arm64 app cannot execute on Apple Silicon,
       # and stapler validate is the only check that proves notarization actually stapled.
@@ -221,6 +227,10 @@ jobs:
           OPENCODE_CHANNEL: prod
           # See the Apple Silicon step: auto-discovery stays enabled so the imported certificate is used.
           HYPERCODE_VERSION: ${{ inputs.version }}
+
+      - name: Keep the x64 mac update manifest
+        working-directory: packages/desktop
+        run: mv dist/latest-mac.yml dist/latest-mac-x64.yml
 
       - name: Assert macOS Intel is signed
         if: env.APPLE_ID_SECRET != ''
@@ -287,6 +297,53 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Merge the per-architecture mac update manifests
+        run: |
+          node - <<'NODE'
+          const fs = require("node:fs")
+          const path = require("node:path")
+          const dir = "dist"
+          const read = (name) => {
+            const text = fs.readFileSync(path.join(dir, name), "utf8")
+            const version = /^version:\s*(.+)$/m.exec(text)?.[1]?.trim()
+            const files = []
+            const re = /- url:\s*(.+)\n\s+sha512:\s*(.+)\n\s+size:\s*(\d+)/g
+            let match
+            while ((match = re.exec(text))) files.push({ url: match[1].trim(), sha512: match[2].trim(), size: Number(match[3]) })
+            return { version, files }
+          }
+          const arm = read("latest-mac-arm64.yml")
+          const x64 = read("latest-mac-x64.yml")
+          const version = arm.version ?? x64.version
+          if (!version) {
+            console.error("::error::no version in the mac manifests")
+            process.exit(1)
+          }
+          const files = [...arm.files, ...x64.files]
+          if (!arm.files.length || !x64.files.length) {
+            console.error("::error::a mac manifest has no files")
+            process.exit(1)
+          }
+          for (const file of files) {
+            if (!fs.existsSync(path.join(dir, file.url))) {
+              console.error(`::error::mac manifest names missing asset ${file.url}`)
+              process.exit(1)
+            }
+          }
+          const primary = files.find((file) => file.url.includes("-arm64")) ?? files[0]
+          const lines = [
+            `version: ${version}`,
+            "files:",
+            ...files.flatMap((file) => [`  - url: ${file.url}`, `    sha512: ${file.sha512}`, `    size: ${file.size}`]),
+            `path: ${primary.url}`,
+            `sha512: ${primary.sha512}`,
+            `releaseDate: '${new Date().toISOString()}'`,
+            "",
+          ]
+          fs.writeFileSync(path.join(dir, "latest-mac.yml"), lines.join("\n"))
+          console.log("latest-mac.yml files:", files.map((file) => file.url).join(", "))
+          NODE
+
       - name: Verify the expected assets exist
         run: |
           cd dist
@@ -295,7 +352,7 @@ jobs:
           # The blockmap is what lets an update fetch only the changed blocks. Without it electron-updater
           # logs "Cannot download differentially, fallback to full download" and pulls the whole ~190 MB
           # installer every time - which still works, so its absence is invisible except in the logs.
-          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg latest.yml hypercode-desktop-win-x64.exe.blockmap; do
+          for f in hypercode-desktop-win-x64.exe hypercode-desktop-mac-arm64.dmg hypercode-desktop-mac-x64.dmg hypercode-desktop-mac-arm64.zip hypercode-desktop-mac-x64.zip latest.yml latest-mac.yml hypercode-desktop-win-x64.exe.blockmap; do
             if [ ! -f "$f" ]; then echo "::error::missing asset $f"; missing=1; fi
           done
           # A manifest naming a file that is not in the release updates nobody: electron-updater resolves
@@ -309,6 +366,15 @@ jobs:
               echo "::error::latest.yml names '$named', which is not among the uploaded assets"
               missing=1
             fi
+          fi
+          if [ -f latest-mac.yml ]; then
+            for named in $(sed -n 's/^  - url: *//p' latest-mac.yml | tr -d '\r'); do
+              echo "latest-mac.yml names: $named"
+              if [ ! -f "$named" ]; then
+                echo "::error::latest-mac.yml names '$named', which is not among the uploaded assets"
+                missing=1
+              fi
+            done
           fi
           # A zero-byte or few-KB "installer" is the failure mode worth catching here: it uploads without
           # complaint and 404-page-as-exe looks identical to the real thing in a release listing.
@@ -328,12 +394,9 @@ jobs:
           tag="v${VERSION#v}"
           # Recreate rather than append, so a re-run cannot leave assets from a previous attempt behind.
           gh release delete "$tag" --repo AwareLiquid/HyperCode --yes --cleanup-tag 2>/dev/null || true
-          # latest.yml lets Windows clients update themselves; without it electron-updater 404s and every
-          # release has to be installed by hand. macOS is deliberately not covered yet: it needs the .zip
-          # assets plus a latest-mac.yml merged across the two per-architecture packaging passes, which
-          # overwrite each other, and none of that can be verified from here. Shipping an untested update
-          # manifest is worse than shipping none, so mac keeps updating manually until it can be tested on a
-          # mac.
+          # latest.yml and latest-mac.yml let installed clients update themselves; without them electron-updater
+          # 404s and every release has to be installed by hand. The mac manifest carries both architectures and
+          # electron-updater picks the zip whose name matches the running arch.
           # The download page links here for the macOS one-time authorization step, so this body has to
           # carry it. Kept in .github/release-notes.md rather than inline: prose belongs in a file that can
           # be read and edited, and a step that depends on someone remembering to paste it is the step that
@@ -350,6 +413,9 @@ jobs:
             dist/hypercode-desktop-win-x64.exe \
             dist/hypercode-desktop-mac-arm64.dmg \
             dist/hypercode-desktop-mac-x64.dmg \
+            dist/hypercode-desktop-mac-arm64.zip \
+            dist/hypercode-desktop-mac-x64.zip \
             dist/latest.yml \
+            dist/latest-mac.yml \
             dist/hypercode-desktop-win-x64.exe.blockmap
           echo "::notice::Draft release $tag created. Verify the installers, then publish it to go live."
