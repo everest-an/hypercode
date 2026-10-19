@@ -262,6 +262,7 @@ jobs:
           path: |
             packages/desktop/dist/*.dmg
             packages/desktop/dist/*.zip
+            packages/desktop/dist/latest-mac-*.yml
           if-no-files-found: error
 
   # Assembles the installers into a *draft* release on the public download repo. Draft is the point: the
