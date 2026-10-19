@@ -1,5 +1,5 @@
 import { NodeFileSystem } from "@effect/platform-node"
-import { dirname, isAbsolute, join, relative, resolve as pathResolve, sep } from "path"
+import { dirname, isAbsolute, join, parse, relative, resolve as pathResolve, sep } from "path"
 import { realpathSync } from "fs"
 import * as NFS from "fs/promises"
 import { lookup } from "mime-types"
@@ -231,6 +231,17 @@ export namespace FSUtil {
     try {
       return realpathSync.native(resolved)
     } catch {
+      // A drive-less rooted path resolves against the current drive. When that drive has no
+      // such path, the input pointed at another drive (a temp directory on C: while the
+      // process runs on D:), so retry the same tail on the remaining drives.
+      if (/^[\\/]/.test(p) && !/^[A-Za-z]:/.test(p)) {
+        const tail = resolved.slice(parse(resolved).root.length)
+        for (const letter of "CDEFGHIJKLMNOPQRSTUVWXYZ") {
+          try {
+            return realpathSync.native(`${letter}:\\${tail}`)
+          } catch {}
+        }
+      }
       return resolved
     }
   }
