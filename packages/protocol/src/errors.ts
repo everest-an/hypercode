@@ -86,6 +86,15 @@ export class PermissionNotFoundError extends Schema.TaggedErrorClass<PermissionN
   { httpApiStatus: 404 },
 ) {}
 
+export class PermissionSavedNotFoundError extends Schema.TaggedErrorClass<PermissionSavedNotFoundError>()(
+  "PermissionSavedNotFoundError",
+  {
+    id: Schema.String,
+    message: Schema.String,
+  },
+  { httpApiStatus: 404 },
+) {}
+
 export class QuestionNotFoundError extends Schema.TaggedErrorClass<QuestionNotFoundError>()(
   "QuestionNotFoundError",
   {

@@ -74,6 +74,14 @@ export type ProviderNotFoundError = {
 export const isProviderNotFoundError = (value: unknown): value is ProviderNotFoundError =>
   typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "ProviderNotFoundError"
 
+export type PermissionSavedNotFoundError = {
+  readonly _tag: "PermissionSavedNotFoundError"
+  readonly id: string
+  readonly message: string
+}
+export const isPermissionSavedNotFoundError = (value: unknown): value is PermissionSavedNotFoundError =>
+  typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "PermissionSavedNotFoundError"
+
 export type PermissionNotFoundError = {
   readonly _tag: "PermissionNotFoundError"
   readonly requestID: string
@@ -2323,6 +2331,16 @@ export type PermissionsListSavedOutput = {
     readonly action: string
     readonly resource: string
   }>
+}["data"]
+
+export type PermissionsUpdateInput = {
+  readonly id: { readonly id: string }["id"]
+  readonly action?: { readonly action?: string | undefined; readonly resource?: string | undefined }["action"]
+  readonly resource?: { readonly action?: string | undefined; readonly resource?: string | undefined }["resource"]
+}
+
+export type PermissionsUpdateOutput = {
+  readonly data: { readonly id: string; readonly projectID: string; readonly action: string; readonly resource: string }
 }["data"]
 
 export type PermissionsRemoveSavedInput = { readonly id: { readonly id: string }["id"] }

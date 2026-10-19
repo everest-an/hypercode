@@ -26,9 +26,27 @@ export const AddInput = Schema.Struct({
 }).annotate({ identifier: "PermissionSaved.AddInput" })
 export type AddInput = typeof AddInput.Type
 
+export const UpdateInput = Schema.Struct({
+  id: ID,
+  action: Schema.String.pipe(Schema.optional),
+  resource: Schema.String.pipe(Schema.optional),
+}).annotate({ identifier: "PermissionSaved.UpdateInput" })
+export type UpdateInput = typeof UpdateInput.Type
+
+export class NotFoundError extends Schema.TaggedErrorClass<NotFoundError>()("PermissionSaved.NotFoundError", {
+  id: ID,
+}) {}
+
+export class ConflictError extends Schema.TaggedErrorClass<ConflictError>()("PermissionSaved.ConflictError", {
+  id: ID,
+  action: Schema.String,
+  resource: Schema.String,
+}) {}
+
 export interface Interface {
   readonly list: (input?: ListInput) => Effect.Effect<ReadonlyArray<Info>>
   readonly add: (input: AddInput) => Effect.Effect<void>
+  readonly update: (input: UpdateInput) => Effect.Effect<Info, NotFoundError | ConflictError>
   readonly remove: (id: ID) => Effect.Effect<void>
 }
 
@@ -46,9 +64,7 @@ const layer = Layer.effect(
         .where(input?.projectID ? eq(PermissionTable.project_id, input.projectID) : undefined)
         .all()
         .pipe(Effect.orDie)
-      return rows.map(
-        (row): Info => ({ id: row.id, projectID: row.project_id, action: row.action, resource: row.resource }),
-      )
+      return rows.map(info)
     })
 
     const add = Effect.fn("PermissionSaved.add")(function* (input: AddInput) {
@@ -68,12 +84,54 @@ const layer = Layer.effect(
         .pipe(Effect.orDie)
     })
 
+    const update = Effect.fn("PermissionSaved.update")(function* (input: UpdateInput) {
+      const current = yield* db
+        .select()
+        .from(PermissionTable)
+        .where(eq(PermissionTable.id, input.id))
+        .get()
+        .pipe(Effect.orDie)
+      if (!current) return yield* new NotFoundError({ id: input.id })
+      const action = input.action ?? current.action
+      const resource = input.resource ?? current.resource
+      const updated = yield* db
+        .update(PermissionTable)
+        .set({ action, resource })
+        .where(eq(PermissionTable.id, input.id))
+        .returning()
+        .get()
+        .pipe(
+          Effect.catch((error) =>
+            isUniqueViolation(error)
+              ? Effect.fail(new ConflictError({ id: input.id, action, resource }))
+              : Effect.die(error),
+          ),
+        )
+      if (!updated) return yield* new NotFoundError({ id: input.id })
+      return info(updated)
+    })
+
     const remove = Effect.fn("PermissionSaved.remove")(function* (id: ID) {
       yield* db.delete(PermissionTable).where(eq(PermissionTable.id, id)).run().pipe(Effect.orDie)
     })
 
-    return Service.of({ list, add, remove })
+    return Service.of({ list, add, update, remove })
   }),
 )
+
+const describeError = (error: unknown): string => {
+  if (error instanceof Error) return `${error.message}${error.cause ? ` ${describeError(error.cause)}` : ""}`
+  return String(error)
+}
+
+const isUniqueViolation = (error: unknown) =>
+  /UNIQUE constraint failed|SQLITE_CONSTRAINT_UNIQUE/i.test(describeError(error))
+
+const info = (row: typeof PermissionTable.$inferSelect): Info => ({
+  id: row.id,
+  projectID: row.project_id,
+  action: row.action,
+  resource: row.resource,
+})
 
 export const node = makeGlobalNode({ service: Service, layer, deps: [Database.node] })

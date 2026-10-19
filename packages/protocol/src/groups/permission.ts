@@ -6,7 +6,7 @@ import { Project } from "@opencode-ai/schema/project"
 import { Session } from "@opencode-ai/schema/session"
 import { Context, Schema } from "effect"
 import { HttpApiEndpoint, HttpApiGroup, HttpApiMiddleware, HttpApiSchema, OpenApi } from "effect/unstable/httpapi"
-import { PermissionNotFoundError, SessionNotFoundError } from "../errors"
+import { ConflictError, PermissionNotFoundError, PermissionSavedNotFoundError, SessionNotFoundError } from "../errors"
 import { LocationQuery, locationQueryOpenApi } from "./location"
 
 export const makePermissionGroup = <
@@ -42,6 +42,23 @@ export const makePermissionGroup = <
           identifier: "v2.permission.saved.list",
           summary: "List saved permissions",
           description: "Retrieve saved permissions, optionally filtered by project.",
+        }),
+      ),
+    )
+    .add(
+      HttpApiEndpoint.patch("permission.saved.update", "/api/permission/saved/:id", {
+        params: { id: PermissionSaved.ID },
+        payload: Schema.Struct({
+          action: Schema.String.pipe(Schema.optional),
+          resource: Schema.String.pipe(Schema.optional),
+        }),
+        success: Schema.Struct({ data: PermissionSaved.Info }),
+        error: [PermissionSavedNotFoundError, ConflictError],
+      }).annotateMerge(
+        OpenApi.annotations({
+          identifier: "v2.permission.saved.update",
+          summary: "Update saved permission",
+          description: "Change the action or resource of a saved permission.",
         }),
       ),
     )

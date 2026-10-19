@@ -4,7 +4,7 @@ import { PermissionSaved } from "@opencode-ai/core/permission/saved"
 import { Effect } from "effect"
 import { HttpApiBuilder, HttpApiSchema } from "effect/unstable/httpapi"
 import { Api } from "../api"
-import { PermissionNotFoundError, SessionNotFoundError } from "@opencode-ai/protocol/errors"
+import { ConflictError, PermissionNotFoundError, PermissionSavedNotFoundError, SessionNotFoundError } from "@opencode-ai/protocol/errors"
 import { response } from "../location"
 
 function missingRequest(id: PermissionV2.ID) {
@@ -84,6 +84,29 @@ export const PermissionHandler = HttpApiBuilder.group(Api, "server.permission", 
             data: yield* (yield* PermissionSaved.Service).list({
               projectID: ctx.query.projectID ?? location.project.id,
             }),
+          }
+        }),
+      )
+      .handle(
+        "permission.saved.update",
+        Effect.fn(function* (ctx) {
+          return {
+            data: yield* (yield* PermissionSaved.Service)
+              .update({ id: ctx.params.id, action: ctx.payload.action, resource: ctx.payload.resource })
+              .pipe(
+                Effect.catchTags({
+                  "PermissionSaved.NotFoundError": (error) =>
+                    new PermissionSavedNotFoundError({
+                      id: error.id,
+                      message: `Saved permission not found: ${error.id}`,
+                    }),
+                  "PermissionSaved.ConflictError": (error) =>
+                    new ConflictError({
+                      resource: error.id,
+                      message: `A saved permission already allows ${error.action} for ${error.resource}`,
+                    }),
+                }),
+              ),
           }
         }),
       )

@@ -395,23 +395,38 @@ const Endpoint9_1 = (raw: RawClient["server.permission"]) => (input?: Endpoint9_
     Effect.map((value) => value.data),
   )
 
-type Endpoint9_2Request = Parameters<RawClient["server.permission"]["permission.saved.remove"]>[0]
-type Endpoint9_2Input = { readonly id: Endpoint9_2Request["params"]["id"] }
+type Endpoint9_2Request = Parameters<RawClient["server.permission"]["permission.saved.update"]>[0]
+type Endpoint9_2Input = {
+  readonly id: Endpoint9_2Request["params"]["id"]
+  readonly action?: Endpoint9_2Request["payload"]["action"]
+  readonly resource?: Endpoint9_2Request["payload"]["resource"]
+}
 const Endpoint9_2 = (raw: RawClient["server.permission"]) => (input: Endpoint9_2Input) =>
+  raw["permission.saved.update"]({
+    params: { id: input["id"] },
+    payload: { action: input["action"], resource: input["resource"] },
+  }).pipe(
+    Effect.mapError(mapClientError),
+    Effect.map((value) => value.data),
+  )
+
+type Endpoint9_3Request = Parameters<RawClient["server.permission"]["permission.saved.remove"]>[0]
+type Endpoint9_3Input = { readonly id: Endpoint9_3Request["params"]["id"] }
+const Endpoint9_3 = (raw: RawClient["server.permission"]) => (input: Endpoint9_3Input) =>
   raw["permission.saved.remove"]({ params: { id: input["id"] } }).pipe(Effect.mapError(mapClientError))
 
-type Endpoint9_3Request = Parameters<RawClient["server.permission"]["session.permission.create"]>[0]
-type Endpoint9_3Input = {
-  readonly sessionID: Endpoint9_3Request["params"]["sessionID"]
-  readonly id?: Endpoint9_3Request["payload"]["id"]
-  readonly action: Endpoint9_3Request["payload"]["action"]
-  readonly resources: Endpoint9_3Request["payload"]["resources"]
-  readonly save?: Endpoint9_3Request["payload"]["save"]
-  readonly metadata?: Endpoint9_3Request["payload"]["metadata"]
-  readonly source?: Endpoint9_3Request["payload"]["source"]
-  readonly agent?: Endpoint9_3Request["payload"]["agent"]
+type Endpoint9_4Request = Parameters<RawClient["server.permission"]["session.permission.create"]>[0]
+type Endpoint9_4Input = {
+  readonly sessionID: Endpoint9_4Request["params"]["sessionID"]
+  readonly id?: Endpoint9_4Request["payload"]["id"]
+  readonly action: Endpoint9_4Request["payload"]["action"]
+  readonly resources: Endpoint9_4Request["payload"]["resources"]
+  readonly save?: Endpoint9_4Request["payload"]["save"]
+  readonly metadata?: Endpoint9_4Request["payload"]["metadata"]
+  readonly source?: Endpoint9_4Request["payload"]["source"]
+  readonly agent?: Endpoint9_4Request["payload"]["agent"]
 }
-const Endpoint9_3 = (raw: RawClient["server.permission"]) => (input: Endpoint9_3Input) =>
+const Endpoint9_4 = (raw: RawClient["server.permission"]) => (input: Endpoint9_4Input) =>
   raw["session.permission.create"]({
     params: { sessionID: input["sessionID"] },
     payload: {
@@ -428,33 +443,33 @@ const Endpoint9_3 = (raw: RawClient["server.permission"]) => (input: Endpoint9_3
     Effect.map((value) => value.data),
   )
 
-type Endpoint9_4Request = Parameters<RawClient["server.permission"]["session.permission.list"]>[0]
-type Endpoint9_4Input = { readonly sessionID: Endpoint9_4Request["params"]["sessionID"] }
-const Endpoint9_4 = (raw: RawClient["server.permission"]) => (input: Endpoint9_4Input) =>
+type Endpoint9_5Request = Parameters<RawClient["server.permission"]["session.permission.list"]>[0]
+type Endpoint9_5Input = { readonly sessionID: Endpoint9_5Request["params"]["sessionID"] }
+const Endpoint9_5 = (raw: RawClient["server.permission"]) => (input: Endpoint9_5Input) =>
   raw["session.permission.list"]({ params: { sessionID: input["sessionID"] } }).pipe(
     Effect.mapError(mapClientError),
     Effect.map((value) => value.data),
   )
 
-type Endpoint9_5Request = Parameters<RawClient["server.permission"]["session.permission.get"]>[0]
-type Endpoint9_5Input = {
-  readonly sessionID: Endpoint9_5Request["params"]["sessionID"]
-  readonly requestID: Endpoint9_5Request["params"]["requestID"]
+type Endpoint9_6Request = Parameters<RawClient["server.permission"]["session.permission.get"]>[0]
+type Endpoint9_6Input = {
+  readonly sessionID: Endpoint9_6Request["params"]["sessionID"]
+  readonly requestID: Endpoint9_6Request["params"]["requestID"]
 }
-const Endpoint9_5 = (raw: RawClient["server.permission"]) => (input: Endpoint9_5Input) =>
+const Endpoint9_6 = (raw: RawClient["server.permission"]) => (input: Endpoint9_6Input) =>
   raw["session.permission.get"]({ params: { sessionID: input["sessionID"], requestID: input["requestID"] } }).pipe(
     Effect.mapError(mapClientError),
     Effect.map((value) => value.data),
   )
 
-type Endpoint9_6Request = Parameters<RawClient["server.permission"]["session.permission.reply"]>[0]
-type Endpoint9_6Input = {
-  readonly sessionID: Endpoint9_6Request["params"]["sessionID"]
-  readonly requestID: Endpoint9_6Request["params"]["requestID"]
-  readonly reply: Endpoint9_6Request["payload"]["reply"]
-  readonly message?: Endpoint9_6Request["payload"]["message"]
+type Endpoint9_7Request = Parameters<RawClient["server.permission"]["session.permission.reply"]>[0]
+type Endpoint9_7Input = {
+  readonly sessionID: Endpoint9_7Request["params"]["sessionID"]
+  readonly requestID: Endpoint9_7Request["params"]["requestID"]
+  readonly reply: Endpoint9_7Request["payload"]["reply"]
+  readonly message?: Endpoint9_7Request["payload"]["message"]
 }
-const Endpoint9_6 = (raw: RawClient["server.permission"]) => (input: Endpoint9_6Input) =>
+const Endpoint9_7 = (raw: RawClient["server.permission"]) => (input: Endpoint9_7Input) =>
   raw["session.permission.reply"]({
     params: { sessionID: input["sessionID"], requestID: input["requestID"] },
     payload: { reply: input["reply"], message: input["message"] },
@@ -463,11 +478,12 @@ const Endpoint9_6 = (raw: RawClient["server.permission"]) => (input: Endpoint9_6
 const adaptGroup9 = (raw: RawClient["server.permission"]) => ({
   listRequests: Endpoint9_0(raw),
   listSaved: Endpoint9_1(raw),
-  removeSaved: Endpoint9_2(raw),
-  create: Endpoint9_3(raw),
-  list: Endpoint9_4(raw),
-  get: Endpoint9_5(raw),
-  reply: Endpoint9_6(raw),
+  update: Endpoint9_2(raw),
+  removeSaved: Endpoint9_3(raw),
+  create: Endpoint9_4(raw),
+  list: Endpoint9_5(raw),
+  get: Endpoint9_6(raw),
+  reply: Endpoint9_7(raw),
 })
 
 type Endpoint10_0Request = Parameters<RawClient["server.fs"]["fs.list"]>[0]

@@ -67,6 +67,8 @@ import type {
   PermissionsListRequestsOutput,
   PermissionsListSavedInput,
   PermissionsListSavedOutput,
+  PermissionsUpdateInput,
+  PermissionsUpdateOutput,
   PermissionsRemoveSavedInput,
   PermissionsRemoveSavedOutput,
   PermissionsCreateInput,
@@ -684,6 +686,18 @@ export function make(options: ClientOptions) {
             query: { projectID: input?.["projectID"] },
             successStatus: 200,
             declaredStatuses: [401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ).then((value) => value.data),
+      update: (input: PermissionsUpdateInput, requestOptions?: RequestOptions) =>
+        request<{ readonly data: PermissionsUpdateOutput }>(
+          {
+            method: "PATCH",
+            path: `/api/permission/saved/${encodeURIComponent(input.id)}`,
+            body: { action: input["action"], resource: input["resource"] },
+            successStatus: 200,
+            declaredStatuses: [404, 409, 401, 400],
             empty: false,
           },
           requestOptions,
