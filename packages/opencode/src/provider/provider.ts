@@ -2007,7 +2007,8 @@ const layer = Layer.effect(
 
       // HyperCode routes DeepSeek through its gateway and ships a flash tier: titles and summaries should
       // use it instead of falling back to the expensive main model.
-      if (providerID === ProviderV2.ID.make("deepseek")) return models.find((model) => /flash/i.test(model.id))
+      if (providerID === ProviderV2.ID.make("deepseek"))
+        return models.find((model) => model.id === "deepseek-flash") ?? models.find((model) => /flash/i.test(model.id))
 
       return undefined
     })

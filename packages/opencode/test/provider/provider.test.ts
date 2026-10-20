@@ -767,7 +767,7 @@ it.instance(
   "getSmallModel prefers the flash tier for the deepseek provider",
   Effect.gen(function* () {
     const model = yield* Provider.use.getSmallModel(ProviderV2.ID.make("deepseek"))
-    expect(model?.id).toBe(ModelV2.ID.make("deepseek-v4-flash"))
+    expect(model?.id).toBe(ModelV2.ID.make("deepseek-flash"))
   }),
   {
     config: {
@@ -778,6 +778,7 @@ it.instance(
           models: {
             "deepseek-v4-pro": { release_date: "2026-05-01" },
             "deepseek-v4-flash": { release_date: "2026-04-01" },
+            "deepseek-flash": { release_date: "2026-03-01" },
           },
           options: { apiKey: "test-key" },
         },
