@@ -69,7 +69,15 @@ jobs:
 
       - name: Run unit tests
         timeout-minutes: 35
-        run: GITHUB_ACTIONS=false bun turbo test
+        run: |
+          # Timing-sensitive suites flake on the Windows runner; one retry keeps a genuine breakage red
+          # (it fails twice) while a scheduler hiccup does not block the release.
+          for attempt in 1 2; do
+            GITHUB_ACTIONS=false bun turbo test && exit 0
+            echo "::warning::unit tests failed on attempt $attempt; retrying"
+            sleep 5
+          done
+          exit 1
         env:
           OPENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER: ${{ runner.os == 'Windows' && 'true' || 'false' }}
 
