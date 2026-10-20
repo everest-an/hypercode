@@ -95,7 +95,15 @@ export function createSessionComposerRegionController(input: {
   createEffect(() => {
     const el = store.body
     if (!el) return
-    const update = () => setStore("height", el.getBoundingClientRect().height)
+    const update = () => {
+      // Measure the intrinsic content height, not the clamped box. The parent
+      // clamps this element with max-height: dockHeight() * progress, so
+      // measuring getBoundingClientRect() fed the clamp back into the store and
+      // produced a ResizeObserver loop during the open/close spring animation.
+      const next = Math.max(el.getBoundingClientRect().height, el.scrollHeight)
+      if (Math.abs(next - store.height) < 0.5) return
+      setStore("height", next)
+    }
     createResizeObserver(el, update)
     update()
   })
