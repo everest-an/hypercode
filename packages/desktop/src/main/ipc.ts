@@ -16,7 +16,7 @@ import {
   clearLicenseKey,
   getLicenseStatus,
 } from "./license-state"
-import { connectGateway } from "./gateway-connect"
+import { checkGatewayBalance, connectGateway } from "./gateway-connect"
 import { configDir, dataDir } from "./engine-paths"
 import { getLogger } from "./logging"
 import {
@@ -29,6 +29,7 @@ import {
   updateTitlebar,
 } from "./windows"
 import type { UpdaterController } from "./updater-controller"
+import type { PluginUpdaterController } from "./plugin-updater"
 import { createUpdaterSubscriptions } from "./updater-subscriptions"
 import type { SetupProgress } from "./setup-progress"
 import { createDesktopDraftStore } from "./draft-store"
@@ -57,6 +58,7 @@ type Deps = {
   checkAppExists: (appName: string) => Promise<boolean> | boolean
   resolveAppPath: (appName: string) => Promise<string | null>
   updater: UpdaterController
+  pluginUpdater: PluginUpdaterController
   setupProgress: SetupProgress
   showUpdater: () => Promise<void> | void
   setBackgroundColor: (color: string) => void
@@ -68,9 +70,11 @@ type Deps = {
 export function registerIpcHandlers(deps: Deps) {
   const drafts = createDesktopDraftStore(join(app.getPath("userData"), "drafts.sqlite"))
   const updaterSubscriptions = createUpdaterSubscriptions()
+  const pluginUpdaterSubscriptions = createUpdaterSubscriptions()
   // Same registry type: it only tracks unsubscribe callbacks per renderer, nothing updater-specific.
   const setupSubscriptions = createUpdaterSubscriptions()
   app.once("will-quit", updaterSubscriptions.clear)
+  app.once("will-quit", pluginUpdaterSubscriptions.clear)
   app.once("will-quit", setupSubscriptions.clear)
   app.on("before-quit", () => drafts.flush())
   app.once("will-quit", () => drafts.close())
@@ -101,6 +105,9 @@ export function registerIpcHandlers(deps: Deps) {
       openExternal: (url) => shell.openExternal(url),
       log: getLogger(),
     }),
+  )
+  ipcMain.handle("gateway-balance", () =>
+    checkGatewayBalance({ dataDir: dataDir(), fetchImpl: (url, init) => fetch(url, init) }),
   )
   ipcMain.handle("get-display-backend", () => deps.getDisplayBackend())
   ipcMain.handle("set-display-backend", (_event: IpcMainInvokeEvent, backend: string | null) =>
@@ -137,6 +144,21 @@ export function registerIpcHandlers(deps: Deps) {
   ipcMain.handle("setup-unsubscribe", (event) => setupSubscriptions.delete(event.sender.id))
   ipcMain.handle("updater-check", () => deps.updater.check())
   ipcMain.handle("updater-install", () => deps.updater.install())
+  ipcMain.handle("plugin-updater-subscribe", (event) => {
+    const id = event.sender.id
+    pluginUpdaterSubscriptions.set(
+      id,
+      deps.pluginUpdater.subscribe((state) => {
+        if (event.sender.isDestroyed()) return pluginUpdaterSubscriptions.delete(id)
+        event.sender.send("plugin-updater-state", state)
+      }),
+    )
+    event.sender.once("destroyed", () => pluginUpdaterSubscriptions.delete(id))
+  })
+  ipcMain.handle("plugin-updater-unsubscribe", (event) => pluginUpdaterSubscriptions.delete(event.sender.id))
+  ipcMain.handle("plugin-updater-check", () => deps.pluginUpdater.check())
+  ipcMain.handle("plugin-updater-install", () => deps.pluginUpdater.install())
+  ipcMain.handle("plugin-updater-revert", () => deps.pluginUpdater.revert())
   ipcMain.handle("set-background-color", (_event: IpcMainInvokeEvent, color: string) => deps.setBackgroundColor(color))
   ipcMain.handle("export-debug-logs", () => deps.exportDebugLogs())
   ipcMain.handle("set-force-focus", (event: IpcMainInvokeEvent, enabled: boolean) =>

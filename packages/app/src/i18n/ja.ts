@@ -917,6 +917,24 @@ export const dict = {
   "settings.updates.action.checking": "確認中...",
   "settings.updates.action.downloading": "ダウンロード中...",
   "settings.updates.action.installing": "インストール中...",
+
+  "settings.updates.action.installPlugin": "Update plugin",
+
+  "settings.updates.action.installedRestart": "Restart to apply",
+
+  "settings.updates.action.revertPlugin": "Restore bundled",
+
+  "settings.updates.row.plugin.title": "Orchestration plugin",
+
+  "settings.updates.row.plugin.description": "Update the bundled AI orchestration plugin independently of the app",
+
+  "settings.updates.toast.pluginLatest.title": "Plugin is up to date",
+
+  "settings.updates.toast.pluginLatest.description": "You're running the latest orchestration plugin.",
+
+  "settings.updates.toast.pluginIncompatible.title": "Plugin update unavailable",
+
+  "settings.updates.toast.pluginIncompatible.description": "This plugin version requires a different HyperCode build.",
   "settings.updates.toast.latest.title": "最新です",
   "settings.updates.toast.latest.description": "HyperCode は最新バージョンです。",
   "sound.option.none": "なし",
@@ -1213,4 +1231,6 @@ export const dict = {
   "settings.gateway.expired": "タイムアウトしました。もう一度接続してください。",
   "settings.gateway.failed": "接続できませんでした。もう一度お試しください。",
   "settings.gateway.topUp": "チャージ",
+  "settings.gateway.topUpWaiting": "Waiting for payment…",
+  "settings.gateway.topUpDone": "Top-up received",
 }

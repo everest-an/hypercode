@@ -9,6 +9,7 @@ import {
   GATEWAY_BASE_URL,
   GATEWAY_PROVIDER_ID,
   GATEWAY_SITE,
+  checkGatewayBalance,
   connectGateway,
   ensureGatewayProvider,
   requestDeviceCode,
@@ -417,5 +418,48 @@ describe("jsonc additive member edits", () => {
 
   test("reports failure rather than guessing when provider is not an object", () => {
     expect(addRootObjectMember(`{ "provider": [] }`, "provider", "b", "{}")).toBeUndefined()
+  })
+})
+
+
+describe("checkGatewayBalance", () => {
+  test("reports unconfigured when no gateway credential is stored", async () => {
+    const root = await tempRoot()
+    const result = await checkGatewayBalance({
+      dataDir: root,
+      fetchImpl: async () => ({ status: 200, json: async () => ({}) }),
+    })
+    expect(result).toEqual({ status: "unconfigured" })
+  })
+
+  test("reports funded when the gateway serves the stored key", async () => {
+    const root = await tempRoot()
+    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    const fetch = scriptedFetch([{ status: 200, body: { data: [] } }])
+    const result = await checkGatewayBalance({ dataDir: root, fetchImpl: fetch.fetchImpl })
+    expect(result).toEqual({ status: "funded" })
+    expect(fetch.calls[0]?.url).toBe(`${GATEWAY_BASE_URL}/models`)
+  })
+
+  test("reports unfunded when the gateway denies the key", async () => {
+    const root = await tempRoot()
+    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    const result = await checkGatewayBalance({
+      dataDir: root,
+      fetchImpl: async () => ({ status: 403, json: async () => ({}) }),
+    })
+    expect(result).toEqual({ status: "unfunded" })
+  })
+
+  test("reports unreachable when the request fails", async () => {
+    const root = await tempRoot()
+    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    const result = await checkGatewayBalance({
+      dataDir: root,
+      fetchImpl: async () => {
+        throw new Error("offline")
+      },
+    })
+    expect(result).toEqual({ status: "unreachable" })
   })
 })

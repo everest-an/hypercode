@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron"
 import type { ElectronAPI, WslServersEvent } from "./types"
 import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { PluginUpdaterState } from "@opencode-ai/app/plugin-updater"
 import type { SetupState } from "@opencode-ai/app/setup-progress"
 
 const updaterCallbacks = new Set<(state: UpdaterState) => void>()
@@ -9,6 +10,14 @@ let updaterSubscription: Promise<void> | undefined
 const updaterHandler = (_: unknown, state: UpdaterState) => {
   updaterState = state
   updaterCallbacks.forEach((callback) => callback(state))
+}
+
+const pluginUpdaterCallbacks = new Set<(state: PluginUpdaterState) => void>()
+let pluginUpdaterState: PluginUpdaterState | undefined
+let pluginUpdaterSubscription: Promise<void> | undefined
+const pluginUpdaterHandler = (_: unknown, state: PluginUpdaterState) => {
+  pluginUpdaterState = state
+  pluginUpdaterCallbacks.forEach((callback) => callback(state))
 }
 
 // Mirrors the updater block above. The cached state matters more here: main starts copying payloads before
@@ -68,6 +77,27 @@ const api: ElectronAPI = {
     check: () => ipcRenderer.invoke("updater-check"),
     install: () => ipcRenderer.invoke("updater-install"),
   },
+  pluginUpdater: {
+    subscribe: async (cb) => {
+      pluginUpdaterCallbacks.add(cb)
+      if (pluginUpdaterState) cb(pluginUpdaterState)
+      if (!pluginUpdaterSubscription) {
+        ipcRenderer.on("plugin-updater-state", pluginUpdaterHandler)
+        pluginUpdaterSubscription = ipcRenderer.invoke("plugin-updater-subscribe")
+      }
+      await pluginUpdaterSubscription
+      return () => {
+        pluginUpdaterCallbacks.delete(cb)
+        if (pluginUpdaterCallbacks.size > 0) return
+        ipcRenderer.removeListener("plugin-updater-state", pluginUpdaterHandler)
+        pluginUpdaterSubscription = undefined
+        void ipcRenderer.invoke("plugin-updater-unsubscribe")
+      }
+    },
+    check: () => ipcRenderer.invoke("plugin-updater-check"),
+    install: () => ipcRenderer.invoke("plugin-updater-install"),
+    revert: () => ipcRenderer.invoke("plugin-updater-revert"),
+  },
   setupProgress: {
     subscribe: async (cb) => {
       setupCallbacks.add(cb)
@@ -99,6 +129,7 @@ const api: ElectronAPI = {
   licenseActivate: (key) => ipcRenderer.invoke("license-activate", key),
   licenseClear: () => ipcRenderer.invoke("license-clear"),
   gatewayConnect: () => ipcRenderer.invoke("gateway-connect"),
+  gatewayBalance: () => ipcRenderer.invoke("gateway-balance"),
   checkAppExists: (appName) => ipcRenderer.invoke("check-app-exists", appName),
   resolveAppPath: (appName) => ipcRenderer.invoke("resolve-app-path", appName),
   storeGet: (name, key) => ipcRenderer.invoke("store-get", name, key),

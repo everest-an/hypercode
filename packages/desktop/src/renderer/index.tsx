@@ -16,6 +16,7 @@ import {
   useLanguage,
 } from "@opencode-ai/app"
 import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { PluginUpdaterState } from "@opencode-ai/app/plugin-updater"
 import * as Sentry from "@sentry/solid"
 import type { AsyncStorage } from "@solid-primitives/storage"
 import { createMemoryHistory, MemoryRouter, type BaseRouterProps } from "@solidjs/router"
@@ -63,6 +64,9 @@ if (import.meta.env.VITE_SENTRY_DSN) {
 
 const [updaterState, setUpdaterState] = createSignal<UpdaterState>({ status: "disabled" })
 void window.api.updater.subscribe(setUpdaterState)
+
+const [pluginUpdaterState, setPluginUpdaterState] = createSignal<PluginUpdaterState>({ status: "disabled" })
+void window.api.pluginUpdater.subscribe(setPluginUpdaterState)
 
 const deepLinkEvent = "opencode:deep-link"
 
@@ -244,6 +248,13 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
       install: () => window.api.updater.install(),
     },
 
+    pluginUpdater: {
+      state: pluginUpdaterState,
+      check: () => window.api.pluginUpdater.check(),
+      install: () => window.api.pluginUpdater.install(),
+      revert: () => window.api.pluginUpdater.revert(),
+    },
+
     license: {
       getStatus: () => window.api.licenseGetStatus(),
       activate: (key) => window.api.licenseActivate(key),
@@ -252,6 +263,7 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
 
     gateway: {
       connect: () => window.api.gatewayConnect(),
+      balance: () => window.api.gatewayBalance(),
     },
 
     exportDebugLogs: () => window.api.exportDebugLogs(),

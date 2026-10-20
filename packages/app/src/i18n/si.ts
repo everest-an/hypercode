@@ -997,6 +997,24 @@ export const dict: Record<string, string> = {
   "settings.updates.action.checking": "පරීක්ෂා කරමින්...",
   "settings.updates.action.downloading": "බාගනිමින්...",
   "settings.updates.action.installing": "ස්ථාපනය කරමින්...",
+
+  "settings.updates.action.installPlugin": "Update plugin",
+
+  "settings.updates.action.installedRestart": "Restart to apply",
+
+  "settings.updates.action.revertPlugin": "Restore bundled",
+
+  "settings.updates.row.plugin.title": "Orchestration plugin",
+
+  "settings.updates.row.plugin.description": "Update the bundled AI orchestration plugin independently of the app",
+
+  "settings.updates.toast.pluginLatest.title": "Plugin is up to date",
+
+  "settings.updates.toast.pluginLatest.description": "You're running the latest orchestration plugin.",
+
+  "settings.updates.toast.pluginIncompatible.title": "Plugin update unavailable",
+
+  "settings.updates.toast.pluginIncompatible.description": "This plugin version requires a different HyperCode build.",
   "settings.updates.toast.latest.title": "ඔබ යාවත්කාලීනයි",
   "settings.updates.toast.latest.description": "ඔබ HyperCode හි නවතම අනුවාදය ධාවනය කරයි.",
   "sound.option.none": "කිසිවක් නැත",
@@ -1197,4 +1215,6 @@ export const dict: Record<string, string> = {
   "settings.gateway.expired": "Timed out. Start the connection again.",
   "settings.gateway.failed": "Could not connect. Please try again.",
   "settings.gateway.topUp": "Top up",
+  "settings.gateway.topUpWaiting": "Waiting for payment…",
+  "settings.gateway.topUpDone": "Top-up received",
 }

@@ -335,3 +335,44 @@ export async function connectGateway(input: ConnectInput): Promise<ConnectResult
   input.log.log("gateway connected", { provider: GATEWAY_PROVIDER_ID })
   return { status: "connected" }
 }
+
+
+/**
+ * Whether the gateway currently serves the stored key.
+ *
+ * The gateway answers /v1/models with 403 while the account has no balance, so this is also the payment
+ * check the app polls after opening the purchase page - no separate billing endpoint is needed.
+ */
+export type GatewayBalance =
+  | { status: "funded" }
+  | { status: "unfunded" }
+  | { status: "unconfigured" }
+  | { status: "unreachable" }
+
+export async function checkGatewayBalance(input: {
+  dataDir: string
+  fetchImpl: FetchLike
+  baseUrl?: string
+}): Promise<GatewayBalance> {
+  const file = path.join(input.dataDir, "auth.json")
+  const raw = await fs.readFile(file, "utf8").catch(() => undefined)
+  if (!raw) return { status: "unconfigured" }
+  const parsed: unknown = (() => {
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return undefined
+    }
+  })()
+  if (!isRecord(parsed)) return { status: "unconfigured" }
+  const entry = parsed[GATEWAY_PROVIDER_ID]
+  const key = isRecord(entry) && typeof entry.key === "string" ? entry.key : undefined
+  if (!key) return { status: "unconfigured" }
+  const response = await input
+    .fetchImpl(`${input.baseUrl ?? GATEWAY_BASE_URL}/models`, { headers: { authorization: `Bearer ${key}` } })
+    .catch(() => undefined)
+  if (!response) return { status: "unreachable" }
+  if (response.status === 200) return { status: "funded" }
+  if (response.status === 403) return { status: "unfunded" }
+  return { status: "unreachable" }
+}

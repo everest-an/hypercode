@@ -1,4 +1,4 @@
-import { type Component, Show, createMemo, createResource, createSignal } from "solid-js"
+import { type Component, Show, createMemo, createResource, createSignal, onCleanup } from "solid-js"
 import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
 import { TextInputV2 } from "@opencode-ai/ui/v2/text-input-v2"
 import { useLanguage } from "@/context/language"
@@ -18,6 +18,34 @@ import "./settings-v2.css"
 export const SettingsLicenseV2: Component = () => {
   const language = useLanguage()
   const platform = usePlatform()
+
+  const [topUpState, setTopUpState] = createSignal<"idle" | "waiting" | "done">("idle")
+  let topUpTimer: ReturnType<typeof setInterval> | undefined
+  const stopTopUp = () => {
+    if (topUpTimer !== undefined) clearInterval(topUpTimer)
+    topUpTimer = undefined
+  }
+  onCleanup(stopTopUp)
+  // The gateway answers /v1/models with 403 until the balance is credited, so poll that instead of a billing API.
+  const startTopUp = () => {
+    platform.openExternal(LICENSE_PURCHASE_URL)
+    if (topUpState() === "waiting") return
+    setTopUpState("waiting")
+    const deadline = Date.now() + 10 * 60 * 1000
+    stopTopUp()
+    topUpTimer = setInterval(async () => {
+      const status = await platform.gateway?.balance?.().catch(() => undefined)
+      if (status?.status === "funded") {
+        stopTopUp()
+        setTopUpState("done")
+        return
+      }
+      if (Date.now() > deadline) {
+        stopTopUp()
+        setTopUpState("idle")
+      }
+    }, 5000)
+  }
 
   const licenseAvailable = createMemo(() => platform.platform === "desktop" && Boolean(platform.license))
 
@@ -177,8 +205,17 @@ export const SettingsLicenseV2: Component = () => {
                 >
                   {gatewayBusy() ? language.t("settings.gateway.connecting") : language.t("settings.gateway.connect")}
                 </ButtonV2>
-                <ButtonV2 size="small" variant="neutral" onClick={() => platform.openExternal(LICENSE_PURCHASE_URL)}>
-                  {language.t("settings.gateway.topUp")}
+                <ButtonV2
+                  size="small"
+                  variant="neutral"
+                  disabled={topUpState() === "waiting"}
+                  onClick={() => startTopUp()}
+                >
+                  {topUpState() === "waiting"
+                    ? language.t("settings.gateway.topUpWaiting")
+                    : topUpState() === "done"
+                      ? language.t("settings.gateway.topUpDone")
+                      : language.t("settings.gateway.topUp")}
                 </ButtonV2>
               </div>
             </SettingsRowV2>

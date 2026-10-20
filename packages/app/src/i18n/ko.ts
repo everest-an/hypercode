@@ -1056,6 +1056,24 @@ export const dict = {
   "settings.updates.action.downloading": "다운로드 중...",
   "settings.updates.action.installing": "설치 중...",
 
+  "settings.updates.action.installPlugin": "Update plugin",
+
+  "settings.updates.action.installedRestart": "Restart to apply",
+
+  "settings.updates.action.revertPlugin": "Restore bundled",
+
+  "settings.updates.row.plugin.title": "Orchestration plugin",
+
+  "settings.updates.row.plugin.description": "Update the bundled AI orchestration plugin independently of the app",
+
+  "settings.updates.toast.pluginLatest.title": "Plugin is up to date",
+
+  "settings.updates.toast.pluginLatest.description": "You're running the latest orchestration plugin.",
+
+  "settings.updates.toast.pluginIncompatible.title": "Plugin update unavailable",
+
+  "settings.updates.toast.pluginIncompatible.description": "This plugin version requires a different HyperCode build.",
+
   "command.logs.export": "로그 내보내기",
 
   "help.tabs.toast.ariaLabel": "탭을 소개합니다. 탭으로 작업과 활성 세션을 정리하세요",
@@ -1211,4 +1229,6 @@ export const dict = {
   "settings.gateway.expired": "Timed out. Start the connection again.",
   "settings.gateway.failed": "Could not connect. Please try again.",
   "settings.gateway.topUp": "Top up",
+  "settings.gateway.topUpWaiting": "Waiting for payment…",
+  "settings.gateway.topUpDone": "Top-up received",
 }

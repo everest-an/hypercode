@@ -1,6 +1,7 @@
 import type { DesktopMenuAction } from "@opencode-ai/app/desktop-menu"
 import type { WslServersPlatform } from "@opencode-ai/app/wsl/types"
 import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { PluginUpdaterState } from "@opencode-ai/app/plugin-updater"
 import type { SetupState } from "@opencode-ai/app/setup-progress"
 import type { DesktopNativeBundle } from "@opencode-ai/app/i18n/desktop-native"
 export type {
@@ -28,6 +29,12 @@ export type UpdaterAPI = {
   subscribe: (cb: (state: UpdaterState) => void) => Promise<() => void>
   check: () => Promise<UpdaterState>
   install: () => Promise<void>
+}
+export type PluginUpdaterAPI = {
+  subscribe: (cb: (state: PluginUpdaterState) => void) => Promise<() => void>
+  check: () => Promise<PluginUpdaterState>
+  install: () => Promise<PluginUpdaterState>
+  revert: () => Promise<PluginUpdaterState>
 }
 
 /** First-run payload preparation. Subscribing replays the current state — see main/setup-progress.ts. */
@@ -90,12 +97,19 @@ export type GatewayConnectResult =
   | { status: "expired" }
   | { status: "cancelled"; reason: string }
 
+export type GatewayBalance =
+  | { status: "funded" }
+  | { status: "unfunded" }
+  | { status: "unconfigured" }
+  | { status: "unreachable" }
+
 export type ElectronAPI = {
   killSidecar: () => Promise<void>
   installCli: () => Promise<string>
   awaitInitialization: () => Promise<ServerReadyData>
   wslServers: WslServersAPI
   updater: UpdaterAPI
+  pluginUpdater: PluginUpdaterAPI
   setupProgress: SetupProgressAPI
   consumeInitialDeepLinks: () => Promise<string[]>
   getDefaultServerUrl: () => Promise<string | null>
@@ -113,6 +127,7 @@ export type ElectronAPI = {
    * site hands back. Shape must stay in sync with `ConnectResult` in main/gateway-connect.ts.
    */
   gatewayConnect: () => Promise<GatewayConnectResult>
+  gatewayBalance: () => Promise<GatewayBalance>
   checkAppExists: (appName: string) => Promise<boolean>
   resolveAppPath: (appName: string) => Promise<string | null>
   storeGet: (name: string, key: string) => Promise<string | null>

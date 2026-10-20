@@ -77,6 +77,13 @@ export type GatewayConnectResult =
   | { status: "expired" }
   | { status: "cancelled"; reason: string }
 
+export type GatewayBalance =
+  | { status: "funded" }
+  | { status: "unfunded" }
+  | { status: "unconfigured" }
+  | { status: "unreachable" }
+
 export type GatewayPlatform = {
   connect(): Promise<GatewayConnectResult>
+  balance?(): Promise<GatewayBalance>
 }

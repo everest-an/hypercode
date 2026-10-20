@@ -1279,6 +1279,24 @@ export const dict = {
   "settings.general.row.pinchZoom.description": "Tillat knipebevegelser på styreflaten og Ctrl-rulling for å zoome",
   "settings.updates.action.downloading": "Laster ned...",
   "settings.updates.action.installing": "Installerer...",
+
+  "settings.updates.action.installPlugin": "Update plugin",
+
+  "settings.updates.action.installedRestart": "Restart to apply",
+
+  "settings.updates.action.revertPlugin": "Restore bundled",
+
+  "settings.updates.row.plugin.title": "Orchestration plugin",
+
+  "settings.updates.row.plugin.description": "Update the bundled AI orchestration plugin independently of the app",
+
+  "settings.updates.toast.pluginLatest.title": "Plugin is up to date",
+
+  "settings.updates.toast.pluginLatest.description": "You're running the latest orchestration plugin.",
+
+  "settings.updates.toast.pluginIncompatible.title": "Plugin update unavailable",
+
+  "settings.updates.toast.pluginIncompatible.description": "This plugin version requires a different HyperCode build.",
   "settings.general.section.license": "License",
   "settings.license.status.active": "HyperCode Pro is active",
   "settings.license.status.active.detail": "Plan: {{plan}}",
@@ -1311,4 +1329,6 @@ export const dict = {
   "settings.gateway.expired": "Timed out. Start the connection again.",
   "settings.gateway.failed": "Could not connect. Please try again.",
   "settings.gateway.topUp": "Top up",
+  "settings.gateway.topUpWaiting": "Waiting for payment…",
+  "settings.gateway.topUpDone": "Top-up received",
 } satisfies Partial<Record<Keys, string>>
