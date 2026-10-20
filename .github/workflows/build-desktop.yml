@@ -315,6 +315,14 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Flatten the downloaded artifacts
+        run: |
+          # upload-artifact roots each artifact at the least common ancestor of its paths, so a job that
+          # uploads both dist/* and plugin-assets/* lands them under dist/dist and dist/plugin-assets here.
+          for nested in dist/dist dist/plugin-assets; do
+            if [ -d "$nested" ]; then cp -r "$nested"/. dist/; rm -rf "$nested"; fi
+          done
+
       - name: Generate plugin manifest
         env:
           VERSION: ${{ inputs.version }}
