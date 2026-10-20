@@ -166,6 +166,7 @@ const DEFAULT_GLOBAL_CONFIG = {
     },
   },
   model: "deepseek/deepseek-v4-pro",
+  small_model: "deepseek/deepseek-v4-flash",
 } as const
 
 function patchJsonc(input: string, patch: unknown, path: string[] = []): string {
@@ -321,6 +322,12 @@ const layer = Layer.effect(
       // their intent, and the defaults are equally effective merged at load. It also repairs installs that
       // are already in this state, which a create-if-missing check never can.
       if (!result.provider && !result.model) result = mergeConfig(result, DEFAULT_GLOBAL_CONFIG as Info)
+
+      // DeepSeek installs get the cheap flash model for titles and summaries unless the user picked a small
+      // model. In memory only: the user file keeps its comments, and an explicit small_model always wins.
+      if (!result.small_model && result.model?.startsWith("deepseek/")) {
+        result.small_model = "deepseek/deepseek-v4-flash"
+      }
 
       return result
     })

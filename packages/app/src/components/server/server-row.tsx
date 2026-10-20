@@ -7,6 +7,7 @@ import {
   createSignal,
   type JSXElement,
   onMount,
+  onCleanup,
   type ParentProps,
   Show,
 } from "solid-js"
@@ -32,23 +33,33 @@ export function ServerRow(props: ServerRowProps) {
   let versionRef: HTMLSpanElement | undefined
   const name = createMemo(() => serverName(props.conn))
 
-  const check = () => {
+  let measureFrame: number | undefined
+  const measure = () => {
+    measureFrame = undefined
     const nameTruncated = nameRef ? nameRef.scrollWidth > nameRef.clientWidth : false
     const versionTruncated = versionRef ? versionRef.scrollWidth > versionRef.clientWidth : false
     setTruncated(nameTruncated || versionTruncated)
+  }
+  const check = () => {
+    if (measureFrame !== undefined) return
+    if (typeof requestAnimationFrame === "undefined") return measure()
+    measureFrame = requestAnimationFrame(measure)
   }
 
   createEffect(() => {
     name()
     props.conn.http.url
     props.status?.version
-    queueMicrotask(check)
+    check()
   })
 
   onMount(() => {
     if (typeof ResizeObserver !== "function") return
     createResizeObserver([nameRef, versionRef], check)
     check()
+  })
+  onCleanup(() => {
+    if (measureFrame !== undefined) cancelAnimationFrame(measureFrame)
   })
 
   const tooltipValue = () => (
