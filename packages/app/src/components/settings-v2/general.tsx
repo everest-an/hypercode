@@ -8,6 +8,7 @@ import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
 import { useUpdaterAction } from "../updater-action"
+import { usePluginUpdaterAction } from "../plugin-updater-action"
 import { useSettings } from "@/context/settings"
 import { ExternalLink } from "../external-link"
 import { SettingsLicenseV2 } from "./license-section"
@@ -281,6 +282,7 @@ export const SettingsGeneralV2: Component<{
   const settings = useSettings()
   const mobile = createMediaQuery("(max-width: 767px)")
   const updater = useUpdaterAction()
+  const pluginUpdater = usePluginUpdaterAction()
   const permissionScope = createPermissionScopeController(() => props.sessionID)
   const shell = createShellSettingsController()
   const appearance = createAppearanceSettingsController()
@@ -511,6 +513,25 @@ export const SettingsGeneralV2: Component<{
           <ButtonV2 size="normal" variant="neutral" disabled={!updater.action().run} onClick={() => updater.run()}>
             {language.t(updater.action().label)}
           </ButtonV2>
+        </SettingsRowV2>
+
+        <SettingsRowV2
+          title={language.t("settings.updates.row.plugin.title")}
+          description={language.t("settings.updates.row.plugin.description")}
+        >
+          <div class="flex items-center gap-2">
+            <ButtonV2
+              size="normal"
+              variant="neutral"
+              disabled={!pluginUpdater.action().run}
+              onClick={() => pluginUpdater.run()}
+            >
+              {language.t(pluginUpdater.action().label)}
+            </ButtonV2>
+            <ButtonV2 size="normal" variant="neutral" onClick={() => pluginUpdater.revert()}>
+              {language.t("settings.updates.action.revertPlugin")}
+            </ButtonV2>
+          </div>
         </SettingsRowV2>
       </SettingsListV2>
     </div>

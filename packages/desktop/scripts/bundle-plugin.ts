@@ -22,6 +22,21 @@ const packageDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".
 
 export const DEFAULT_PACKAGE = "oh-my-openagent"
 
+// Pinned instead of floating on `latest`. The bundled plugin is the product's "software layer": a build has
+// to be reproducible, and the version that ships has to be one CI actually exercised against this engine.
+// Override with HYPERCODE_PLUGIN_VERSION (release builds) or --package name@version (local experiments).
+export const DEFAULT_PACKAGE_VERSION = "5.1.34"
+
+export function packageName(spec: string): string {
+  const at = spec.indexOf("@", 1)
+  return at === -1 ? spec : spec.slice(0, at)
+}
+
+export function packageVersion(spec: string): string | undefined {
+  const name = packageName(spec)
+  return spec.length > name.length ? spec.slice(name.length + 1) : undefined
+}
+
 // Directories that are package documentation or test fixtures rather than shipped code.
 const DROPPABLE_DIRS = new Set(["test", "tests", "__tests__", "docs", "doc", "example", "examples", ".github"])
 
@@ -146,7 +161,9 @@ async function main() {
     return index === -1 ? undefined : args[index + 1]
   }
 
-  const pkg = flag("package") ?? DEFAULT_PACKAGE
+  const pkg = flag("package") ?? `${DEFAULT_PACKAGE}@${process.env.HYPERCODE_PLUGIN_VERSION ?? DEFAULT_PACKAGE_VERSION}`
+  const pluginName = packageName(pkg)
+  const expectedVersion = packageVersion(pkg)
   const out = path.resolve(packageDir, flag("out") ?? "plugin-payload")
   // Off by default. `typescript` is 23 MB and nothing in the tree declares it as a runtime dependency, but
   // "nothing declares it" is not the same as "nothing requires it" — a lazy require() would only fail at
@@ -174,15 +191,22 @@ async function main() {
   await execFileAsync(
     process.platform === "win32" ? "npm.cmd" : "npm",
     ["install", pkg, "--omit=dev", "--omit=optional", "--ignore-scripts", "--no-audit", "--no-fund"],
-    { cwd: staging, maxBuffer: 64 * 1024 * 1024 },
+    { cwd: staging, maxBuffer: 64 * 1024 * 1024, shell: process.platform === "win32" },
   )
+
+  const installedVersion: unknown = JSON.parse(
+    await fs.readFile(path.join(staging, "node_modules", pluginName, "package.json"), "utf8"),
+  ).version
+  if (expectedVersion && installedVersion !== expectedVersion)
+    throw new Error(`[bundle-plugin] installed ${pluginName}@${String(installedVersion)}, expected ${expectedVersion}`)
+  console.log(`[bundle-plugin] resolved ${pluginName}@${String(installedVersion)}`)
 
   const modules = path.join(staging, "node_modules")
   const before = await directorySize(modules)
   const pruned = await pruneTree(modules, {
     platformDir,
     dropTypescript,
-    preserveRoot: path.join(modules, ...pkg.split("/")),
+    preserveRoot: path.join(modules, ...pluginName.split("/")),
   })
   const after = await directorySize(modules)
   console.log(

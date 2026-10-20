@@ -16,7 +16,7 @@ import { checkAppExists, resolveAppPath } from "./apps"
 import { resolveBundledPluginSource, seedBundledPlugin } from "./bundled-plugin"
 import { installBundledSkills } from "./bundled-skills"
 import { cacheDir, configDir } from "./engine-paths"
-import { CHANNEL } from "./constants"
+import { CHANNEL, UPDATER_ENABLED } from "./constants"
 import { SERVER_USERNAME } from "./server-credentials"
 import { createSetupProgress } from "./setup-progress"
 import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
@@ -37,6 +37,8 @@ import {
   type SidecarListener,
 } from "./server"
 import { setupAutoUpdater, showUpdaterDialog } from "./updater"
+import { createPluginUpdaterController } from "./plugin-updater"
+import { markPluginValidated, recoverPluginTransaction } from "./plugin-installer"
 import { safeWebContentsURL } from "./window-state"
 import {
   getLastFocusedWindow,
@@ -325,6 +327,13 @@ const main = Effect.gen(function* () {
   registerRendererProtocol()
   setDockIcon()
   const updater = setupAutoUpdater(stopSidecars)
+  const pluginUpdater = createPluginUpdaterController({
+    enabled: UPDATER_ENABLED,
+    appVersion: app.getVersion(),
+    cacheDir: cacheDir(),
+    platform: `${process.platform}-${process.arch}`,
+    log: logger,
+  })
   const menuDeps = {
     trigger: (id: string) => {
       const win = getLastFocusedWindow()
@@ -356,6 +365,7 @@ const main = Effect.gen(function* () {
     checkAppExists: (appName) => checkAppExists(appName),
     resolveAppPath: async (appName) => resolveAppPath(appName),
     updater,
+    pluginUpdater,
     setupProgress,
     showUpdater: () => showUpdaterDialog(updater, true),
     setBackgroundColor: (color) => setBackgroundColor(color),
@@ -367,6 +377,7 @@ const main = Effect.gen(function* () {
   })
   registerWslIpcHandlers(wslServers)
   void updater.start()
+  void pluginUpdater.start()
   const updateTimer = setInterval(() => void updater.check(), 10 * 60 * 1000)
   updateTimer.unref()
   app.once("will-quit", () => clearInterval(updateTimer))
@@ -429,6 +440,7 @@ const main = Effect.gen(function* () {
   // Must land before the sidecar starts: once the engine loads config it resolves the plugin list, and a
   // cache miss there costs the user minutes of silence. Seeding first turns that resolution into a stat().
   // Same failure posture as the skills above — a missing plugin degrades the product, a failed launch ends it.
+  yield* Effect.promise(() => recoverPluginTransaction(cacheDir()))
   yield* Effect.promise(() =>
     seedBundledPlugin({
       source: resolveBundledPluginSource({ resourcesPath: process.resourcesPath, appPath: app.getAppPath() }),
@@ -535,6 +547,7 @@ const main = Effect.gen(function* () {
   // The await stays: loadingTask is forked into this scope, so returning without it would interrupt the
   // sidecar startup it is running. The window is already open by now.
   yield* Fiber.await(loadingTask)
+  yield* Effect.promise(() => markPluginValidated(cacheDir()))
 })
 
 Effect.runFork(main)

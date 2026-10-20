@@ -10,8 +10,10 @@
 //   bun ./scripts/verify-package.ts dist/win-unpacked/resources
 //   bun ./scripts/verify-package.ts "dist/mac-arm64/HyperCode.app/Contents/Resources"
 
-import { existsSync, readdirSync, statSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
+
+import { DEFAULT_PACKAGE_VERSION } from "./bundle-plugin"
 
 function dirSize(dir: string) {
   let total = 0
@@ -83,6 +85,13 @@ else {
   const { total, files, broken } = dirSize(plugin)
   console.log(`[verify-package] plugin: ${mb(total)} across ${files} files`)
   if (!existsSync(target)) failures.push("plugin/modules/oh-my-openagent is missing")
+  else {
+    const expectedPluginVersion = process.env.HYPERCODE_PLUGIN_VERSION ?? DEFAULT_PACKAGE_VERSION
+    const version = JSON.parse(readFileSync(path.join(target, "package.json"), "utf8")).version
+    console.log(`[verify-package] plugin version: ${version} (expected ${expectedPluginVersion})`)
+    if (version !== expectedPluginVersion)
+      failures.push(`plugin/modules/oh-my-openagent is ${version}, expected ${expectedPluginVersion}`)
+  }
   if (total < 50 * 1024 * 1024) failures.push(`plugin/ is only ${mb(total)}, expected >50 MB`)
   // Dangling links carry no bytes, so the size check above cannot see them. They appear on macOS and Linux
   // when the payload is staged without verbatimSymlinks: node_modules/.bin ends up pointing at the build's

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs"
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { pruneTree } from "./bundle-plugin"
+import { packageName, packageVersion, pruneTree } from "./bundle-plugin"
 
 const roots: string[] = []
 
@@ -125,4 +125,13 @@ test("keeps typescript unless explicitly asked to drop it", async () => {
   const dropped = await tree()
   await pruneTree(dropped, { platformDir: "win32-x64", dropTypescript: true })
   expect(existsSync(join(dropped, "typescript"))).toBe(false)
+})
+
+test("parses scoped and unscoped package specs", () => {
+  expect(packageName("oh-my-openagent@5.1.34")).toBe("oh-my-openagent")
+  expect(packageVersion("oh-my-openagent@5.1.34")).toBe("5.1.34")
+  expect(packageName("@scope/name@1.2.3")).toBe("@scope/name")
+  expect(packageVersion("@scope/name@1.2.3")).toBe("1.2.3")
+  expect(packageName("@scope/name")).toBe("@scope/name")
+  expect(packageVersion("@scope/name")).toBeUndefined()
 })

@@ -4,6 +4,7 @@ import path from "node:path"
 
 import { npmPackageDir } from "./engine-paths"
 import { addRootArrayEntry, parseJsonc, rootKeys } from "./jsonc-edit"
+import { clearPluginState, readPluginState } from "./plugin-state"
 
 // The orchestration plugin is a ~200 MB dependency tree. Installing it on demand means the user's first real
 // prompt blocks for minutes behind an arborist run that reports no progress at all (`progress: false`,
@@ -118,6 +119,18 @@ export async function seedBundledPlugin(options: SeedBundledPluginOptions): Prom
   if (!existsSync(path.join(source, PAYLOAD_MODULES_DIR, BUNDLED_PLUGIN_PACKAGE))) {
     log.warn("bundled plugin payload is incomplete", { source })
     return result
+  }
+
+  const state = await readPluginState(options.cacheDir)
+  if (state?.source === "npm" && state.activeVersion) {
+    const ready = CACHE_SPECS.every((spec) =>
+      existsSync(path.join(npmPackageDir(options.cacheDir, spec), "node_modules", BUNDLED_PLUGIN_PACKAGE)),
+    )
+    if (ready) {
+      result.configured = await ensurePluginConfigured(options.configDir, log)
+      return result
+    }
+    await clearPluginState(options.cacheDir)
   }
 
   const identity = await payloadIdentity(source, options.version)

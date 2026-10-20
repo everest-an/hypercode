@@ -5,6 +5,7 @@ import type { DesktopMenuAction } from "../desktop-menu"
 import { ServerConnection } from "./server"
 import type { WslServersPlatform } from "../wsl/types"
 import type { UpdaterPlatform } from "../updater"
+import type { PluginUpdaterPlatform } from "../plugin-updater"
 import type { LicensePlatform, GatewayPlatform } from "../license"
 import type { DraftStore } from "@/utils/draft-store"
 
@@ -86,6 +87,9 @@ type PlatformBase = {
 
   /** Application-global desktop updater */
   updater?: UpdaterPlatform
+
+  /** Independently updatable orchestration plugin (desktop only) */
+  pluginUpdater?: PluginUpdaterPlatform
 
   /** HyperCode Pro subscription license state (desktop only) */
   license?: LicensePlatform

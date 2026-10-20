@@ -15,6 +15,7 @@ import { usePlatform, type DisplayBackend } from "@/context/platform"
 import { useServerSync } from "@/context/server-sync"
 import { useServerSDK } from "@/context/server-sdk"
 import { useUpdaterAction } from "./updater-action"
+import { usePluginUpdaterAction } from "./plugin-updater-action"
 import {
   monoDefault,
   monoFontFamily,
@@ -92,6 +93,7 @@ export const SettingsGeneral: Component = () => {
   const settings = useSettings()
 
   const updater = useUpdaterAction()
+  const pluginUpdater = usePluginUpdaterAction()
 
   const linux = createMemo(() => platform.platform === "desktop" && platform.os === "linux")
   const dir = createMemo(() => decode64(params.dir))
@@ -695,6 +697,25 @@ export const SettingsGeneral: Component = () => {
           <Button size="small" variant="secondary" disabled={!updater.action().run} onClick={updater.run}>
             {language.t(updater.action().label)}
           </Button>
+        </SettingsRow>
+
+        <SettingsRow
+          title={language.t("settings.updates.row.plugin.title")}
+          description={language.t("settings.updates.row.plugin.description")}
+        >
+          <div class="flex items-center gap-2">
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={!pluginUpdater.action().run}
+              onClick={() => pluginUpdater.run()}
+            >
+              {language.t(pluginUpdater.action().label)}
+            </Button>
+            <Button size="small" variant="secondary" onClick={() => pluginUpdater.revert()}>
+              {language.t("settings.updates.action.revertPlugin")}
+            </Button>
+          </div>
         </SettingsRow>
       </SettingsList>
     </div>

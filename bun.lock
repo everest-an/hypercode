@@ -384,7 +384,7 @@
     },
     "packages/desktop": {
       "name": "hypercode-desktop",
-      "version": "0.1.17",
+      "version": "0.1.21",
       "dependencies": {
         "@zip.js/zip.js": "2.7.62",
         "drizzle-orm": "catalog:",
@@ -562,7 +562,7 @@
     },
     "packages/opencode": {
       "name": "opencode",
-      "version": "0.1.8",
+      "version": "0.1.21",
       "bin": {
         "hypercode": "./bin/opencode",
       },
