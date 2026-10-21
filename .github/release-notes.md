@@ -1,23 +1,15 @@
 ## Install
 
-**Windows** — download `hypercode-desktop-win-x64.exe` and double-click.
-If SmartScreen warns on first launch, choose **More info → Run anyway**. That warning is
-standard for an application that is not yet code-signed.
+**Windows** - download `hypercode-desktop-win-x64.exe` and double-click.
+If SmartScreen warns on first launch, choose **More info -> Run anyway**. The Windows
+installer is not code-signed yet.
 
-**macOS** — download the `.dmg` for your chip (`mac-arm64` for Apple Silicon, `mac-x64`
-for Intel) and drag HyperCode to Applications.
-
-The first launch needs a one-time authorization, because this build is not yet signed with
-an Apple Developer ID. In Terminal, run:
-
-```
-xattr -dr com.apple.quarantine /Applications/HyperCode.app
-```
-
-then open the app normally. Unlike Windows, right-click → Open does not get past this on
-Apple Silicon. Code signing is in progress and will remove the step.
+**macOS** - download the `.dmg` for your chip (`mac-arm64` for Apple Silicon, `mac-x64`
+for Intel) and drag HyperCode to Applications. The app is signed with a Developer ID and
+notarized by Apple, so it opens normally. If macOS still asks, open **System Settings ->
+Privacy & Security** and choose **Open Anyway**.
 
 ## Updating
 
-Windows updates itself: the app checks on launch and offers the new version when one is
-published. macOS is manual for now — download the new `.dmg` and replace the app.
+Both platforms update themselves: the app checks on launch and offers the new version when
+one is published. Windows downloads the installer, macOS downloads the matching `.zip`.
