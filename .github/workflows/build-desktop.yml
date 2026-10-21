@@ -31,6 +31,13 @@ env:
 jobs:
   build-win:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AZURE_TRUSTED_SIGNING_ENDPOINT: ${{ secrets.AZURE_TRUSTED_SIGNING_ENDPOINT }}
+      AZURE_TRUSTED_SIGNING_ACCOUNT_NAME: ${{ secrets.AZURE_TRUSTED_SIGNING_ACCOUNT_NAME }}
+      AZURE_TRUSTED_SIGNING_CERTIFICATE_PROFILE: ${{ secrets.AZURE_TRUSTED_SIGNING_CERTIFICATE_PROFILE }}
     steps:
       - uses: actions/checkout@v4
 
@@ -91,6 +98,14 @@ jobs:
       - name: Package plugin payload
         working-directory: packages/desktop
         run: bun ./scripts/package-plugin.ts --platform win32 --arch x64 --version "${{ env.HYPERCODE_PLUGIN_VERSION }}" --out plugin-assets
+
+      - name: Azure login (Trusted Signing)
+        if: env.AZURE_TRUSTED_SIGNING_ENDPOINT != ''
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Package Windows (NSIS installer)
         working-directory: packages/desktop
