@@ -321,3 +321,24 @@ export function addRootObjectMember(
   const comma = last !== undefined && text[last] === "," ? "" : ","
   return `${text.slice(0, end)}${comma}${newline}    ${JSON.stringify(member)}: ${value}${newline}  ${text.slice(end)}`
 }
+
+
+/**
+ * Replace the root-level string member `key` with `value`, or add it when missing.
+ *
+ * Only a scalar string is touched, so comments and every other byte stay intact. Returns undefined when
+ * the document has no root object or `key` holds something other than a string.
+ */
+export function setRootString(text: string, key: string, value: string): string | undefined {
+  const parsed = scan(text)
+  if (parsed.bodyStart === undefined) return undefined
+  const newline = text.includes("\r\n") ? "\r\n" : "\n"
+  const member = parsed.members.find((candidate) => candidate.name === key)
+  if (!member) {
+    const inserted = `${newline}  ${JSON.stringify(key)}: ${JSON.stringify(value)}${parsed.empty ? "" : ","}`
+    return `${text.slice(0, parsed.bodyStart)}${inserted}${text.slice(parsed.bodyStart)}`
+  }
+  if (text[member.valueStart] !== '"') return undefined
+  const end = skipString(text, member.valueStart)
+  return `${text.slice(0, member.valueStart)}${JSON.stringify(value)}${text.slice(end)}`
+}

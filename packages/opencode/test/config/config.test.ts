@@ -316,8 +316,8 @@ it.effect("seeds the global config with the default provider, no blank apiKey an
       yield* Config.use.get().pipe(provideInstanceEffect(dir))
 
       const content = yield* FSUtil.use.readFileString(path.join(dir, "hypercode.jsonc"))
-      expect(content).toContain('"deepseek"')
-      expect(content).toContain('"baseURL": "https://api.deepseek.com/v1"')
+      expect(content).toContain('"hypercode"')
+      expect(content).toContain('"baseURL": "https://api.trust3.pro/v1"')
       // A blank apiKey would permanently mask the key the user pastes through the UI, because the provider
       // only falls back to the auth store when the configured value is absent.
       expect(content).not.toContain("apiKey")
@@ -336,8 +336,8 @@ it.effect("still configures a provider when another component created the config
     Effect.gen(function* () {
       const config = yield* Config.use.get().pipe(provideInstanceEffect(dir))
 
-      expect(config.model).toBe("deepseek/deepseek-v4-pro")
-      expect(Object.keys(config.provider ?? {})).toContain("deepseek")
+      expect(config.model).toBe("hypercode/deepseek-v4-pro")
+      expect(Object.keys(config.provider ?? {})).toContain("hypercode")
       // Whatever that other component wrote has to survive being merged with the defaults.
       expect(config.plugin).toContain("oh-my-openagent")
 

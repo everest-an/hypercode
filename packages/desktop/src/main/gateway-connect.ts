@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import fs from "node:fs/promises"
 import path from "node:path"
 
-import { addRootObjectMember, hasRootObjectMember, parseJsonc } from "./jsonc-edit"
+import { addRootObjectMember, hasRootObjectMember, parseJsonc, setRootString } from "./jsonc-edit"
 
 // "One-click connect": the desktop app asks the site for a pairing code, opens the browser, and receives
 // an API key when the user approves. The product rule is that a paying user never sees, copies or pastes a
@@ -14,7 +14,7 @@ import { addRootObjectMember, hasRootObjectMember, parseJsonc } from "./jsonc-ed
 //   auth    — holds the key, written 0600 by the engine itself too (packages/opencode/src/auth/index.ts).
 // Keeping the secret out of the config matters: the config is a file users screenshot and share.
 
-export const GATEWAY_PROVIDER_ID = "deepseek"
+export const GATEWAY_PROVIDER_ID = "hypercode"
 export const GATEWAY_BASE_URL = "https://api.trust3.pro/v1"
 /** Site origin: serves the human-facing pages, including the /device approval page. */
 export const GATEWAY_SITE = "https://www.trust3.pro"
@@ -232,28 +232,38 @@ export async function ensureGatewayProvider(input: { configDir: string; log: Log
     return false
   }
 
-  if (hasRootObjectMember(text, "provider", GATEWAY_PROVIDER_ID)) return true
-
-  // Each model maps to an object with a `name`, exactly as the CLI installer writes it — a bare string
-  // here would diverge from the only configuration that has actually been run end to end.
-  const models = Object.entries(GATEWAY_MODELS)
-    .map(([id, name]) => `${JSON.stringify(id)}: { "name": ${JSON.stringify(name)} }`)
-    .join(", ")
-  const block = `{
+  let next = text
+  if (!hasRootObjectMember(next, "provider", GATEWAY_PROVIDER_ID)) {
+    // Each model maps to an object with a `name`, exactly as the CLI installer writes it - a bare string
+    // here would diverge from the only configuration that has actually been run end to end.
+    const models = Object.entries(GATEWAY_MODELS)
+      .map(([id, name]) => `${JSON.stringify(id)}: { "name": ${JSON.stringify(name)} }`)
+      .join(", ")
+    const block = `{
       "npm": "@ai-sdk/openai-compatible",
       "name": "HyperCode",
       "options": { "baseURL": ${JSON.stringify(GATEWAY_BASE_URL)} },
       "models": { ${models} }
     }`
-  const next = addRootObjectMember(text, "provider", GATEWAY_PROVIDER_ID, block)
-  if (next === undefined) {
-    // Unparseable, or `provider` holds a shape we do not understand. Rewriting would destroy user data, and
-    // the credential is already stored — the user can still point the engine at the gateway by hand.
-    input.log.warn("skipped engine config edit", { file, provider: GATEWAY_PROVIDER_ID })
-    return false
+    const added = addRootObjectMember(next, "provider", GATEWAY_PROVIDER_ID, block)
+    if (added === undefined) {
+      // Unparseable, or `provider` holds a shape we do not understand. Rewriting would destroy user data,
+      // and the credential is already stored - the user can still point the engine at the gateway by hand.
+      input.log.warn("skipped engine config edit", { file, provider: GATEWAY_PROVIDER_ID })
+      return false
+    }
+    next = added
   }
-  // Only an unreadable edit should reach here as a failure; a *valid* config proves the splice kept the
-  // document parseable, which is the property the engine depends on.
+
+  // Pairing means "use the gateway": a DeepSeek-era default (or no model at all) moves to the gateway model.
+  // A model the user picked from another provider is left alone.
+  const current = parseJsonc(next)
+  const model = isRecord(current) ? current.model : undefined
+  if (typeof model === "string" && model.startsWith("deepseek/")) {
+    const switched = setRootString(next, "model", `${GATEWAY_PROVIDER_ID}/deepseek-v4-pro`)
+    if (switched !== undefined) next = switched
+  }
+
   const reparsed = parseJsonc(next)
   if (!isRecord(reparsed)) {
     input.log.warn("refused to write an engine config that no longer parses", { file })

@@ -153,11 +153,11 @@ function globalConfigFile() {
 // 里用户粘贴的 key 注入进来,写成 "" 会永久遮蔽它,导致界面里粘贴 key 永远不生效。
 const DEFAULT_GLOBAL_CONFIG = {
   provider: {
-    deepseek: {
+    hypercode: {
       npm: "@ai-sdk/openai-compatible",
-      name: "DeepSeek",
+      name: "HyperCode",
       options: {
-        baseURL: "https://api.deepseek.com/v1",
+        baseURL: "https://api.trust3.pro/v1",
       },
       models: {
         "deepseek-v4-pro": { name: "DeepSeek V4 Pro" },
@@ -166,7 +166,7 @@ const DEFAULT_GLOBAL_CONFIG = {
       },
     },
   },
-  model: "deepseek/deepseek-v4-pro",
+  model: "hypercode/deepseek-v4-pro",
 } as const
 
 function patchJsonc(input: string, patch: unknown, path: string[] = []): string {

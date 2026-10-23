@@ -434,7 +434,7 @@ describe("checkGatewayBalance", () => {
 
   test("reports funded when the gateway serves the stored key", async () => {
     const root = await tempRoot()
-    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    await writeFile(join(root, "auth.json"), JSON.stringify({ [GATEWAY_PROVIDER_ID]: { type: "api", key: "sk-test" } }))
     const fetch = scriptedFetch([{ status: 200, body: { data: [] } }])
     const result = await checkGatewayBalance({ dataDir: root, fetchImpl: fetch.fetchImpl })
     expect(result).toEqual({ status: "funded" })
@@ -443,7 +443,7 @@ describe("checkGatewayBalance", () => {
 
   test("reports unfunded when the gateway denies the key", async () => {
     const root = await tempRoot()
-    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    await writeFile(join(root, "auth.json"), JSON.stringify({ [GATEWAY_PROVIDER_ID]: { type: "api", key: "sk-test" } }))
     const result = await checkGatewayBalance({
       dataDir: root,
       fetchImpl: async () => ({ status: 403, json: async () => ({}) }),
@@ -453,7 +453,7 @@ describe("checkGatewayBalance", () => {
 
   test("reports unreachable when the request fails", async () => {
     const root = await tempRoot()
-    await writeFile(join(root, "auth.json"), JSON.stringify({ deepseek: { type: "api", key: "sk-test" } }))
+    await writeFile(join(root, "auth.json"), JSON.stringify({ [GATEWAY_PROVIDER_ID]: { type: "api", key: "sk-test" } }))
     const result = await checkGatewayBalance({
       dataDir: root,
       fetchImpl: async () => {

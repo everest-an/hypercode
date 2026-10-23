@@ -3,9 +3,9 @@
   "plugin": ["oh-my-openagent"],
   // 模型:HyperCode 通道(trust3 网关,全体子代理共享;key 自动写入,或按向导手动粘贴)
   "provider": {
-    "deepseek": {
+    "hypercode": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "DeepSeek",
+      "name": "HyperCode",
       "options": {
         "baseURL": "https://api.trust3.pro/v1",
         "apiKey": "__HC_API_KEY__"
@@ -16,5 +16,5 @@
       }
     }
   },
-  "model": "deepseek/deepseek-v4-pro"
+  "model": "hypercode/deepseek-v4-pro"
 }
