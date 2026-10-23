@@ -37,6 +37,21 @@ export const GATEWAY_MODELS: Record<string, string> = {
 // Same list and order as globalConfigFile() in packages/opencode/src/config/config.ts and bundled-plugin.ts.
 const CONFIG_CANDIDATES = ["hypercode.jsonc", "hypercode.json", "opencode.jsonc", "opencode.json", "config.json"]
 
+// Load order used by the engine (packages/opencode/src/config/config.ts): later files win.
+const CONFIG_LOAD_ORDER = ["config.json", "opencode.json", "opencode.jsonc", "hypercode.json", "hypercode.jsonc"]
+
+/** The model the engine will actually use, taking the last file that sets it. */
+async function readEffectiveModel(configDir: string): Promise<string | undefined> {
+  let model: string | undefined
+  for (const name of CONFIG_LOAD_ORDER) {
+    const text = await fs.readFile(path.join(configDir, name), "utf8").catch(() => undefined)
+    if (!text) continue
+    const parsed = parseJsonc(text)
+    if (isRecord(parsed) && typeof parsed.model === "string") model = parsed.model
+  }
+  return model
+}
+
 const AUTH_FILE_MODE = 0o600
 
 type Log = {
@@ -255,10 +270,9 @@ export async function ensureGatewayProvider(input: { configDir: string; log: Log
     next = added
   }
 
-  // Pairing means "use the gateway": a DeepSeek-era default (or no model at all) moves to the gateway model.
-  // A model the user picked from another provider is left alone.
-  const current = parseJsonc(next)
-  const model = isRecord(current) ? current.model : undefined
+  // Pairing means "use the gateway": a DeepSeek-era model moves to the gateway model. A model the user
+  // picked from another provider is left alone.
+  const model = await readEffectiveModel(input.configDir)
   if (typeof model === "string" && model.startsWith("deepseek/")) {
     const switched = setRootString(next, "model", `${GATEWAY_PROVIDER_ID}/deepseek-v4-pro`)
     if (switched !== undefined) next = switched
