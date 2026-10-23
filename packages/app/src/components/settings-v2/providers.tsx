@@ -93,35 +93,25 @@ export const SettingsProvidersV2: Component<{
     return true
   }
 
-  const disableProvider = async (providerID: string, name: string) => {
-    if (protocol() !== "v1") return
-    const before = serverSync().data.config.disabled_providers ?? []
-    const next = before.includes(providerID) ? before : [...before, providerID]
-    serverSync().set("config", "disabled_providers", next)
-
-    await serverSync()
-      .updateConfig({ disabled_providers: next })
-      .then(() => {
-        showToast({
-          variant: "success",
-          icon: "circle-check",
-          title: language.t("provider.disconnect.toast.disconnected.title", { provider: name }),
-          description: language.t("provider.disconnect.toast.disconnected.description", { provider: name }),
-        })
-      })
-      .catch((err: unknown) => {
-        serverSync().set("config", "disabled_providers", before)
-        const message = err instanceof Error ? err.message : String(err)
-        showToast({ title: language.t("common.requestFailed"), description: message })
-      })
-  }
-
   const disconnect = async (providerID: string, name: string) => {
     if (isConfigCustom(providerID)) {
+      // A provider declared in the user config stays listed after its credential is removed: hiding it
+      // behind disabled_providers made the only way back a full custom-provider setup.
       await serverSdk()
         .client.auth.remove({ providerID })
-        .catch(() => undefined)
-      await disableProvider(providerID, name)
+        .then(async () => {
+          await serverSdk().client.global.dispose()
+          showToast({
+            variant: "success",
+            icon: "circle-check",
+            title: language.t("provider.disconnect.toast.disconnected.title", { provider: name }),
+            description: language.t("provider.disconnect.toast.disconnected.description", { provider: name }),
+          })
+        })
+        .catch((err: unknown) => {
+          const message = err instanceof Error ? err.message : String(err)
+          showToast({ title: language.t("common.requestFailed"), description: message })
+        })
       return
     }
     await serverSdk()

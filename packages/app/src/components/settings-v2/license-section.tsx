@@ -3,6 +3,7 @@ import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
 import { TextInputV2 } from "@opencode-ai/ui/v2/text-input-v2"
 import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
+import { useServerSDK } from "@/context/server-sdk"
 import { LICENSE_PURCHASE_URL, type LicenseStatus } from "@/license"
 import { SettingsListV2 } from "./parts/list"
 import { SettingsRowV2 } from "./parts/row"
@@ -18,6 +19,7 @@ import "./settings-v2.css"
 export const SettingsLicenseV2: Component = () => {
   const language = useLanguage()
   const platform = usePlatform()
+  const serverSdk = useServerSDK()
 
   const [topUpState, setTopUpState] = createSignal<"idle" | "waiting" | "done">("idle")
   let topUpTimer: ReturnType<typeof setInterval> | undefined
@@ -27,7 +29,16 @@ export const SettingsLicenseV2: Component = () => {
   }
   onCleanup(stopTopUp)
   // The gateway answers /v1/models with 403 until the balance is credited, so poll that instead of a billing API.
-  const startTopUp = () => {
+  const startTopUp = async () => {
+    if (topUpState() === "waiting") return
+    // Paying before pairing would leave the credit on an account this install cannot use: pair first,
+    // then open the page and poll for the credit.
+    const status = await platform.gateway?.balance?.().catch(() => undefined)
+    if (status?.status === "unconfigured") {
+      const connected = await platform.gateway?.connect().catch(() => undefined)
+      if (connected?.status !== "connected") return
+      await serverSdk().client.global.dispose().catch(() => undefined)
+    }
     platform.openExternal(LICENSE_PURCHASE_URL)
     if (topUpState() === "waiting") return
     setTopUpState("waiting")
@@ -104,8 +115,12 @@ export const SettingsLicenseV2: Component = () => {
     setGatewayMessage(null)
     try {
       const result = await api.connect()
-      if (result.status === "connected") setGatewayMessage(language.t("settings.gateway.connected"))
-      else if (result.status === "expired") setGatewayMessage(language.t("settings.gateway.expired"))
+      if (result.status === "connected") {
+        setGatewayMessage(language.t("settings.gateway.connected"))
+        // The engine caches the global config for the process lifetime; disposing the global instance makes
+        // it re-read the provider and model this connect just wrote.
+        await serverSdk().client.global.dispose().catch(() => undefined)
+      } else if (result.status === "expired") setGatewayMessage(language.t("settings.gateway.expired"))
       else setGatewayMessage(language.t("settings.gateway.failed"))
     } catch {
       setGatewayMessage(language.t("settings.gateway.failed"))
