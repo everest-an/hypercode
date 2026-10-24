@@ -255,6 +255,8 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
       revert: () => window.api.pluginUpdater.revert(),
     },
 
+    mas: window.api.mas,
+
     license: {
       getStatus: () => window.api.licenseGetStatus(),
       activate: (key) => window.api.licenseActivate(key),

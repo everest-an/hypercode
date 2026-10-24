@@ -104,6 +104,8 @@ export type GatewayBalance =
   | { status: "unreachable" }
 
 export type ElectronAPI = {
+  /** True for the Mac App Store build (electron-builder mas target); the renderer hides purchase entry points. */
+  mas: boolean
   killSidecar: () => Promise<void>
   installCli: () => Promise<string>
   awaitInitialization: () => Promise<ServerReadyData>

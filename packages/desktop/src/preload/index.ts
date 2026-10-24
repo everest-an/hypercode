@@ -32,6 +32,7 @@ const setupHandler = (_: unknown, state: SetupState) => {
 }
 
 const api: ElectronAPI = {
+  mas: Boolean(process.mas),
   killSidecar: () => ipcRenderer.invoke("kill-sidecar"),
   installCli: () => ipcRenderer.invoke("install-cli"),
   awaitInitialization: () => ipcRenderer.invoke("await-initialization"),

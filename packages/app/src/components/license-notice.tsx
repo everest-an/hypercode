@@ -23,7 +23,7 @@ export const LicenseNotice: Component = () => {
   const language = useLanguage()
   const dialog = useDialog()
 
-  const enabled = () => platform.platform === "desktop" && Boolean(platform.license)
+  const enabled = () => platform.platform === "desktop" && Boolean(platform.license) && !platform.mas
   const [status, setStatus] = createSignal<LicenseStatus | undefined>()
   const [dismissed, setDismissed] = createSignal(false)
   const notice = createMemo(() => resolveLicenseNotice(status()))

@@ -39,6 +39,12 @@ type PlatformBase = {
   /** App version */
   version?: string
 
+  /**
+   * Mac App Store build. Apple rejects apps that send users to an external purchase page (3.1.1), so every
+   * entry point that opens the site's checkout is hidden when this is true.
+   */
+  mas?: boolean
+
   /** Open a web or mail URL in the default system application */
   openExternal(url: string): void
 

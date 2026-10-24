@@ -30,6 +30,8 @@ export const SettingsLicenseV2: Component = () => {
   onCleanup(stopTopUp)
   // The gateway answers /v1/models with 403 until the balance is credited, so poll that instead of a billing API.
   const startTopUp = async () => {
+    // App Store builds have no checkout to open; the button is hidden, and this is the belt to its braces.
+    if (platform.mas) return
     if (topUpState() === "waiting") return
     // Paying before pairing would leave the credit on an account this install cannot use: pair first,
     // then open the page and poll for the credit.
@@ -220,18 +222,21 @@ export const SettingsLicenseV2: Component = () => {
                 >
                   {gatewayBusy() ? language.t("settings.gateway.connecting") : language.t("settings.gateway.connect")}
                 </ButtonV2>
-                <ButtonV2
-                  size="small"
-                  variant="neutral"
-                  disabled={topUpState() === "waiting"}
-                  onClick={() => startTopUp()}
-                >
-                  {topUpState() === "waiting"
-                    ? language.t("settings.gateway.topUpWaiting")
-                    : topUpState() === "done"
-                      ? language.t("settings.gateway.topUpDone")
-                      : language.t("settings.gateway.topUp")}
-                </ButtonV2>
+                  {/* App Store builds may not link out to a checkout (3.1.1); this row only signs in. */}
+  <Show when={!platform.mas}>
+  <ButtonV2
+                    size="small"
+                    variant="neutral"
+                    disabled={topUpState() === "waiting"}
+                    onClick={() => startTopUp()}
+                  >
+                    {topUpState() === "waiting"
+                      ? language.t("settings.gateway.topUpWaiting")
+                      : topUpState() === "done"
+                        ? language.t("settings.gateway.topUpDone")
+                        : language.t("settings.gateway.topUp")}
+                  </ButtonV2>
+  </Show>
               </div>
             </SettingsRowV2>
           </Show>
