@@ -48,3 +48,32 @@ The `build:ios` and `build:android` commands validate and export platform JavaSc
 - Google connects through the system browser. Refresh the workspace after completing OAuth.
 
 Phone and wide layouts share Chat, Activity, Ideas, Goals and Apps. The task and notification sheets restore server state when reopened. Document and browser viewers have platform-specific files; presentation and state remain shared.
+
+## Release (TestFlight / App Store)
+
+The store listing ships as **HyperCode Remote** (`app.hypercode.mobile`). It is the companion client for a
+HyperCode workspace: chat, activity and the app surfaces, driven by the same server the desktop app talks to.
+
+A release build bakes the server origin in at build time, so it must be set before building:
+
+```sh
+EXPO_PUBLIC_API_URL=https://<workbench-host> npx eas build -p ios --profile production
+```
+
+Builds are defined in `eas.json`:
+
+| Profile | Use |
+| --- | --- |
+| `development` | Dev client for local work (`expo start --dev-client`) |
+| `preview` | Internal ad-hoc build for the team |
+| `production` | Store build (App Store Connect / TestFlight) |
+
+Publishing checklist:
+
+1. `npx eas login` and `npx eas init` once, linking the project to the Expo account.
+2. Create the App ID `app.hypercode.mobile` in the Apple developer portal and let EAS manage the distribution
+   certificate and provisioning profile.
+3. Set `EXPO_PUBLIC_API_URL` for the production profile (EAS secret or `eas.json` `env`).
+4. `npx eas build -p ios --profile production`, then `npx eas submit -p ios` (or upload the `.ipa` with Transporter).
+5. Fill the App Store Connect record: screenshots (6.9" and 6.5"), privacy policy, and the "remote access" review
+   notes. `ITSAppUsesNonExemptEncryption` is already `false` in `app.json`.
