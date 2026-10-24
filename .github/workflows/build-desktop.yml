@@ -585,6 +585,18 @@ jobs:
           HYPERCODE_VERSION: ${{ inputs.version }}
         run: bun run package:mas -- --publish never
 
+      # electron-builder signs the .app for MAS but does not emit the installer package, so build the
+      # .pkg from the signed bundle with productbuild and the Mac Installer Distribution identity.
+      - name: Build the MAS pkg
+        if: env.MAS_CERT != ''
+        run: |
+          set -euo pipefail
+          APP="packages/desktop/dist/mas-arm64/HyperCode.app"
+          test -d "$APP"
+          productbuild --component "$APP" /Applications \
+            --sign "3rd Party Mac Developer Installer: Shenzhen Sansi Dark Source Technology Co., Ltd (YSVQQ3T73G)" \
+            "packages/desktop/dist/hypercode-mas.pkg"
+
       - name: Upload MAS pkg
         if: env.MAS_CERT != ''
         uses: actions/upload-artifact@v4
