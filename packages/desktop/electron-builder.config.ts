@@ -138,6 +138,7 @@ const getBase = (appId: string): Configuration => ({
     hardenedRuntime: false,
     // Path is provided by the MAS build job; absent for dmg builds.
     provisioningProfile: process.env.MAS_PROVISIONING_PROFILE,
+    target: ["mas"],
     category: "public.app-category.developer-tools",
     // MAS requires "production" provisioning profile via Xcode/Transporter; electron-builder
     // only needs the cert + entitlements here.
