@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: false
+      upload_mas:
+        description: "Upload the Mac App Store package to App Store Connect"
+        required: false
+        type: boolean
+        default: false
   push:
     branches:
       - dev
@@ -600,6 +605,14 @@ jobs:
             --sign "3rd Party Mac Developer Installer: Shenzhen Sansi Dark Source Technology Co., Ltd (YSVQQ3T73G)" \
             "packages/desktop/dist/hypercode-mas.pkg"
 
+      - name: Upload to App Store Connect
+        if: env.MAS_CERT != '' && inputs.upload_mas == true
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          xcrun altool --upload-app -f packages/desktop/dist/hypercode-mas.pkg -t macos \
+            -u "$APPLE_ID" -p "$APPLE_APP_SPECIFIC_PASSWORD" --verbose
       - name: Upload MAS pkg
         if: env.MAS_CERT != ''
         uses: actions/upload-artifact@v4
