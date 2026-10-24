@@ -1,15 +1,25 @@
 {
   "expo": {
-    "name": "HyperCode",
+    "name": "HyperCode Remote",
     "slug": "hypercode",
     "scheme": "hypercode",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "ios": { "supportsTablet": true, "bundleIdentifier": "app.hypercode.mobile" },
-    "android": { "package": "app.hypercode.mobile" },
-    "web": { "bundler": "metro", "name": "HyperCode — a little room for everything" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.hypercode.mobile",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "app.hypercode.mobile",
+      "versionCode": 1
+    },
+    "web": { "bundler": "metro", "name": "HyperCode - a little room for everything" },
     "plugins": [
       "expo-document-picker",
       "@config-plugins/react-native-blob-util",
