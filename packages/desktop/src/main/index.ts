@@ -328,7 +328,9 @@ const main = Effect.gen(function* () {
   setDockIcon()
   const updater = setupAutoUpdater(stopSidecars)
   const pluginUpdater = createPluginUpdaterController({
-    enabled: UPDATER_ENABLED,
+    // App Store builds are updated by the store; the plugin channel downloads executable payloads at
+    // runtime, which guideline 2.5.2 does not allow, so it stays off there.
+    enabled: UPDATER_ENABLED && !process.mas,
     appVersion: app.getVersion(),
     cacheDir: cacheDir(),
     platform: `${process.platform}-${process.arch}`,
@@ -376,11 +378,13 @@ const main = Effect.gen(function* () {
     },
   })
   registerWslIpcHandlers(wslServers)
-  void updater.start()
-  void pluginUpdater.start()
-  const updateTimer = setInterval(() => void updater.check(), 10 * 60 * 1000)
-  updateTimer.unref()
-  app.once("will-quit", () => clearInterval(updateTimer))
+  if (!process.mas) {
+    void updater.start()
+    void pluginUpdater.start()
+    const updateTimer = setInterval(() => void updater.check(), 10 * 60 * 1000)
+    updateTimer.unref()
+    app.once("will-quit", () => clearInterval(updateTimer))
+  }
   // Subscription license state at boot: seeds machine id + trial start on first run and, when a key is
   // stored, verifies it against the billing backend in the background. Non-blocking and non-fatal — an
   // unreachable or unconfigured billing endpoint must never hold up launch (grace handling is in license.ts).
