@@ -90,23 +90,19 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           set -euo pipefail
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key><string>app-store</string>
-            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
-            <key>signingStyle</key><string>manual</string>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>app.hypercode.mobile</key><string>HyperCode Remote App Store</string>
-            </dict>
-            <key>uploadSymbols</key><true/>
-            <key>destination</key><string>export</string>
-          </dict>
-          </plist>
-          PLIST
+          python3 - <<'PY'
+          import os, plistlib
+          options = {
+              "method": "app-store-connect",
+              "teamID": os.environ["APPLE_TEAM_ID"],
+              "signingStyle": "manual",
+              "provisioningProfiles": {"app.hypercode.mobile": "HyperCode Remote App Store"},
+              "uploadSymbols": True,
+              "destination": "export",
+          }
+          with open(os.path.join(os.environ["RUNNER_TEMP"], "ExportOptions.plist"), "wb") as fh:
+              plistlib.dump(options, fh)
+          PY
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
