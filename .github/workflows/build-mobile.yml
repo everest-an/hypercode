@@ -103,6 +103,11 @@ jobs:
           with open(os.path.join(os.environ["RUNNER_TEMP"], "ExportOptions.plist"), "wb") as fh:
               plistlib.dump(options, fh)
           PY
+          echo "--- xcodebuild version ---"
+          xcodebuild -version
+          echo "--- export options ---"
+          cat "$RUNNER_TEMP/ExportOptions.plist"
+          plutil -lint "$RUNNER_TEMP/ExportOptions.plist" || true
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
