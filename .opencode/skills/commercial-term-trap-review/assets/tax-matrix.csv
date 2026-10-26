@@ -1,0 +1,13 @@
+line_item,headline,basis,tax_clause_exact_words,inclusive_exclusive,tax_rate,invoice_type,effective_cost,notes
+Base rent,,,,,,,,
+Turnover rent,,,,,,,,
+Property fee,,,,,,,,
+Service fee,,,,,,,,
+Marketing / promotion,,,,,,,,
+Utilities,,,,,,,,
+Deposit,,,,,,,,
+Fit-out contribution,,,,,,,,
+Rent-free / fit-out period,,,,,,,,
+Late payment fee,,,,,,,,
+Commission / channel fee,,,,,,,,
+Other mandatory fee,,,,,,,,
