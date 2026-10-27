@@ -70,7 +70,8 @@ jobs:
         run: |
           set -euo pipefail
           WORKSPACE=$(ls -d *.xcworkspace | head -n 1)
-          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json | python3 -c 'import json,sys; d=json.load(sys.stdin); s=[x for x in d["workspace"]["schemes"] if not x.startswith("Pods")]; print(s[0] if s else d["workspace"]["schemes"][0])')
+          PROJECT=$(ls -d *.xcodeproj | head -n 1)
+          SCHEME="${PROJECT%.xcodeproj}"
           echo "workspace=$WORKSPACE scheme=$SCHEME"
           xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" archive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="HyperCode Remote App Store" DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
           echo "--- archive contents ---"
