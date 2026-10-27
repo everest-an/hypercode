@@ -56,8 +56,7 @@ jobs:
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "" "$KEYCHAIN"
           echo "$IOS_CERT_P12_BASE64" | base64 --decode > "$RUNNER_TEMP/ios.p12"
-          security import "$RUNNER_TEMP/ios.p12" -k "$KEYCHAIN" -P "$IOS_CERT_PASSWORD" \
-            -T /usr/bin/codesign -T /usr/bin/security -A
+          security import "$RUNNER_TEMP/ios.p12" -k "$KEYCHAIN" -P "$IOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security -A
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN"
           security list-keychains -d user -s "$KEYCHAIN"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
@@ -73,23 +72,23 @@ jobs:
           WORKSPACE=$(ls -d *.xcworkspace | head -n 1)
           SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["workspace"]["schemes"][0])')
           echo "workspace=$WORKSPACE scheme=$SCHEME"
-          xcodebuild \
-            -workspace "$WORKSPACE" \
-            -scheme "$SCHEME" \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" \
-            archive \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="HyperCode Remote App Store" \
-            DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" archive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="HyperCode Remote App Store" DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
 
       - name: Export the .ipa
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           set -euo pipefail
+          echo "team=[$APPLE_TEAM_ID] len=${#APPLE_TEAM_ID}"
+          ARCHIVE="$RUNNER_TEMP/HyperCodeRemote.xcarchive"
+          APP=$(ls -d "$ARCHIVE"/Products/Applications/*.app | head -n 1)
+          echo "--- archive info ---"
+          /usr/libexec/PlistBuddy -c "Print :ApplicationProperties" "$ARCHIVE/Info.plist" || true
+          echo "--- app signature ---"
+          codesign -dv --verbose=2 "$APP" 2>&1 | head -n 12 || true
+          echo "--- embedded profile ---"
+          security cms -D -i "$HOME/Library/MobileDevice/Provisioning Profiles/hypercode-mobile.mobileprovision" > "$RUNNER_TEMP/profile.plist" || true
+          /usr/libexec/PlistBuddy -c "Print :Name" -c "Print :UUID" -c "Print :Entitlements:application-identifier" "$RUNNER_TEMP/profile.plist" || true
           python3 - <<'PY'
           import os, plistlib
           options = {
@@ -103,15 +102,21 @@ jobs:
           with open(os.path.join(os.environ["RUNNER_TEMP"], "ExportOptions.plist"), "wb") as fh:
               plistlib.dump(options, fh)
           PY
-          echo "--- xcodebuild version ---"
-          xcodebuild -version
           echo "--- export options ---"
           cat "$RUNNER_TEMP/ExportOptions.plist"
-          plutil -lint "$RUNNER_TEMP/ExportOptions.plist" || true
-          xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/HyperCodeRemote.xcarchive" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
-            -exportPath "$RUNNER_TEMP/export"
+          echo "--- export attempt 1 ---"
+          xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" -allowProvisioningUpdates || true
+          if ! ls "$RUNNER_TEMP/export"/*.ipa >/dev/null 2>&1; then
+            echo "--- export attempt 2 (minimal options) ---"
+            python3 - <<'PY'
+            import os, plistlib
+            options = {"method": "app-store-connect", "teamID": os.environ["APPLE_TEAM_ID"], "destination": "export"}
+            with open(os.path.join(os.environ["RUNNER_TEMP"], "ExportOptions.min.plist"), "wb") as fh:
+                plistlib.dump(options, fh)
+            PY
+            cat "$RUNNER_TEMP/ExportOptions.min.plist"
+            xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.min.plist" -exportPath "$RUNNER_TEMP/export" -allowProvisioningUpdates
+          fi
 
       - name: Upload the .ipa as an artifact
         uses: actions/upload-artifact@v4
@@ -127,5 +132,4 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
           IPA=$(ls "$RUNNER_TEMP"/export/*.ipa | head -n 1)
-          xcrun altool --upload-app -f "$IPA" -t ios \
-            -u "$APPLE_ID" -p "$APPLE_APP_SPECIFIC_PASSWORD" --verbose
+          xcrun altool --upload-app -f "$IPA" -t ios -u "$APPLE_ID" -p "$APPLE_APP_SPECIFIC_PASSWORD" --verbose
