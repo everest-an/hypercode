@@ -81,7 +81,7 @@ jobs:
           set -euo pipefail
           echo "team=[$APPLE_TEAM_ID] len=${#APPLE_TEAM_ID}"
           ARCHIVE="$RUNNER_TEMP/HyperCodeRemote.xcarchive"
-          APP=$(ls -d "$ARCHIVE"/Products/Applications/*.app | head -n 1)
+          APP=$(ls -d "$ARCHIVE"/Products/Applications/*.app 2>/dev/null | head -n 1 || true)
           echo "--- archive tree ---"
           ls -la "$ARCHIVE" || true
           find "$ARCHIVE" -maxdepth 3 | head -n 40 || true
