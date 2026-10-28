@@ -1,0 +1,54 @@
+name: email-drip
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only print what would be sent"
+        type: boolean
+        default: true
+
+concurrency:
+  group: email-drip
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  drip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send onboarding emails
+        env:
+          SUB2API_EMAIL: ${{ secrets.SUB2API_EMAIL }}
+          SUB2API_PASSWORD: ${{ secrets.SUB2API_PASSWORD }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python3 ops/email/drip.py --dry-run
+          else
+            python3 ops/email/drip.py
+          fi
+
+      - name: Commit the send state
+        if: inputs.dry_run != true
+        run: |
+          if git diff --quiet -- ops/email/state.json; then
+            echo "no state change"
+            exit 0
+          fi
+          git config user.name "hypercode-bot"
+          git config user.email "bot@awareliquid.ai"
+          git add ops/email/state.json
+          git commit -m "chore(email): record onboarding emails sent"
+          git push
