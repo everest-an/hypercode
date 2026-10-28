@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Onboarding email drip for HyperCode users.
 
-Reads users from the sub2api admin API and sends the D0 / D2 / D5 onboarding emails over the
+Reads users from the sub2api admin API and sends the D0 / D2 / D5 / win-back emails over the
 Aliyun DirectMail SMTP relay. Sent state lives in ops/email/state.json so a re-run never
 duplicates a message. Run with --dry-run to see what would be sent without touching SMTP.
 
@@ -27,10 +27,13 @@ STATE = Path(__file__).with_name("state.json")
 ARGS = set(sys.argv[1:])
 DRY = "--dry-run" in ARGS
 
+FOOTER = "\n\n如果不想再收到产品邮件，回复「退订」即可。"
+
 SUBJECTS = {
     "d0": "HyperCode 已就绪：三步跑通第一个任务",
     "d2": "用 HyperCode 把「补测试」这件事交给 AI",
     "d5": "你的试用还剩 2 天（到期不自动扣费）",
+    "winback": "试用结束不等于结束：HyperCode 还在这里",
 }
 
 BODIES = {
@@ -44,7 +47,7 @@ BODIES = {
 
 不需要配置 API key：连接一次账号即可。工作区是本地运行的，代码不会离开你的电脑。
 
-有问题直接回复这封邮件。
+有问题直接回复到 anmuning@awareliquid.ai。
 
 — AwareLiquid
 """,
@@ -69,6 +72,20 @@ HyperCode 最适合做那些「需要连续跑几小时」的任务：
 3. 免费档：保留基础功能
 
 如果试用帮到了你，订阅是最省心的方式；如果还在评估，也可以先用 BYOK。
+
+— AwareLiquid
+""",
+    "winback": """你好，
+
+你的 HyperCode 试用已经结束。本地工作区、项目文件和已有会话都还在，随时可以继续。
+
+如果之前的体验还差一点，这里有三件事可能值得再试一次：
+
+1. 长任务：给一个明确目标（例如「把测试补齐并跑绿」），看它连续跑几小时
+2. BYOK：自带 DeepSeek key，功能完整且免费
+3. 订阅：59 元/月（Pro 99 元/月），不自动扣费
+
+有问题或建议，直接回复到 anmuning@awareliquid.ai。
 
 — AwareLiquid
 """,
@@ -109,13 +126,13 @@ def stage_for(user):
     paid = float(user.get("total_recharged") or 0) > 0 or float(user.get("balance") or 0) > 0
     if paid:
         return None
+    if age > 10:
+        return "winback"
     if age >= 5:
         return "d5"
     if age >= 2:
         return "d2"
-    if age >= 0:
-        return "d0"
-    return None
+    return "d0"
 
 
 def send(to, subject, body):
@@ -130,7 +147,8 @@ def send(to, subject, body):
     msg["From"] = sender
     msg["To"] = to
     msg["Subject"] = subject
-    msg.set_content(body + "\n\n如果不想再收到产品邮件，回复「退订」即可。")
+    msg["Reply-To"] = "anmuning@awareliquid.ai"
+    msg.set_content(body + FOOTER)
     ctx = ssl.create_default_context()
     with smtplib.SMTP_SSL(host, port, context=ctx, timeout=30) as s:
         s.login(user, password)
