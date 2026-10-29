@@ -33,8 +33,9 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          DRY_RUN: ${{ inputs.dry_run == true }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "$DRY_RUN" = "true" ]; then
             python3 ops/email/drip.py --dry-run
           else
             python3 ops/email/drip.py
