@@ -2,6 +2,7 @@
   "expo": {
     "name": "HyperCode Remote",
     "slug": "hypercode",
+    "icon": "./assets/icon.png",
     "scheme": "hypercode",
     "version": "1.0.0",
     "orientation": "default",
@@ -10,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.hypercode.mobile",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
