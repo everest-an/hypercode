@@ -318,6 +318,9 @@ export const make = Effect.gen(function* () {
   ) =>
     Effect.suspend(() => {
       if (proc.kill(signal)) return Effect.void
+      // kill() returns false for an already-exited process. That is a no-op, not a
+      // failure, so aborting a command that just finished must not surface an error.
+      if (proc.exitCode !== null || proc.signalCode !== null) return Effect.void
       return Effect.fail(toPlatformError("kill", new Error("Failed to kill child process"), command))
     })
 
