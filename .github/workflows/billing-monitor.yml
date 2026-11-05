@@ -1,0 +1,41 @@
+name: billing-monitor
+
+on:
+  schedule:
+    # 每天 UTC 02:00（北京时间 10:00）检查 LeapNode 余额；1 号同时出月度成本报告
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: LeapNode 余额检查
+        continue-on-error: true
+        env:
+          LEAPNODE_EMAIL: ${{ secrets.LEAPNODE_EMAIL }}
+          LEAPNODE_PASSWORD: ${{ secrets.LEAPNODE_PASSWORD }}
+          LEAPNODE_BALANCE_THRESHOLD: "100"
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        run: python ops/billing/leapnode_balance.py
+
+      - name: 月度成本报告（仅 1 号）
+        env:
+          TRUST3_ADMIN_EMAIL: ${{ secrets.TRUST3_ADMIN_EMAIL }}
+          TRUST3_ADMIN_PASSWORD: ${{ secrets.TRUST3_ADMIN_PASSWORD }}
+          USD_CNY_RATE: "7.2"
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        run: python ops/billing/monthly_cost.py
