@@ -21,6 +21,11 @@ jobs:
           LEAPNODE_EMAIL: ${{ secrets.LEAPNODE_EMAIL }}
           LEAPNODE_PASSWORD: ${{ secrets.LEAPNODE_PASSWORD }}
           LEAPNODE_BALANCE_THRESHOLD: "100"
+          LEAPNODE_RUNWAY_DAYS: "3"
+          BIG_USER_CNY: "50"
+          USD_CNY_RATE: "7.2"
+          TRUST3_ADMIN_EMAIL: ${{ secrets.TRUST3_ADMIN_EMAIL }}
+          TRUST3_ADMIN_PASSWORD: ${{ secrets.TRUST3_ADMIN_PASSWORD }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
