@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.hypercode.mobile",
+      "bundleIdentifier": "ai.awareliquid.hypercode.ios",
       "buildNumber": "4",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -20,7 +20,10 @@
       "package": "app.hypercode.mobile",
       "versionCode": 1
     },
-    "web": { "bundler": "metro", "name": "HyperCode - a little room for everything" },
+    "web": {
+      "bundler": "metro",
+      "name": "HyperCode - a little room for everything"
+    },
     "plugins": [
       "expo-document-picker",
       "@config-plugins/react-native-blob-util",
