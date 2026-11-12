@@ -84,7 +84,7 @@ jobs:
         run: |
           set -euo pipefail
           ARCHIVE="$RUNNER_TEMP/HyperCodeIOS.xcarchive"
-          python3 -c 'import os,plistlib; o={"method":"app-store-connect","teamID":os.environ["APPLE_TEAM_ID"],"signingStyle":"manual","provisioningProfiles":{"app.hypercode.mobile":"HyperCode Remote App Store"},"uploadSymbols":True,"destination":"export"}; open(os.path.join(os.environ["RUNNER_TEMP"],"ExportOptions.plist"),"wb").write(plistlib.dumps(o))'
+          python3 -c 'import os,plistlib; o={"method":"app-store-connect","teamID":os.environ["APPLE_TEAM_ID"],"signingStyle":"manual","provisioningProfiles":{"ai.awareliquid.hypercode.ios":"HyperCode iOS App Store"},"uploadSymbols":True,"destination":"export"}; open(os.path.join(os.environ["RUNNER_TEMP"],"ExportOptions.plist"),"wb").write(plistlib.dumps(o))'
           cat "$RUNNER_TEMP/ExportOptions.plist"
           xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" -allowProvisioningUpdates
           ls -la "$RUNNER_TEMP/export"
