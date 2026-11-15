@@ -120,20 +120,32 @@ export async function createApp(
       browserConfigured: Boolean(config.workerUrl && config.workerToken),
     }),
   );
-  let loginWindow = 0,
-    loginAttempts = 0;
+  // Per-IP sign-in throttle: 30 attempts per minute, scoped to the caller so
+  // one noisy client cannot lock everybody else out.
+  const loginBuckets = new Map<string, { window: number; count: number }>();
   app.post("/api/session", async (c) => {
-    if (Date.now() - loginWindow > 60000) {
-      loginWindow = Date.now();
-      loginAttempts = 0;
-    }
-    if (++loginAttempts > 30)
+    const ip =
+      c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
+      c.req.header("x-real-ip") ||
+      "local";
+    const now = Date.now();
+    const bucket = loginBuckets.get(ip);
+    if (!bucket || now - bucket.window > 60000) {
+      loginBuckets.set(ip, { window: now, count: 1 });
+    } else if (++bucket.count > 30) {
       throw new AppError("Too many sign-in attempts. Try again in a minute.", 429);
+    }
+    if (loginBuckets.size > 5000) {
+      for (const [key, value] of loginBuckets) {
+        if (now - value.window > 60000) loginBuckets.delete(key);
+      }
+    }
     const body = z.object({ accessKey: z.string().optional() }).parse(await c.req.json());
     const session = await auth.session(body.accessKey);
-    await workspace.ensureSample("local-user", actions);
-    await agent.ensure("local-user");
-    if (config.mode === "sample") await agent.refreshIdeas("local-user");
+    const owner = session.owner ?? "local-user";
+    await workspace.ensureSample(owner, actions);
+    await agent.ensure(owner);
+    if (config.mode === "sample") await agent.refreshIdeas(owner);
     return c.json(session);
   });
   app.get("/api/google/callback", async (c) => {
