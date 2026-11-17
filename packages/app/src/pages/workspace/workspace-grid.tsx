@@ -1,4 +1,5 @@
 import { useLanguage } from "@/context/language"
+import { usePlatform } from "@/context/platform"
 import { useServerSync } from "@/context/server-sync"
 import { base64Encode } from "@opencode-ai/core/util/encode"
 import { Button } from "@opencode-ai/ui/button"
@@ -43,6 +44,7 @@ export function WorkspaceGrid() {
   const sync = useServerSync()
   const navigate = useNavigate()
   const language = useLanguage()
+  const platform = usePlatform()
   const [order, setOrder] = createSignal<string[]>(readOrder())
   const [columns, setColumns] = createSignal<number>(readColumns())
   const [dragging, setDragging] = createSignal<string | null>(null)
@@ -180,7 +182,22 @@ export function WorkspaceGrid() {
                   <span class="text-11-regular text-text-weak">
                     {DateTime.fromMillis(card.updated).toRelative() ?? ""}
                   </span>
-                  <span class="text-11-medium text-text-weak">{label("打开", "Open")}</span>
+                  <span class="flex items-center gap-2">
+                    <Show when={typeof platform.runDesktopMenuAction === "function"}>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        class="text-11-medium text-text-weak hover:text-text-strong"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          void platform.runDesktopMenuAction?.("window.new")
+                        }}
+                      >
+                        {label("新窗口", "New window")}
+                      </span>
+                    </Show>
+                    <span class="text-11-medium text-text-weak">{label("打开", "Open")}</span>
+                  </span>
                 </div>
               </div>
             )}
