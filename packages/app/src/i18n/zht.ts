@@ -393,6 +393,7 @@ export const dict = {
   "prompt.context.removeActiveFile": "從上下文移除目前檔案",
   "prompt.context.removeFile": "從上下文移除檔案",
   "prompt.action.attachFile": "附加檔案",
+  "prompt.action.pasteImage": "貼上截圖",
   "prompt.menu.addImagesAndFiles": "新增檔案及更多內容",
   "prompt.menu.imagesAndFiles": "圖片和檔案",
   "prompt.menu.commands": "命令",
