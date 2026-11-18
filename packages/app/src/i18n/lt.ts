@@ -374,6 +374,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Pašalinkite aktyvų failą iš konteksto",
   "prompt.context.removeFile": "Pašalinti failą iš konteksto",
   "prompt.action.attachFile": "Pridėti failus",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Pridėkite failus ir daugiau",
   "prompt.menu.imagesAndFiles": "Vaizdai ir failai",
   "prompt.menu.commands": "Komandos",
