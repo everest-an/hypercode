@@ -373,6 +373,8 @@ export const dict: Record<string, string> = {
   "prompt.context.removeActiveFile": "སྐབས་དོན་ལས་ཤུགས་ལྡན་ཡིག་སྣོད་རྩ་བསྐྲད་གཏང་།",
   "prompt.context.removeFile": "སྐབས་དོན་ལས་ཡིག་སྣོད་རྩ་བསྐྲད་གཏང་།",
   "prompt.action.attachFile": "ཡིག་སྣོད་ཚུ་ཁ་སྐོང་རྐྱབས།",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ཡིག་སྣོད་ཚུ་དང་དེ་ལས་ལྷག་སྟེ་ཁ་སྐོང་རྐྱབས།",
   "prompt.menu.imagesAndFiles": "གཟུགས་བརྙན་དང་ཡིག་སྣོད།",
   "prompt.menu.commands": "བརྡ་བཀོད་ཚུ།",
