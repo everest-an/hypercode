@@ -276,6 +276,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Poista aktiivinen tiedosto kontekstista",
   "prompt.context.removeFile": "Poista tiedosto kontekstista",
   "prompt.action.attachFile": "Lisää tiedostoja",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Lisää tiedostoja ja paljon muuta",
   "prompt.menu.imagesAndFiles": "Kuvia ja tiedostoja",
   "prompt.menu.commands": "Komennot",
