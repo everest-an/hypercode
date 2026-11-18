@@ -368,6 +368,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Eemaldage aktiivne fail kontekstist",
   "prompt.context.removeFile": "Eemaldage fail kontekstist",
   "prompt.action.attachFile": "Lisa faile",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Lisage faile ja palju muud",
   "prompt.menu.imagesAndFiles": "Pildid ja failid",
   "prompt.menu.commands": "Käsud",
