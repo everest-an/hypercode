@@ -63,6 +63,7 @@ export function WorkspaceGrid() {
   const [order, setOrder] = createSignal<string[]>(readOrder())
   const [columns, setColumns] = createSignal<number>(readColumns())
   const [live, setLive] = createSignal<boolean>(readLive())
+  const [loaded, setLoaded] = createSignal<Record<string, boolean>>({})
   const [dragging, setDragging] = createSignal<string | null>(null)
 
   const zh = createMemo(() => language.locale().startsWith("zh"))
@@ -239,12 +240,45 @@ export function WorkspaceGrid() {
                     </div>
                   }
                 >
-                  <iframe
-                    src={paneUrl(card.directory)}
-                    title={card.name}
-                    class="w-full border-0 bg-surface-base"
-                    style={{ height: columns() === 3 ? "280px" : "380px" }}
-                  />
+                  <Show
+                    when={loaded()[card.id]}
+                    fallback={
+                      <div class="p-4 flex items-center justify-between gap-2">
+                        <span class="text-11-regular text-text-weak">
+                          {label("实时面板会新建/打开该项目会话", "Live pane opens a session for this project")}
+                        </span>
+                        <Button
+                          size="small"
+                          variant="secondary"
+                          onClick={() => {
+                            setLoaded((current) => ({ ...current, [card.id]: true }))
+                          }}
+                        >
+                          {label("加载", "Load")}
+                        </Button>
+                      </div>
+                    }
+                  >
+                    <div class="relative">
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        class="absolute right-2 top-2 z-10 rounded bg-surface-base/90 border border-border-weak-base px-2 py-0.5 text-10-regular text-text-weak hover:text-text-strong"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setLoaded((current) => ({ ...current, [card.id]: false }))
+                        }}
+                      >
+                        {label("卸载", "Unload")}
+                      </span>
+                      <iframe
+                        src={paneUrl(card.directory)}
+                        title={card.name}
+                        class="w-full border-0 bg-surface-base"
+                        style={{ height: columns() === 3 ? "280px" : "380px" }}
+                      />
+                    </div>
+                  </Show>
                 </Show>
               </div>
             )}
