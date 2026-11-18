@@ -368,6 +368,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Elimină fișierul activ din context",
   "prompt.context.removeFile": "Elimină fișierul din context",
   "prompt.action.attachFile": "Adaugă fișiere",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Adaugă fișiere și altele",
   "prompt.menu.imagesAndFiles": "Imagini și fișiere",
   "prompt.menu.commands": "Comenzi",
