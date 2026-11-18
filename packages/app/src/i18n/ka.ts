@@ -369,6 +369,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "აქტიური ფაილის ამოღება კონტექსტიდან",
   "prompt.context.removeFile": "ფაილის ამოღება კონტექსტიდან",
   "prompt.action.attachFile": "ფაილების დამატება",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ფაილების დამატება და სხვა",
   "prompt.menu.imagesAndFiles": "სურათები და ფაილები",
   "prompt.menu.commands": "ბრძანებები",
