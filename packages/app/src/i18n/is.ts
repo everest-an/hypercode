@@ -373,6 +373,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Fjarlægðu virka skrá úr samhengi",
   "prompt.context.removeFile": "Fjarlægðu skrá úr samhengi",
   "prompt.action.attachFile": "Bæta við skrám",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Bættu við skrám og fleira",
   "prompt.menu.imagesAndFiles": "Myndir og skrár",
   "prompt.menu.commands": "Skipanir",
