@@ -9,6 +9,21 @@ import { createMemo, createSignal, For, Show } from "solid-js"
 
 const ORDER_KEY = "hypercode.workspace.grid.order"
 const COLUMNS_KEY = "hypercode.workspace.grid.columns"
+const LIVE_KEY = "hypercode.workspace.grid.live"
+
+function readLive(): boolean {
+  try {
+    return localStorage.getItem(LIVE_KEY) === "1"
+  } catch {
+    return false
+  }
+}
+
+/** Deep link for one project inside the current app shell (live pane). */
+function paneUrl(directory: string) {
+  const root = location.href.split(/[?#]/)[0].replace(/[^/]*$/, "")
+  return `${root}${base64Encode(directory)}/session`
+}
 
 function readOrder(): string[] {
   try {
@@ -47,6 +62,7 @@ export function WorkspaceGrid() {
   const platform = usePlatform()
   const [order, setOrder] = createSignal<string[]>(readOrder())
   const [columns, setColumns] = createSignal<number>(readColumns())
+  const [live, setLive] = createSignal<boolean>(readLive())
   const [dragging, setDragging] = createSignal<string | null>(null)
 
   const zh = createMemo(() => language.locale().startsWith("zh"))
@@ -91,6 +107,13 @@ export function WorkspaceGrid() {
     } catch {}
   }
 
+  function persistLive(next: boolean) {
+    setLive(next)
+    try {
+      localStorage.setItem(LIVE_KEY, next ? "1" : "0")
+    } catch {}
+  }
+
   function move(source: string, target: string) {
     if (source === target) return
     const current = cards().map((card) => card.id)
@@ -116,6 +139,13 @@ export function WorkspaceGrid() {
           </div>
         </div>
         <div class="flex items-center gap-1">
+          <Button
+            size="small"
+            variant={live() ? "secondary" : "ghost"}
+            onClick={() => persistLive(!live())}
+          >
+            {label("实时面板", "Live panes")}
+          </Button>
           <Button
             size="small"
             variant={columns() === 2 ? "secondary" : "ghost"}
@@ -148,13 +178,6 @@ export function WorkspaceGrid() {
           <For each={cards()}>
             {(card) => (
               <div
-                draggable={true}
-                onDragStart={(event) => {
-                  setDragging(card.id)
-                  event.dataTransfer?.setData("text/plain", card.id)
-                  if (event.dataTransfer) event.dataTransfer.effectAllowed = "move"
-                }}
-                onDragEnd={() => setDragging(null)}
                 onDragOver={(event) => {
                   event.preventDefault()
                   if (event.dataTransfer) event.dataTransfer.dropEffect = "move"
@@ -165,24 +188,28 @@ export function WorkspaceGrid() {
                   if (source) move(source, card.id)
                   setDragging(null)
                 }}
-                onClick={() => openProject(card)}
                 classList={{
-                  "rounded-xl border border-border-weak-base bg-surface-base p-4 flex flex-col gap-3 cursor-pointer transition-transform": true,
+                  "rounded-xl border border-border-weak-base bg-surface-base overflow-hidden transition-transform": true,
                   "opacity-50": dragging() === card.id,
                   "hover:border-border-strong-base": true,
                 }}
               >
-                <div class="flex items-start justify-between gap-2">
-                  <div class="flex flex-col gap-0.5 min-w-0">
-                    <div class="text-14-medium text-text-strong truncate">{card.name}</div>
-                    <div class="text-11-regular text-text-weak truncate">{card.directory}</div>
+                <div
+                  draggable={true}
+                  onDragStart={(event) => {
+                    setDragging(card.id)
+                    event.dataTransfer?.setData("text/plain", card.id)
+                    if (event.dataTransfer) event.dataTransfer.effectAllowed = "move"
+                  }}
+                  onDragEnd={() => setDragging(null)}
+                  onClick={() => openProject(card)}
+                  class="flex items-center justify-between gap-2 px-3 py-2 cursor-grab border-b border-border-weak-base"
+                >
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-12-medium text-text-strong truncate">{card.name}</span>
+                    <span class="text-10-regular text-text-weak truncate">{card.directory}</span>
                   </div>
-                </div>
-                <div class="flex items-center justify-between border-t border-border-weak-base pt-2">
-                  <span class="text-11-regular text-text-weak">
-                    {DateTime.fromMillis(card.updated).toRelative() ?? ""}
-                  </span>
-                  <span class="flex items-center gap-2">
+                  <span class="flex items-center gap-2 shrink-0">
                     <Show when={typeof platform.runDesktopMenuAction === "function"}>
                       <span
                         role="button"
@@ -199,6 +226,26 @@ export function WorkspaceGrid() {
                     <span class="text-11-medium text-text-weak">{label("打开", "Open")}</span>
                   </span>
                 </div>
+                <Show
+                  when={live()}
+                  fallback={
+                    <div class="p-4 flex items-center justify-between">
+                      <span class="text-11-regular text-text-weak">
+                        {DateTime.fromMillis(card.updated).toRelative() ?? ""}
+                      </span>
+                      <span class="text-11-regular text-text-weak">
+                        {label("点击打开项目", "Click to open")}
+                      </span>
+                    </div>
+                  }
+                >
+                  <iframe
+                    src={paneUrl(card.directory)}
+                    title={card.name}
+                    class="w-full border-0 bg-surface-base"
+                    style={{ height: columns() === 3 ? "280px" : "380px" }}
+                  />
+                </Show>
               </div>
             )}
           </For>
