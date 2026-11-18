@@ -376,6 +376,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Xóa tệp hiện hoạt khỏi ngữ cảnh",
   "prompt.context.removeFile": "Xóa tệp khỏi ngữ cảnh",
   "prompt.action.attachFile": "Thêm tệp",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Thêm tệp và nội dung khác",
   "prompt.menu.imagesAndFiles": "Hình ảnh và tệp",
   "prompt.menu.commands": "Lệnh",
