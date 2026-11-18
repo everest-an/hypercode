@@ -368,6 +368,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "លុបឯកសារសកម្មចេញពីបរិបទ",
   "prompt.context.removeFile": "លុបឯកសារចេញពីបរិបទ",
   "prompt.action.attachFile": "បន្ថែមឯកសារ",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "បន្ថែមឯកសារ និងច្រើនទៀត",
   "prompt.menu.imagesAndFiles": "រូបភាព និងឯកសារ",
   "prompt.menu.commands": "ពាក្យបញ្ជា",
