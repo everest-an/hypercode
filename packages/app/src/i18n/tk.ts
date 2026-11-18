@@ -369,6 +369,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Işjeň faýly kontekstden aýyryň",
   "prompt.context.removeFile": "Faýly kontekstden aýyryň",
   "prompt.action.attachFile": "Faýl goşuň",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Faýl we ş.m. goşuň",
   "prompt.menu.imagesAndFiles": "Suratlar we faýllar",
   "prompt.menu.commands": "Buýruklar",
