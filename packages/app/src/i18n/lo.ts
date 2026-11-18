@@ -368,6 +368,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "ເອົາໄຟລ໌ທີ່ໃຊ້ວຽກອອກຈາກບໍລິບົດ",
   "prompt.context.removeFile": "ເອົາໄຟລ໌ອອກຈາກບໍລິບົດ",
   "prompt.action.attachFile": "ເພີ່ມໄຟລ໌",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ເພີ່ມໄຟລ໌ ແລະອື່ນໆອີກ",
   "prompt.menu.imagesAndFiles": "ຮູບພາບ ແລະໄຟລ໌",
   "prompt.menu.commands": "ຄໍາສັ່ງ",
