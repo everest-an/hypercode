@@ -301,7 +301,8 @@ export function registerRendererProtocol() {
       return new Response("Not found", { status: 404 })
     }
 
-    const file = resolve(rendererRoot, `.${decodeURIComponent(url.pathname)}`)
+    const requestedPath = decodeURIComponent(url.pathname)
+    let file = resolve(rendererRoot, `.${requestedPath}`)
     const rel = relative(rendererRoot, file)
     if (rel.startsWith("..") || isAbsolute(rel)) {
       writeLog("protocol", "rejected path", { url: request.url, file }, "warn")
@@ -310,9 +311,15 @@ export function registerRendererProtocol() {
 
     try {
       const range = request.headers.get("range")
-      const response = await net.fetch(pathToFileURL(file).toString(), {
+      let response = await net.fetch(pathToFileURL(file).toString(), {
         headers: range ? { range } : undefined,
       })
+      // Single-page routing: unknown extension-less paths (deep links used by
+      // workspace iframes) fall back to index.html instead of 404.
+      if (response.status === 404 && !/\.[^/]+$/.test(requestedPath)) {
+        file = resolve(rendererRoot, "index.html")
+        response = await net.fetch(pathToFileURL(file).toString())
+      }
       if (response.status >= 400) {
         writeLog(
           "protocol",
