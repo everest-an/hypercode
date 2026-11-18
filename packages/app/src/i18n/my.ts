@@ -372,6 +372,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "အသုံးပြုနေသောဖိုင်ကို ဆက်စပ်အကြောင်းအရာမှ ဖယ်ရှားပါ။",
   "prompt.context.removeFile": "ဆက်စပ်အကြောင်းအရာမှ ဖိုင်ကို ဖယ်ရှားပါ။",
   "prompt.action.attachFile": "ဖိုင်များထည့်ပါ။",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ဖိုင်များနှင့် အခြားအရာများကို ထည့်ပါ။",
   "prompt.menu.imagesAndFiles": "ရုပ်ပုံများနှင့် ဖိုင်များ",
   "prompt.menu.commands": "အမိန့်များ",
