@@ -1,4 +1,4 @@
-import type { SetupStage, SetupState } from "@opencode-ai/app/setup-progress"
+import type { SetupStage, SetupState } from "@opencode/app/setup-progress"
 
 export type { SetupStage, SetupState }
 

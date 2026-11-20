@@ -741,7 +741,7 @@ export const docsSampleSections = [
 ] as const satisfies readonly { id: string; title: string; source: string; components: readonly DocsVariantKey[] }[]
 
 const countLines = [
-  'import { tool } from "@opencode-ai/plugin"',
+  'import { tool } from "@opencode/plugin"',
   "",
   "export default tool({",
   '  description: "Count lines in a file",',

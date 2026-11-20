@@ -9,7 +9,7 @@ import { deriveSubagentSessionPermission } from "../agent/subagent-permissions"
 import type { TaskPromptOps } from "./task"
 import { Config } from "@/config/config"
 import { Effect, Schema } from "effect"
-import { Database } from "@opencode-ai/core/database/database"
+import { Database } from "@opencode/core/database/database"
 
 const id = "task-parallel"
 

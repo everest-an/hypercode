@@ -587,7 +587,7 @@ Review the current changes. List findings in severity order.`,
 ]
 
 const countLines = [
-  'import { tool } from "@opencode-ai/plugin"',
+  'import { tool } from "@opencode/plugin"',
   "",
   "export default tool({",
   '  description: "Count lines in a file",',

@@ -654,8 +654,8 @@ XDG_CONFIG_HOME
 ```text
 ../../../config.mjs
 @astrojs/starlight/components
-@opencode-ai/plugin
-@opencode-ai/sdk
+@opencode/plugin
+@opencode/sdk
 path
 shescape
 zod

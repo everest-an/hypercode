@@ -336,13 +336,13 @@ A plugin module exports `default` (or any named export) of type
 function, not a plain object literal, and the function returns an object
 (return `{}` if there is nothing to register).
 
-The plugin types are published on npm as `@opencode-ai/plugin`. That package
+The plugin types are published on npm as `@opencode/plugin`. That package
 name is a literal identifier, not a branding choice: HyperCode installs exactly
 that package into config directories, so the import specifier below must be
 copied verbatim.
 
 ```ts
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin } from "@opencode/plugin"
 
 export default (async ({ client, project, directory, $ }) => {
   return {

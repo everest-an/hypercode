@@ -82,7 +82,7 @@
 
 ## 四、插件内置方案(oh-my-openagent 怎么塞进去)
 
-已核实 OpenCode 的插件机制:`specs/tui-plugins.md` 明确——"当 `plugin` entries 存在于可写的 `.opencode` 目录或 `OPENCODE_CONFIG_DIR`,OpenCode 自动安装 `@opencode-ai/plugin` 并写入配置"。
+已核实 OpenCode 的插件机制:`specs/tui-plugins.md` 明确——"当 `plugin` entries 存在于可写的 `.opencode` 目录或 `OPENCODE_CONFIG_DIR`,OpenCode 自动安装 `@opencode/plugin` 并写入配置"。
 
 **"内置"的落地方案(用户零配置)**:
 1. 安装器预创建 `~/.hypercode/`(或借 `OPENCODE_CONFIG_DIR` 指向)

@@ -1,7 +1,7 @@
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
 import path from "path"
-import { Global } from "@opencode-ai/core/global"
+import { Global } from "@opencode/core/global"
 import { cliIt } from "../lib/cli-process"
 
 // The app name is a fork-level rename target, so read it from Global instead of
