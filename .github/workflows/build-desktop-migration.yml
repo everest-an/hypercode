@@ -1,0 +1,70 @@
+name: build-desktop-migration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OPENCODE_CHANNEL: prod
+
+jobs:
+  build-mac:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+      - name: Build CLI
+        working-directory: packages/cli
+        run: bun run build
+      - name: Build desktop app
+        working-directory: packages/desktop
+        run: bun run build
+      - name: Package
+        working-directory: packages/desktop
+        run: bun run pack
+      - name: List artifacts
+        run: find dist/desktop -maxdepth 2 -type f | head -50
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-desktop-macos-migration
+          path: dist/desktop
+          if-no-files-found: warn
+
+  build-win:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+      - name: Build CLI
+        working-directory: packages/cli
+        run: bun run build
+      - name: Build desktop app
+        working-directory: packages/desktop
+        run: bun run build
+      - name: Package
+        working-directory: packages/desktop
+        run: bun run pack
+      - name: List artifacts
+        shell: pwsh
+        run: Get-ChildItem dist/desktop -Recurse -File | Select-Object -First 50 FullName
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-desktop-windows-migration
+          path: dist/desktop
+          if-no-files-found: warn
