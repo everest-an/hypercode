@@ -373,6 +373,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Távolítsa el az aktív fájlt a kontextusból",
   "prompt.context.removeFile": "Távolítsa el a fájlt a kontextusból",
   "prompt.action.attachFile": "Fájlok hozzáadása",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Fájlok hozzáadása és egyebek",
   "prompt.menu.imagesAndFiles": "Képek és fájlok",
   "prompt.menu.commands": "Parancsok",

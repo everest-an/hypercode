@@ -370,6 +370,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Κατάργηση ενεργού αρχείου από το περιβάλλον",
   "prompt.context.removeFile": "Κατάργηση αρχείου από το περιβάλλον",
   "prompt.action.attachFile": "Προσθήκη αρχείων",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Προσθήκη αρχείων και άλλα",
   "prompt.menu.imagesAndFiles": "Εικόνες και αρχεία",
   "prompt.menu.commands": "Εντολές",

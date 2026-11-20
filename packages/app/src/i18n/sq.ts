@@ -369,6 +369,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Hiq skedarin aktiv nga konteksti",
   "prompt.context.removeFile": "Hiq skedarin nga konteksti",
   "prompt.action.attachFile": "Shtoni skedarë",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Shtoni skedarë dhe më shumë",
   "prompt.menu.imagesAndFiles": "Imazhet dhe skedarët",
   "prompt.menu.commands": "Komandat",

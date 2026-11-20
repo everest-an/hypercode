@@ -372,6 +372,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Aktiv faylı kontekstdən sil",
   "prompt.context.removeFile": "Faylı kontekstdən sil",
   "prompt.action.attachFile": "Fayllar əlavə et",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Fayllar və daha çox əlavə edin",
   "prompt.menu.imagesAndFiles": "Şəkillər və fayllar",
   "prompt.menu.commands": "Əmrlər",

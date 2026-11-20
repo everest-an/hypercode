@@ -369,6 +369,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Buang fail aktif daripada konteks",
   "prompt.context.removeFile": "Buang fail daripada konteks",
   "prompt.action.attachFile": "Tambah fail",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Tambah fail dan lain-lain",
   "prompt.menu.imagesAndFiles": "Imej dan fail",
   "prompt.menu.commands": "Arahan",

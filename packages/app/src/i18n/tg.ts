@@ -370,6 +370,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Файли фаъолро аз контекст хориҷ кунед",
   "prompt.context.removeFile": "Файлро аз контекст хориҷ кунед",
   "prompt.action.attachFile": "Илова кардани файлҳо",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Илова кардани файлҳо ва ғайра",
   "prompt.menu.imagesAndFiles": "Тасвирҳо ва файлҳо",
   "prompt.menu.commands": "Фармонҳо",

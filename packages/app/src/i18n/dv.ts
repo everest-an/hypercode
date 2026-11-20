@@ -374,6 +374,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "ކޮންޓެކްސްޓުން އެކްޓިވް ފައިލް ނައްތާލުން",
   "prompt.context.removeFile": "ކޮންޓެކްސްޓުން ފައިލް ނައްތާލުން",
   "prompt.action.attachFile": "ފައިލްތައް އިތުރުކުރުން",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ފައިލްތަކާއި އަދިވެސް އެތައް ކަމެއް އިތުރުކުރުން",
   "prompt.menu.imagesAndFiles": "ތަސްވީރުތަކާއި ފައިލްތައް",
   "prompt.menu.commands": "އަމުރުތަކެވެ",

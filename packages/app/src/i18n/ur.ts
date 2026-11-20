@@ -378,6 +378,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "سیاق و سباق سے فعال فائل کو ہٹا دیں۔",
   "prompt.context.removeFile": "سیاق و سباق سے فائل کو ہٹا دیں۔",
   "prompt.action.attachFile": "فائلیں شامل کریں۔",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "فائلیں اور مزید شامل کریں۔",
   "prompt.menu.imagesAndFiles": "تصاویر اور فائلیں۔",
   "prompt.menu.commands": "کمانڈز",

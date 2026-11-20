@@ -68,6 +68,7 @@ import { legacySessionHref, legacySessionServer, requireServerKey, sessionHref }
 import { createSessionLineage } from "@/pages/session/session-lineage"
 
 import { SessionPage, SessionRouteErrorBoundary, TargetSessionRouteContent } from "@/pages/session"
+import { WorkspaceGrid } from "@/pages/workspace/workspace-grid"
 import { NewHome } from "@/pages/home"
 import { LegacyHome } from "@/pages/home/legacy-home"
 
@@ -671,6 +672,7 @@ function Routes(props: { serverScoped?: JSX.Element }) {
           <Route path="/" component={() => <Navigate href="session" />} />
           <Route path="/session/:id?" component={SessionRoute} />
         </Route>
+        <Route path="/workspace" component={WorkspaceGrid} />
       </Route>
       {/*
         The vault route sits outside this Show on purpose. Its entry points -- the titlebar button and the

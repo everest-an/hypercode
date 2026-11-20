@@ -34,6 +34,8 @@ export interface Config {
   dataDir: string;
   databaseUrl?: string;
   accessKey?: string;
+  /** Optional key ring: each key gets its own workspace. */
+  accessKeys?: string[];
   encryptionKey?: string;
   model?: string;
   agentBackend: "sample" | "model" | "agui";
@@ -105,6 +107,10 @@ export function readConfig(): Config {
     dataDir: resolve(process.env.DATA_DIR ?? ".hypercode"),
     databaseUrl: process.env.DATABASE_URL,
     accessKey: process.env.HYPERCODE_ACCESS_KEY,
+    accessKeys: (process.env.HYPERCODE_ACCESS_KEYS ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter((value) => value.length >= 24),
     encryptionKey: process.env.TOKEN_ENCRYPTION_KEY,
     model: process.env.MODEL,
     agentBackend: backend,

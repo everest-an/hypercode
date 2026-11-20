@@ -369,6 +369,8 @@ export const dict: Record<string, string> = {
   "prompt.context.removeActiveFile": "প্রসঙ্গ থেকে সক্রিয় ফাইল সরান",
   "prompt.context.removeFile": "প্রসঙ্গ থেকে ফাইল সরান",
   "prompt.action.attachFile": "ফাইল যোগ করুন",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ফাইল এবং আরো যোগ করুন",
   "prompt.menu.imagesAndFiles": "ছবি এবং ফাইল",
   "prompt.menu.commands": "কমান্ড",

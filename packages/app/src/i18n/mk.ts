@@ -370,6 +370,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Отстранете ја активната датотека од контекст",
   "prompt.context.removeFile": "Отстранете ја датотеката од контекст",
   "prompt.action.attachFile": "Додадете датотеки",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Додадете датотеки и повеќе",
   "prompt.menu.imagesAndFiles": "Слики и датотеки",
   "prompt.menu.commands": "Наредби",

@@ -370,6 +370,8 @@ export const dict: Record<string, string> = {
   "prompt.context.removeActiveFile": "सन्दर्भबाट सक्रिय फाइल हटाउनुहोस्",
   "prompt.context.removeFile": "सन्दर्भबाट फाइल हटाउनुहोस्",
   "prompt.action.attachFile": "फाइलहरू थप्नुहोस्",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "फाइलहरू र थप थप्नुहोस्",
   "prompt.menu.imagesAndFiles": "छविहरू र फाइलहरू",
   "prompt.menu.commands": "आदेशहरू",

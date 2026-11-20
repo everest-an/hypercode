@@ -371,6 +371,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Elimina el fitxer actiu del context",
   "prompt.context.removeFile": "Elimina el fitxer del context",
   "prompt.action.attachFile": "Afegeix fitxers",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Afegeix fitxers i més",
   "prompt.menu.imagesAndFiles": "Imatges i fitxers",
   "prompt.menu.commands": "Ordres",

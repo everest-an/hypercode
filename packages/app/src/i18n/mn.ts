@@ -372,6 +372,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Контекстээс идэвхтэй файлыг устгана уу",
   "prompt.context.removeFile": "Контекстээс файлыг устгах",
   "prompt.action.attachFile": "Файл нэмэх",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Файл нэмэх гэх мэт",
   "prompt.menu.imagesAndFiles": "Зураг болон файлууд",
   "prompt.menu.commands": "Тушаалууд",

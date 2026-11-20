@@ -400,6 +400,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Etkin dosyayı bağlamdan çıkar",
   "prompt.context.removeFile": "Dosyayı bağlamdan çıkar",
   "prompt.action.attachFile": "Dosya ekle",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Dosya ve daha fazlasını ekle",
   "prompt.menu.imagesAndFiles": "Görseller ve dosyalar",
   "prompt.menu.commands": "Komutlar",

@@ -365,6 +365,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "ገቢር ፋይልን ከአውድ አስወግድ",
   "prompt.context.removeFile": "ፋይሉን ከአውድ አስወግድ",
   "prompt.action.attachFile": "ፋይሎችን አክል",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "ፋይሎችን አክል እና ተጨማሪ",
   "prompt.menu.imagesAndFiles": "ምስሎች እና ፋይሎች",
   "prompt.menu.commands": "ትዕዛዞች",

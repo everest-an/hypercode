@@ -396,6 +396,8 @@ export const dict = {
   "prompt.context.removeActiveFile": "Hapus berkas aktif dari konteks",
   "prompt.context.removeFile": "Hapus berkas dari konteks",
   "prompt.action.attachFile": "Tambah berkas",
+
+  "prompt.action.pasteImage": "Paste screenshot",
   "prompt.menu.addImagesAndFiles": "Tambah berkas dan lainnya",
   "prompt.menu.imagesAndFiles": "Gambar dan berkas",
   "prompt.menu.commands": "Perintah",

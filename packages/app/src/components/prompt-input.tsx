@@ -1160,7 +1160,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     return true
   }
 
-  const { addAttachment, addAttachments, removeAttachment, handlePaste } = createPromptAttachments({
+  const { addAttachment, addAttachments, removeAttachment, handlePaste, addClipboardAttachment } = createPromptAttachments({
     prompt,
     editor: () => editorRef,
     isDialogActive: () => !!dialog.active,
@@ -1173,6 +1173,11 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     readClipboardImage: platform.readClipboardImage,
     getPathForFile: platform.getPathForFile,
   })
+
+  const pasteImage = () => {
+    if (!platform.readClipboardImage) return
+    void addClipboardAttachment(platform.readClipboardImage())
+  }
 
   const fileAttachmentInput = () => (
     <input
@@ -1598,25 +1603,42 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                 "pointer-events": buttonsSpring() > 0.5 ? "auto" : "none",
               }}
             >
-              <TooltipKeybind
-                placement="top"
-                title={language.t("prompt.action.attachFile")}
-                keybind={command.keybind("file.attach")}
-              >
-                <Button
-                  data-action="prompt-attach"
-                  type="button"
-                  variant="ghost"
-                  class="size-8 p-0"
-                  style={buttons()}
-                  onClick={pick}
-                  disabled={store.mode !== "normal"}
-                  tabIndex={store.mode === "normal" ? undefined : -1}
-                  aria-label={language.t("prompt.action.attachFile")}
+              <div class="flex items-center gap-1">
+                <TooltipKeybind
+                  placement="top"
+                  title={language.t("prompt.action.attachFile")}
+                  keybind={command.keybind("file.attach")}
                 >
-                  <Icon name="plus" class="size-4.5" />
-                </Button>
-              </TooltipKeybind>
+                  <Button
+                    data-action="prompt-attach"
+                    type="button"
+                    variant="ghost"
+                    class="size-8 p-0"
+                    style={buttons()}
+                    onClick={pick}
+                    disabled={store.mode !== "normal"}
+                    tabIndex={store.mode === "normal" ? undefined : -1}
+                    aria-label={language.t("prompt.action.attachFile")}
+                  >
+                    <Icon name="plus" class="size-4.5" />
+                  </Button>
+                </TooltipKeybind>
+                <Tooltip placement="top" value={language.t("prompt.action.pasteImage")}>
+                  <Button
+                    data-action="prompt-paste-image"
+                    type="button"
+                    variant="ghost"
+                    class="size-8 p-0"
+                    style={buttons()}
+                    onClick={pasteImage}
+                    disabled={store.mode !== "normal" || !platform.readClipboardImage}
+                    tabIndex={store.mode === "normal" ? undefined : -1}
+                    aria-label={language.t("prompt.action.pasteImage")}
+                  >
+                    <Icon name="photo" class="size-4.5" />
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           </div>
         </div>

@@ -310,7 +310,18 @@ export function registerIpcHandlers(deps: Deps) {
   })
 
   ipcMain.handle("read-clipboard-image", () => {
-    const image = clipboard.readImage()
+    // The bundled electron typings narrow `clipboard`; readImage exists at runtime
+    // on every supported platform (mac / win / linux).
+    const readImage = (
+      clipboard as typeof clipboard & {
+        readImage: () => {
+          isEmpty(): boolean
+          toPNG(): { buffer: Buffer }
+          getSize(): { width: number; height: number }
+        }
+      }
+    ).readImage
+    const image = readImage.call(clipboard)
     if (image.isEmpty()) return null
     const buffer = image.toPNG().buffer
     const size = image.getSize()

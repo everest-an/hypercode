@@ -12,21 +12,36 @@ export class Auth {
     private readonly config: Config,
     private readonly signingKey: string,
   ) {}
+  private allowedKeys(): string[] {
+    const ring = (this.config.accessKeys ?? []).filter(Boolean);
+    if (ring.length) return ring;
+    return this.config.accessKey ? [this.config.accessKey] : [];
+  }
+  /** One workspace per access key, so keys never share another user's data. */
+  private keyOwner(accessKey: string): string {
+    return "u-" + createHash("sha256").update(accessKey).digest("hex").slice(0, 12);
+  }
   async session(accessKey?: string) {
-    if (
-      this.config.mode === "live" &&
-      (!accessKey ||
-        !this.config.accessKey ||
-        !timingSafeEqual(digest(accessKey), digest(this.config.accessKey)))
-    )
-      throw new AppError("Access key is incorrect", 401);
+    const provided = accessKey ?? "";
+    if (this.config.mode === "live") {
+      const matched = provided
+        ? this.allowedKeys().filter((key) =>
+            timingSafeEqual(digest(provided), digest(key)),
+          ).length > 0
+        : false;
+      if (!matched) throw new AppError("Access key is incorrect", 401);
+    }
+    const owner =
+      this.config.mode === "live" && provided
+        ? this.keyOwner(provided)
+        : "local-user";
     const token = randomBytes(32).toString("base64url");
     await this.db.put("system", "sessions", {
       id: digest(token).toString("hex"),
-      owner: "local-user",
+      owner,
       expiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
-    return { token, mode: this.config.mode };
+    return { token, mode: this.config.mode, owner };
   }
   async owner(authorization?: string) {
     if (!authorization?.startsWith("Bearer ")) throw new AppError("Sign in to HyperCode", 401);
