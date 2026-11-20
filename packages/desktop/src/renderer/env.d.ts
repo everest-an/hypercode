@@ -1,4 +1,4 @@
-import type { ElectronAPI } from "../preload/types"
+import type { ElectronNative } from "../preload/types"
 
 // Vite resolves asset imports to a URL string at build time.
 declare module "*.png" {
@@ -7,8 +7,12 @@ declare module "*.png" {
 }
 
 declare global {
+  interface ImportMetaEnv {
+    readonly OPENCODE_TEST_ONBOARDING: boolean
+  }
+
   interface Window {
-    api: ElectronAPI
+    electron: ElectronNative
     __OPENCODE__?: {
       deepLinks?: string[]
     }

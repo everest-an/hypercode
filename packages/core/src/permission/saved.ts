@@ -1,12 +1,14 @@
-export * as PermissionSaved from "./saved"
+export * as PermissionSaved from "./saved.js"
 
 import { eq } from "drizzle-orm"
-import { Context, Effect, Layer, Schema } from "effect"
-import { Database } from "../database/database"
-import { makeGlobalNode } from "../effect/app-node"
-import { ProjectV2 } from "../project"
-import { PermissionTable } from "./sql"
-import { PermissionSaved } from "@opencode-ai/schema/permission-saved"
+import { Cause, Context, DateTime, Effect, Layer, Schema } from "effect"
+import { isSqlError } from "effect/sql/SqlError"
+import type { EffectDrizzleQueryError } from "drizzle-orm/effect-core/errors"
+import type { Project } from "@opencode/schema/project"
+import { Database } from "../database/database.js"
+import { makeGlobalNode } from "@opencode/util/effect/app-node"
+import { PermissionTable } from "./sql.js"
+import { PermissionSaved } from "@opencode/schema/permission-saved"
 
 export const ID = PermissionSaved.ID
 export type ID = typeof ID.Type
@@ -14,30 +16,27 @@ export type ID = typeof ID.Type
 export const Info = PermissionSaved.Info
 export type Info = typeof Info.Type
 
-export const ListInput = Schema.Struct({
-  projectID: ProjectV2.ID.pipe(Schema.optional),
-}).annotate({ identifier: "PermissionSaved.ListInput" })
-export type ListInput = typeof ListInput.Type
+export interface ListInput {
+  readonly projectID?: Project.ID
+}
 
-export const AddInput = Schema.Struct({
-  projectID: ProjectV2.ID,
-  action: Schema.String,
-  resources: Schema.Array(Schema.String),
-}).annotate({ identifier: "PermissionSaved.AddInput" })
-export type AddInput = typeof AddInput.Type
+export interface AddInput {
+  readonly projectID: Project.ID
+  readonly action: string
+  readonly resources: readonly string[]
+}
 
-export const UpdateInput = Schema.Struct({
-  id: ID,
-  action: Schema.String.pipe(Schema.optional),
-  resource: Schema.String.pipe(Schema.optional),
-}).annotate({ identifier: "PermissionSaved.UpdateInput" })
-export type UpdateInput = typeof UpdateInput.Type
+export interface UpdateInput {
+  readonly id: ID
+  readonly action?: string
+  readonly resource?: string
+}
 
-export class NotFoundError extends Schema.TaggedErrorClass<NotFoundError>()("PermissionSaved.NotFoundError", {
+export class NotFoundError extends Schema.TaggedError<NotFoundError>()("PermissionSaved.NotFoundError", {
   id: ID,
 }) {}
 
-export class ConflictError extends Schema.TaggedErrorClass<ConflictError>()("PermissionSaved.ConflictError", {
+export class ConflictError extends Schema.TaggedError<ConflictError>()("PermissionSaved.ConflictError", {
   id: ID,
   action: Schema.String,
   resource: Schema.String,
@@ -50,14 +49,14 @@ export interface Interface {
   readonly remove: (id: ID) => Effect.Effect<void>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/v2/PermissionSaved") {}
+export class Service extends Context.Service<Service, Interface>()("@opencode/PermissionSaved") {}
 
 const layer = Layer.effect(
   Service,
   Effect.gen(function* () {
-    const { db } = yield* Database.Service
+    const db = (yield* Database.Service).db
 
-    const list = Effect.fn("PermissionSaved.list")(function* (input?: ListInput) {
+    const list = Effect.fnUntraced(function* (input?: ListInput) {
       const rows = yield* db
         .select()
         .from(PermissionTable)
@@ -94,6 +93,7 @@ const layer = Layer.effect(
       if (!current) return yield* new NotFoundError({ id: input.id })
       const action = input.action ?? current.action
       const resource = input.resource ?? current.resource
+      // The unique index rejects an edit that duplicates another saved permission in the project.
       const updated = yield* db
         .update(PermissionTable)
         .set({ action, resource })
@@ -101,11 +101,8 @@ const layer = Layer.effect(
         .returning()
         .get()
         .pipe(
-          Effect.catch((error) =>
-            isUniqueViolation(error)
-              ? Effect.fail(new ConflictError({ id: input.id, action, resource }))
-              : Effect.die(error),
-          ),
+          Effect.catchIf(isUniqueViolation, () => new ConflictError({ id: input.id, action, resource })),
+          Effect.catchTag("EffectDrizzleQueryError", (error) => Effect.die(error)),
         )
       if (!updated) return yield* new NotFoundError({ id: input.id })
       return info(updated)
@@ -119,19 +116,25 @@ const layer = Layer.effect(
   }),
 )
 
-const describeError = (error: unknown): string => {
-  if (error instanceof Error) return `${error.message}${error.cause ? ` ${describeError(error.cause)}` : ""}`
-  return String(error)
+// Durable Object SQLite throws a plain Error without SQLite codes, so its unique violation is only in the message.
+const isUniqueViolation = (error: EffectDrizzleQueryError) => {
+  const sql = Cause.isCause(error.cause) ? Cause.squash(error.cause) : error.cause
+  if (!isSqlError(sql)) return false
+  return (
+    sql.reason._tag === "UniqueViolation" ||
+    (sql.reason.cause instanceof Error && sql.reason.cause.message.includes("SQLITE_CONSTRAINT_UNIQUE"))
+  )
 }
-
-const isUniqueViolation = (error: unknown) =>
-  /UNIQUE constraint failed|SQLITE_CONSTRAINT_UNIQUE/i.test(describeError(error))
 
 const info = (row: typeof PermissionTable.$inferSelect): Info => ({
   id: row.id,
   projectID: row.project_id,
   action: row.action,
   resource: row.resource,
+  time: {
+    created: DateTime.makeUnsafe(row.time_created),
+    updated: DateTime.makeUnsafe(row.time_updated),
+  },
 })
 
 export const node = makeGlobalNode({ service: Service, layer, deps: [Database.node] })
