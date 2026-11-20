@@ -13,7 +13,7 @@ export const dict = {
   "voice.captions.hide": "Hide captions",
   "voice.connecting": "Connecting…",
   "voice.you": "You:",
-  "voice.assistant": "OpenCode:",
+  "voice.assistant": "HyperCode:",
   "voice.failure.unavailable": "Voice calls need an OpenAI API key on this server.",
   "voice.failure.microphone": "Microphone access is required to call.",
   "voice.failure.dropped": "The call disconnected.",
@@ -134,7 +134,7 @@ export const dict = {
   "palette.session.location": "{{project}} · {{server}}",
 
   "dialog.provider.title": "Integrations",
-  "dialog.provider.description": "Connect services so OpenCode can use them.",
+  "dialog.provider.description": "Connect services so HyperCode can use them.",
   "dialog.provider.search.placeholder": "Search providers",
   "dialog.provider.empty": "No providers found",
   "dialog.provider.group.popular": "Popular",
