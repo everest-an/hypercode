@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test"
 import { Exit, Schema } from "effect"
 import { readFile } from "node:fs/promises"
 import path from "node:path"
-import { ConfigMCPV1 } from "@opencode-ai/core/v1/config/mcp"
+import { ConfigMCPV1 } from "@opencode/core/v1/config/mcp"
 
 // 办公连接器目录随产品分发（bake/skills/hc-tools/hc-office/references/connectors.md）。
 // 里面的每个 json 块都是直接给用户粘贴进 hypercode.json 的预设，因此必须逐个用真实配置
