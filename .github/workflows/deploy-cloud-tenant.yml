@@ -1,0 +1,97 @@
+name: deploy-cloud-tenant
+
+# 在 Awareness 服务器上开通一个云 workspace（每租户一套栈, X2）。
+# 前置 secrets:
+#   DEPLOY_HOST     服务器 IP/域名
+#   DEPLOY_USER     有 sudo 的登录用户
+#   DEPLOY_SSH_KEY  该用户的私钥（ed25519）
+#   HC_MODEL_KEY    模型 API key（可选，首次开通时写入租户 env）
+#
+# 安全提示：这是生产机器（跑 awareness-box）。请低峰执行，且本脚本只
+#   1) 创建 hc-<tenant> 用户 + rootless docker   2) 起独立 compose 栈
+# 不会触碰 awareness-box 的容器/网络/数据。
+
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: "tenant id (lowercase, e.g. acme)"
+        required: true
+        type: string
+      host_port:
+        description: "host port to bind on 127.0.0.1 (e.g. 18001)"
+        required: true
+        type: string
+      base_domain:
+        description: "base domain for the tenant"
+        required: true
+        default: cloud.awareliquid.ai
+        type: string
+      repo_dir:
+        description: "repo checkout on the server"
+        required: true
+        default: /opt/hypercode
+        type: string
+
+concurrency:
+  group: deploy-cloud-tenant-${{ inputs.tenant }}
+  cancel-in-progress: false
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Validate inputs
+        run: |
+          set -euo pipefail
+          echo "${{ inputs.tenant }}" | grep -Eq '^[a-z0-9][a-z0-9-]{1,30}$' || { echo "bad tenant id"; exit 1; }
+          echo "${{ inputs.host_port }}" | grep -Eq '^[0-9]{4,5}$' || { echo "bad port"; exit 1; }
+
+      - name: Set up SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Provision tenant on server
+        env:
+          TENANT: ${{ inputs.tenant }}
+          HOST_PORT: ${{ inputs.host_port }}
+          BASE_DOMAIN: ${{ inputs.base_domain }}
+          REPO_DIR: ${{ inputs.repo_dir }}
+          HC_MODEL_KEY: ${{ secrets.HC_MODEL_KEY }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_deploy "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "TENANT='$TENANT' HOST_PORT='$HOST_PORT' BASE_DOMAIN='$BASE_DOMAIN' REPO_DIR='$REPO_DIR' HC_MODEL_KEY='$HC_MODEL_KEY' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$REPO_DIR"
+          git fetch --all --prune
+          git checkout "${GITHUB_REF_NAME:-merge/upstream-1120}" 2>/dev/null || true
+          git pull --ff-only 2>/dev/null || true
+
+          echo "--- host headroom ---"
+          df -h / | tail -n 1
+          free -m | head -n 2
+
+          cd workbench/deploy/tenant
+          chmod +x tenant.sh
+          export HC_BASE_DOMAIN="$BASE_DOMAIN"
+          export HC_MODEL="${HC_MODEL:-openai/deepseek-chat}"
+          export HC_MODEL_BASE_URL="${HC_MODEL_BASE_URL:-https://api.deepseek.com/v1}"
+          export HC_MODEL_KEY="$HC_MODEL_KEY"
+          sudo -E ./tenant.sh provision "$TENANT" "$HOST_PORT"
+          REMOTE
+
+      - name: Report Caddy snippet
+        run: |
+          echo "### 部署完成" >> "$GITHUB_STEP_SUMMARY"
+          echo "在宿主机 Caddy 加：" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ inputs.tenant }}.${{ inputs.base_domain }} {" >> "$GITHUB_STEP_SUMMARY"
+          echo "    reverse_proxy 127.0.0.1:${{ inputs.host_port }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '}' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
