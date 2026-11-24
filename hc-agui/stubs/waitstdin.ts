@@ -1,5 +1,7 @@
 // Stub engine #5: blocks until stdin reaches EOF, like the real CLI does when it
 // inherits an open pipe. Guards against the shim leaving the child's stdin alive.
+export {}
+
 let acc = ""
 for await (const chunk of process.stdin) acc += chunk
 process.stdout.write(
