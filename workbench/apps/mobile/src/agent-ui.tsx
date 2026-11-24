@@ -20,7 +20,16 @@ import {
   X,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Linking, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Linking,
+  Platform,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import type { Artifact, BrowserSession } from "../../../packages/domain/src";
 import type {
@@ -34,6 +43,8 @@ import type {
   RunEvent,
 } from "../../../packages/domain/src/agent";
 import { useAgentWorkspace } from "./agent-workspace";
+import { PairPhoneCard } from "./pair-phone";
+import { hostOf } from "./pairing";
 import { ActivityScreen, ConnectionsScreen } from "./screens";
 import {
   Button,
@@ -1669,8 +1680,13 @@ export function NotificationsSheet() {
   );
 }
 export function AppsScreen() {
-  const { navigate, open } = useWorkspace();
+  const { navigate, open, serverUrl, disconnect } = useWorkspace();
   const { data, mutate } = useAgentWorkspace();
+  const desktop = useWindowDimensions().width >= 900;
+  // A computer browser can always show the code, even in a narrow window; a phone cannot.
+  // Pairing is self-host only; cloud builds hide it.
+  const showPairing =
+    (Platform.OS === "web" || desktop) && process.env.EXPO_PUBLIC_SELF_HOSTED === "1";
   const [query, setQuery] = useState("");
   const [settings, setSettings] = useState(false);
   const [name, setName] = useState(data?.identity.name || "HyperCode");
@@ -1758,6 +1774,18 @@ export function AppsScreen() {
               }
             />
           ))}
+      </Card>
+      {showPairing && <PairPhoneCard />}
+      <SectionHeading title="This device" />
+      <Card style={{ gap: 10 }}>
+        <Text style={s.muted}>
+          This device is connected to{" "}
+          <Text style={{ color: colors.text, fontWeight: "600" }}>{hostOf(serverUrl)}</Text>. Chats,
+          tasks and approvals are shared with every paired device.
+        </Text>
+        <Button small onPress={disconnect} style={{ alignSelf: "flex-start" }}>
+          Disconnect this device
+        </Button>
       </Card>
       <Button onPress={() => setSettings(!settings)}>
         {settings ? "Close agent settings" : "Personality & memory"}

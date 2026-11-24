@@ -8,9 +8,10 @@ import {
   Plus,
   RefreshCw,
   Settings2,
+  Smartphone,
 } from "lucide-react-native";
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import { Button, colors, ErrorNotice, Field, LinkRow, Sheet, s } from "./ui";
 import { useWorkspace } from "./workspace";
 
@@ -318,6 +319,17 @@ export function ThreadsSheet({ onClose }: { onClose: () => void }) {
         />
         <LinkRow icon={CalendarDays} title="Calendar" onPress={() => go("calendar")} />
         <LinkRow icon={FileText} title="Files" onPress={() => go("files")} />
+        {Platform.OS === "web" && (
+          <LinkRow
+            icon={Smartphone}
+            title="Connect your phone"
+            detail="Scan once to use this workspace on your phone"
+            onPress={() => {
+              onClose();
+              open({ type: "pair-phone" });
+            }}
+          />
+        )}
         <LinkRow icon={Settings2} title="Apps & settings" onPress={() => go("apps")} />
         <Button small icon={RefreshCw} onPress={() => void mutate(refresh)}>
           Refresh workspace

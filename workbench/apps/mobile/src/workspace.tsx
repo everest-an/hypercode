@@ -22,6 +22,7 @@ export type Detail =
   | { type: "delegate" }
   | { type: "notifications" }
   | { type: "computer" }
+  | { type: "pair-phone" }
   | { type: "menu" };
 export interface WorkspaceContextValue {
   workspace: Workspace;
@@ -33,6 +34,10 @@ export interface WorkspaceContextValue {
   close: () => void;
   notify: (message: string) => void;
   ask: (prompt: string) => void;
+  /** The computer this phone is paired with. */
+  serverUrl: string;
+  /** Forget this computer and return to the pairing screen. */
+  disconnect: () => void;
 }
 export const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 export function useWorkspace() {

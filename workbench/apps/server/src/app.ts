@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { MessageSchema } from "@ag-ui/core";
 import { CopilotKitIntelligence } from "@copilotkit/runtime/v2";
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { z } from "zod";
@@ -19,6 +19,7 @@ import { AgentService } from "./engine/service.ts";
 import { AppError } from "./errors.ts";
 import { Files } from "./files.ts";
 import { GoogleAuth } from "./google-auth.ts";
+import { Pairing } from "./pairing.ts";
 import { WorkspaceService } from "./workspace.ts";
 
 /**
@@ -67,6 +68,7 @@ export async function createApp(
       ? undefined
       : new CopilotKitIntelligence({ apiKey: config.intelligenceApiKey });
   const runtime = makeRuntime(config, agent, auth, intelligence);
+  const pairing = new Pairing(config);
   const app = new Hono<{ Variables: { owner: string } }>();
   const origins = new Set([...config.allowedOrigins, new URL(config.publicUrl).origin]);
   app.use("*", async (c, next) => {
@@ -121,9 +123,10 @@ export async function createApp(
     }),
   );
   // Per-IP sign-in throttle: 30 attempts per minute, scoped to the caller so
-  // one noisy client cannot lock everybody else out.
+  // one noisy client cannot lock everybody else out. Pairing claims share it:
+  // both turn a secret into a session.
   const loginBuckets = new Map<string, { window: number; count: number }>();
-  app.post("/api/session", async (c) => {
+  const throttleSignIn = (c: Context) => {
     const ip =
       c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
       c.req.header("x-real-ip") ||
@@ -140,12 +143,28 @@ export async function createApp(
         if (now - value.window > 60000) loginBuckets.delete(key);
       }
     }
-    const body = z.object({ accessKey: z.string().optional() }).parse(await c.req.json());
-    const session = await auth.session(body.accessKey);
-    const owner = session.owner ?? "local-user";
+  };
+  const openWorkspace = async (owner: string) => {
     await workspace.ensureSample(owner, actions);
     await agent.ensure(owner);
     if (config.mode === "sample") await agent.refreshIdeas(owner);
+  };
+  app.post("/api/session", async (c) => {
+    throttleSignIn(c);
+    const body = z.object({ accessKey: z.string().optional() }).parse(await c.req.json());
+    const session = await auth.session(body.accessKey);
+    await openWorkspace(session.owner);
+    return c.json(session);
+  });
+  // A phone exchanges the short-lived code from the computer's QR for its own
+  // session. The code is bound to the computer's owner, so both devices open
+  // the same workspace instead of creating a second one.
+  app.post("/api/pairing/claim", async (c) => {
+    throttleSignIn(c);
+    const body = z.object({ code: z.string().min(1).max(32) }).parse(await c.req.json());
+    const owner = pairing.claim(body.code);
+    const session = await auth.issue(owner, 30 * 24 * 60 * 60 * 1000);
+    await openWorkspace(owner);
     return c.json(session);
   });
   app.get("/api/google/callback", async (c) => {
@@ -171,6 +190,13 @@ export async function createApp(
     c.set("owner", owner);
     await next();
   });
+  app.post("/api/session/logout", async (c) => {
+    await auth.revoke(c.req.header("authorization"));
+    return c.json({ ok: true });
+  });
+  // Only a computer that is already signed in may mint a code, and the code
+  // only ever moves that same owner onto another device.
+  app.post("/api/pairing", (c) => c.json(pairing.create(c.get("owner"))));
   app.get("/api/workspace", async (c) => {
     const [snapshot, reachable] = await Promise.all([
       workspace.snapshot(c.get("owner"), c.req.query("q")),
@@ -392,5 +418,5 @@ export async function createApp(
   app.get("/", (c) =>
     c.json({ name: "HyperCode", app: "http://localhost:8081", health: "/api/health" }),
   );
-  return { app, auth, files, actions, workspace, agent, computer };
+  return { app, auth, files, actions, workspace, agent, computer, pairing };
 }

@@ -13,12 +13,17 @@
       "bundleIdentifier": "ai.awareliquid.hypercode.ios",
       "buildNumber": "5",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocalNetworkUsageDescription": "HyperCode connects to your computer on the same network to open your workspace.",
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
       }
     },
     "android": {
       "package": "app.hypercode.mobile",
-      "versionCode": 1
+      "versionCode": 1,
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",

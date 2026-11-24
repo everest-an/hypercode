@@ -16,7 +16,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   AppState,
+  Linking,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -34,20 +36,29 @@ import {
 } from "./src/agent-ui";
 import { AgentWorkspaceProvider, useAgentWorkspace } from "./src/agent-workspace";
 import {
-  API_URL,
   createSession,
+  defaultApiUrl,
   MuseApi,
+  revokeSession,
+  ServerUnreachableError,
   SessionExpiredError,
   SessionStatusError,
 } from "./src/api";
-import { probeFailureIsReportable } from "./src/session-probe";
 import { ChatScreen, WorkspaceTools } from "./src/chat";
 import { ComputerEntry } from "./src/computer";
 import { ComputerDraftProvider } from "./src/computer-drafts";
+import { ConnectScreen } from "./src/connect";
+import {
+  clearConnection,
+  loadConnection,
+  type SavedConnection,
+  saveConnection,
+} from "./src/connection";
 import { Details } from "./src/details";
+import { type PairingTarget, parsePairingLink } from "./src/pairing";
 import { BrowserScreen, CalendarScreen, FilesScreen, MailScreen } from "./src/screens";
 import { ThreadsProvider, ThreadsSheet, useMuseThread } from "./src/threads";
-import { Button, Card, colors, ErrorNotice, Field, IconButton, Mascot, s } from "./src/ui";
+import { Button, colors, ErrorNotice, IconButton, Mascot, s } from "./src/ui";
 import { type Detail, useWorkspace, WorkspaceContext } from "./src/workspace";
 
 const nav: { id: Section; label: string; icon: LucideIcon }[] = [
@@ -75,88 +86,141 @@ const titles: Partial<Record<Section, { title: string; subtitle: string }>> = {
   files: { title: "Files", subtitle: "Documents, forms and filled copies." },
 };
 export default function App() {
-  const [token, setToken] = useState("");
-  const [accessKey, setAccessKey] = useState("");
-  const [busy, setBusy] = useState(true);
-  const [error, setError] = useState("");
-  const connect = useCallback(async (key?: string) => {
-    setBusy(true);
-    setError("");
-    try {
-      const session = await createSession(key);
-      setToken(session.token);
-    } catch (e) {
-      const status = e instanceof SessionStatusError ? e.status : undefined;
-      if (probeFailureIsReportable(status, key !== undefined))
-        setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setBusy(false);
-    }
-  }, []);
+  const [connection, setConnection] = useState<SavedConnection>();
+  const [lastUrl, setLastUrl] = useState<string>();
+  const [scanned, setScanned] = useState<PairingTarget>();
+  const [notice, setNotice] = useState("");
+  const [keyFirst, setKeyFirst] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  // A QR code opened with the Camera app arrives as a deep link, including on a cold start.
   useEffect(() => {
-    void connect();
-  }, [connect]);
-  const expire = useCallback(() => {
-    setToken("");
-    setError("Your session expired. Sign in again.");
+    const receive = (value: string | null) => {
+      const target = value ? parsePairingLink(value) : undefined;
+      if (target) setScanned(target);
+    };
+    const subscription = Linking.addEventListener("url", (event) => receive(event.url));
+    return () => subscription.remove();
   }, []);
+
+  useEffect(() => {
+    void (async () => {
+      const initial = await Linking.getInitialURL().catch(() => null);
+      const paired = initial ? parsePairingLink(initial) : undefined;
+      if (paired) setScanned(paired);
+      const saved = await loadConnection();
+      if (saved) {
+        setConnection(saved);
+        setLastUrl(saved.url);
+      } else if ((Platform.OS === "web" || process.env.EXPO_PUBLIC_API_URL) && !paired) {
+        // The browser on the computer is already trusted, and a store build knows its own hosted
+        // server: keep opening that workspace without a key, exactly as it did before pairing.
+        try {
+          const session = await createSession(defaultApiUrl);
+          const next = { url: defaultApiUrl, token: session.token };
+          setConnection(next);
+          setLastUrl(next.url);
+          void saveConnection(next).catch(() => {});
+        } catch (e) {
+          if (e instanceof ServerUnreachableError) setNotice(e.message);
+          else if (e instanceof SessionStatusError) {
+            setNotice("This workspace needs an access key or a pairing code.");
+            setKeyFirst(true);
+          }
+        }
+      }
+      setReady(true);
+    })();
+  }, []);
+
+  const connected = useCallback(
+    (next: SavedConnection) => {
+      if (connection && connection.token !== next.token)
+        void revokeSession(connection.url, connection.token).catch(() => {});
+      setConnection(next);
+      setLastUrl(next.url);
+      setScanned(undefined);
+      setNotice("");
+      void saveConnection(next).catch(() => {});
+    },
+    [connection],
+  );
+
+  const disconnect = useCallback(
+    (message = "") => {
+      if (connection) void revokeSession(connection.url, connection.token).catch(() => {});
+      setConnection(undefined);
+      setScanned(undefined);
+      setNotice(message);
+      void clearConnection().catch(() => {});
+    },
+    [connection],
+  );
+
+  const expire = useCallback(
+    () => disconnect("Your session expired. Pair this phone with your computer again."),
+    [disconnect],
+  );
+
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      {token ? (
-        <CopilotKitProvider
-          runtimeUrl={`${API_URL}/api/copilotkit`}
-          headers={{ Authorization: `Bearer ${token}` }}
-        >
-          <WorkspaceApp token={token} onExpired={expire} />
-        </CopilotKitProvider>
-      ) : (
+      {!ready ? (
         <SafeAreaView
           style={{
             flex: 1,
             backgroundColor: colors.canvas,
-            justifyContent: "center",
             alignItems: "center",
-            padding: 24,
+            justifyContent: "center",
+            gap: 18,
           }}
         >
-          <View style={{ width: "100%", maxWidth: 420, gap: 22, alignItems: "center" }}>
-            <Mascot size={72} />
-            <Text
-              style={{ fontSize: 32, color: colors.text, letterSpacing: -1, fontWeight: "500" }}
-            >
-              Welcome to HyperCode.
-            </Text>
-            <Text style={[s.muted, { textAlign: "center" }]}>A little room for your day.</Text>
-            {busy ? (
-              <ActivityIndicator color={colors.blueDark} />
-            ) : (
-              <Card style={{ width: "100%" }}>
-                <ErrorNotice error={error} />
-                <Field
-                  label="Workspace access key"
-                  value={accessKey}
-                  onChangeText={setAccessKey}
-                  secureTextEntry
-                  placeholder="Required for a live workspace"
-                />
-                <Button primary onPress={() => void connect(accessKey || undefined)}>
-                  Open workspace
-                </Button>
-                <Text style={[s.small, { marginTop: 15 }]}>
-                  Local workspaces open without a key. Make sure your HyperCode server is running at{" "}
-                  {API_URL}.
-                </Text>
-              </Card>
-            )}
-          </View>
+          <Mascot size={56} />
+          <ActivityIndicator color={colors.blueDark} />
         </SafeAreaView>
+      ) : scanned ? (
+        <ConnectScreen
+          key={`${scanned.url} ${scanned.code}`}
+          scanned={scanned}
+          notice={notice}
+          onConnected={connected}
+          onCancel={connection ? () => setScanned(undefined) : undefined}
+        />
+      ) : connection ? (
+        <CopilotKitProvider
+          runtimeUrl={`${connection.url}/api/copilotkit`}
+          headers={{ Authorization: `Bearer ${connection.token}` }}
+        >
+          <WorkspaceApp
+            connection={connection}
+            onExpired={expire}
+            onDisconnect={() => disconnect()}
+          />
+        </CopilotKitProvider>
+      ) : (
+        <ConnectScreen
+          initialUrl={lastUrl}
+          notice={notice}
+          initialKeyMode={keyFirst}
+          onConnected={connected}
+        />
       )}
     </SafeAreaProvider>
   );
 }
-function WorkspaceApp({ token, onExpired }: { token: string; onExpired: () => void }) {
-  const api = useMemo(() => new MuseApi(token, onExpired), [token, onExpired]);
+function WorkspaceApp({
+  connection,
+  onExpired,
+  onDisconnect,
+}: {
+  connection: SavedConnection;
+  onExpired: () => void;
+  onDisconnect: () => void;
+}) {
+  const api = useMemo(
+    () => new MuseApi(connection.token, connection.url, onExpired),
+    [connection, onExpired],
+  );
   const [workspace, setWorkspace] = useState<Workspace>();
   const [section, setSection] = useState<Section>("chat");
   const [detail, setDetail] = useState<Detail>();
@@ -218,6 +282,9 @@ function WorkspaceApp({ token, onExpired }: { token: string; onExpired: () => vo
             <Button onPress={() => void refresh().catch((e) => setError(String(e)))}>
               Try again
             </Button>
+            <Button small onPress={onDisconnect}>
+              Connect another computer
+            </Button>
           </>
         ) : (
           <>
@@ -229,10 +296,22 @@ function WorkspaceApp({ token, onExpired }: { token: string; onExpired: () => vo
     );
   return (
     <WorkspaceContext.Provider
-      value={{ workspace, api, section, navigate, refresh, open, close, notify: setToast, ask }}
+      value={{
+        workspace,
+        api,
+        section,
+        navigate,
+        refresh,
+        open,
+        close,
+        notify: setToast,
+        ask,
+        serverUrl: connection.url,
+        disconnect: onDisconnect,
+      }}
     >
       <AgentWorkspaceProvider>
-        <ComputerDraftProvider key={token}>
+        <ComputerDraftProvider key={connection.token}>
           <ThreadsProvider>
             <WorkspaceShell
               detail={detail}

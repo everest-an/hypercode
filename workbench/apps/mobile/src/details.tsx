@@ -39,6 +39,7 @@ import { ComputerSheet } from "./computer";
 import DateTimeEditor from "./DateTimeEditor";
 import { localDateTime, zonedInstant } from "./date-time";
 import PdfReader from "./PdfReader";
+import { PairPhoneSheet } from "./pair-phone";
 import {
   Button,
   Card,
@@ -60,6 +61,7 @@ import { type Detail, useWorkspace } from "./workspace";
 export function Details({ detail }: { detail: Detail }) {
   const { close, navigate } = useWorkspace();
   if (detail.type === "computer") return <ComputerSheet />;
+  if (detail.type === "pair-phone") return <PairPhoneSheet onClose={close} />;
   if (detail.type === "task") return <TaskDetail taskId={detail.taskId} />;
   if (detail.type === "delegate") return <DelegateSheet />;
   if (detail.type === "notifications") return <NotificationsSheet />;

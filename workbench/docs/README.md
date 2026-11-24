@@ -10,6 +10,7 @@ The demos follow a request from chat to the agent's inline browser, then show ho
 
 - [Quick start and architecture](../README.md)
 - [Native iOS / Android / web setup](../apps/mobile/README.md)
+- [Pairing a phone with a computer](PAIRING.md)
 - [Browser worker, API, persistence, and network boundary](../apps/worker/README.md)
 - [Linux computer, terminal, and workspace files](COMPUTER.md)
 - [CopilotKit Rich Threads](RICH-THREADS.md)

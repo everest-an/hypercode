@@ -35,13 +35,22 @@ export class Auth {
       this.config.mode === "live" && provided
         ? this.keyOwner(provided)
         : "local-user";
+    return this.issue(owner);
+  }
+  /** Mints a session for an owner without asking for the access key again, as a claimed pairing does. */
+  async issue(owner: string, ttlMs = 24 * 60 * 60 * 1000) {
     const token = randomBytes(32).toString("base64url");
     await this.db.put("system", "sessions", {
       id: digest(token).toString("hex"),
       owner,
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+      expiresAt: Date.now() + ttlMs,
     });
     return { token, mode: this.config.mode, owner };
+  }
+  /** Drops one session by its bearer token, so switching accounts does not leave a live device behind. */
+  async revoke(authorization?: string) {
+    if (!authorization?.startsWith("Bearer ")) return;
+    await this.db.remove("system", "sessions", digest(authorization.slice(7)).toString("hex"));
   }
   async owner(authorization?: string) {
     if (!authorization?.startsWith("Bearer ")) throw new AppError("Sign in to HyperCode", 401);
