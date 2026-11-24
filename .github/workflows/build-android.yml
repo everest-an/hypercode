@@ -1,0 +1,84 @@
+name: build-android
+
+# Android 构建（EAS）。与 build-mobile.yml(iOS) 对齐。
+# 前置 secrets: EXPO_TOKEN（Expo 账号 token，用于非交互构建）
+# 说明：登录地址由用户在 App 内输入（T5），因此无需在构建时烘焙 EXPO_PUBLIC_API_URL。
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "EAS build profile"
+        required: true
+        type: choice
+        default: production
+        options:
+          - development
+          - preview
+          - production
+      upload:
+        description: "Submit the build to Google Play (production only)"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: build-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: npm i -g pnpm@9
+
+      - name: Install workbench dependencies
+        working-directory: workbench
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build with EAS
+        working-directory: workbench/apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx --yes eas-cli@latest build \
+            --platform android \
+            --profile "${{ inputs.profile }}" \
+            --non-interactive \
+            --wait \
+            --json > eas-android.json
+
+      - name: Print artifact
+        working-directory: workbench/apps/mobile
+        run: |
+          set -euo pipefail
+          cat eas-android.json
+          node -e "const j=require('./eas-android.json'); const b=Array.isArray(j)?j[0]:j; console.log('buildUrl:', b.artifacts && (b.artifacts.buildUrl || b.artifacts.applicationArchiveUrl));"
+
+      - name: Upload build record
+        uses: actions/upload-artifact@v4
+        with:
+          name: hypercode-android
+          path: workbench/apps/mobile/eas-android.json
+          if-no-files-found: error
+
+      - name: Submit to Google Play
+        if: inputs.upload == true && inputs.profile == 'production'
+        working-directory: workbench/apps/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx --yes eas-cli@latest submit \
+            --platform android \
+            --profile production \
+            --non-interactive
