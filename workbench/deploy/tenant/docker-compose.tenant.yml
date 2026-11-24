@@ -1,0 +1,91 @@
+# ============================================================
+# 每租户一套栈（T1b）
+# 用法（由 tenant.sh 调用）：
+#   docker compose -p hc-<tenantId> --env-file tenants/<tenantId>.env -f docker-compose.tenant.yml up -d
+#
+# 隔离要点：
+#  - 独立 compose project / 独立网络 / 独立卷 / 独立 postgres
+#  - server 的 DOCKER_HOST 只指向【本租户 rootless docker】的 socket，绝不挂宿主 docker.sock
+#  - computer 容器不在这里起：由 server 通过本租户 docker 按需创建
+#  - server 只监听 127.0.0.1:<HOST_PORT>，对外由宿主机 Caddy 按子域反代
+# ============================================================
+name: hc-${TENANT_ID:?TENANT_ID required}
+
+x-logging: &lg
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hypercode
+      POSTGRES_PASSWORD: ${PG_PASSWORD:?PG_PASSWORD required}
+      POSTGRES_DB: hypercode
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [tenant]
+    mem_limit: 512m
+    logging: *lg
+
+  worker:
+    image: ${HC_WORKER_IMAGE:-hypercode-worker:local}
+    restart: unless-stopped
+    environment:
+      WORKER_TOKEN: ${WORKER_TOKEN:?WORKER_TOKEN required}
+      WORKER_HOST: 0.0.0.0
+      WORKER_DATA_DIR: /data
+    volumes:
+      - browser:/data
+    networks: [tenant]
+    mem_limit: 2g
+    logging: *lg
+
+  server:
+    image: ${HC_SERVER_IMAGE:-hypercode-server:local}
+    restart: unless-stopped
+    depends_on: [postgres, worker]
+    # 以租户 uid 运行，才能访问本租户 rootless docker 的 socket（0660，属主=租户用户）
+    user: "${TENANT_UID:?}:${TENANT_GID:?}"
+    environment:
+      WORKSPACE_MODE: live
+      AGENT_BACKEND: ${AGENT_BACKEND:-model}
+      MODEL: ${MODEL:?MODEL required}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      PORT: "8787"
+      HOST: 0.0.0.0
+      PUBLIC_API_URL: ${PUBLIC_API_URL:?}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?}
+      DATABASE_URL: postgresql://hypercode:${PG_PASSWORD}@postgres:5432/hypercode
+      DATA_DIR: /data
+      HOME: /data
+      HYPERCODE_ACCESS_KEY: ${HYPERCODE_ACCESS_KEY:?}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?}
+      CPK_INTELLIGENCE_API_KEY: ${CPK_INTELLIGENCE_API_KEY:-}
+      HYPERCODE_THREADS: ${HYPERCODE_THREADS:-cloud}
+      BROWSER_WORKER_URL: http://worker:8790
+      WORKER_TOKEN: ${WORKER_TOKEN}
+      COMPUTER_ENABLED: "true"
+      COMPUTER_IMAGE: ${HC_COMPUTER_IMAGE:-hypercode-computer:local}
+      COMPUTER_DEPLOYMENT_ID: ${TENANT_ID}
+      # 只连本租户的 rootless docker（不碰宿主）
+      DOCKER_HOST: unix:///run/hc/docker.sock
+    volumes:
+      - ${HC_TENANT_DATA_DIR:?}:/data
+      - ${TENANT_DOCKER_SOCKET:?}:/run/hc/docker.sock
+    ports:
+      - "127.0.0.1:${HOST_PORT:?}:8787"
+    networks: [tenant]
+    mem_limit: 1g
+    logging: *lg
+
+networks:
+  tenant:
+    name: hc-${TENANT_ID}-net
+
+volumes:
+  pgdata:
+  browser:
