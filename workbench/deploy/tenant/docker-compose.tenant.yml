@@ -77,7 +77,7 @@ services:
       - ${HC_TENANT_DATA_DIR:?}:/data
       - ${TENANT_DOCKER_SOCKET:?}:/run/hc/docker.sock
     ports:
-      - "127.0.0.1:${HOST_PORT:?}:8787"
+      - "${HC_BIND_IP:-127.0.0.1}:${HOST_PORT:?}:8787"
     networks: [tenant]
     mem_limit: 1g
     logging: *lg
