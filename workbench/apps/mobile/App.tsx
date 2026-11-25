@@ -48,6 +48,7 @@ import { ChatScreen, WorkspaceTools } from "./src/chat";
 import { ComputerEntry } from "./src/computer";
 import { ComputerDraftProvider } from "./src/computer-drafts";
 import { ConnectScreen } from "./src/connect";
+import { registerPush } from "./src/push";
 import {
   clearConnection,
   loadConnection,
@@ -221,6 +222,9 @@ function WorkspaceApp({
     () => new MuseApi(connection.token, connection.url, onExpired),
     [connection, onExpired],
   );
+  useEffect(() => {
+    void registerPush(api);
+  }, [api]);
   const [workspace, setWorkspace] = useState<Workspace>();
   const [section, setSection] = useState<Section>("chat");
   const [detail, setDetail] = useState<Detail>();
