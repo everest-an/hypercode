@@ -4,14 +4,14 @@
     "slug": "hypercode",
     "icon": "./assets/icon.png",
     "scheme": "hypercode",
-    "version": "1.0",
+    "version": "1.0.1",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ai.awareliquid.hypercode.ios",
-      "buildNumber": "9",
+      "buildNumber": "10",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "HyperCode connects to your computer on the same network to open your workspace.",
