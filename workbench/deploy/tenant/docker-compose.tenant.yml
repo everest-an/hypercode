@@ -71,6 +71,10 @@ services:
       COMPUTER_ENABLED: "true"
       COMPUTER_IMAGE: ${HC_COMPUTER_IMAGE:-hypercode-computer:local}
       COMPUTER_DEPLOYMENT_ID: ${TENANT_ID}
+      APNS_KEY_ID: ${APNS_KEY_ID:-}
+      APNS_KEY_P8_BASE64: ${APNS_KEY_P8_BASE64:-}
+      APNS_TEAM_ID: ${APNS_TEAM_ID:-}
+      APNS_BUNDLE_ID: ${APNS_BUNDLE_ID:-}
       # 只连本租户的 rootless docker（不碰宿主）
       DOCKER_HOST: unix:///run/hc/docker.sock
     volumes:
