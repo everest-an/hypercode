@@ -10,6 +10,7 @@ import { ActionService } from "./actions.ts";
 import { agentConfigured, makeRuntime } from "./agent.ts";
 import { createAuth } from "./auth.ts";
 import { BrowserService } from "./browser.ts";
+import { registerPushToken } from "./push.ts";
 import { ComputerService, type DockerRunner } from "./computer.ts";
 import { computerRoutes } from "./computer-routes.ts";
 import { assertApiDeploymentConfig, type Config } from "./config.ts";
@@ -213,6 +214,13 @@ export async function createApp(
   });
   app.route("/api/agent", agentRoutes(agent));
   app.route("/api/computer", computerRoutes(computer, files));
+  app.post("/api/push/register", async (c) => {
+    const body = z
+      .object({ token: z.string().min(8).max(512), platform: z.string().max(32).optional() })
+      .parse(await c.req.json());
+    await registerPushToken(db, c.get("owner"), body.token, body.platform);
+    return c.json({ ok: true });
+  });
   app.get("/api/calendars", async (c) => c.json(await workspace.calendars(c.get("owner"))));
   app.get("/api/calendar/events", async (c) => {
     const query = z

@@ -31,6 +31,7 @@ import type { Store } from "../db.ts";
 import { AppError } from "../errors.ts";
 import type { Files } from "../files.ts";
 import { backgroundFailure } from "../log.ts";
+import { sendPush } from "../push.ts";
 import type { WorkspaceService } from "../workspace.ts";
 import { analyzeSpending } from "./finance.ts";
 import { executeModelTask } from "./model.ts";
@@ -665,6 +666,7 @@ export class AgentService {
       read: false,
     };
     await this.db.insertIfAbsent(owner, "notifications", value);
+    void sendPush(this.db, owner, title, body, taskId ? { taskId } : undefined);
   }
   mailEvidence(mail: Mail): Evidence {
     return { id: mail.id, kind: "mail", title: mail.subject, excerpt: mail.body.slice(0, 400) };
