@@ -1,4 +1,4 @@
-name: build-mobile
+﻿name: build-mobile
 
 on:
   workflow_dispatch:
@@ -73,7 +73,7 @@ jobs:
           PROJECT=$(ls -d *.xcodeproj | head -n 1)
           SCHEME="${PROJECT%.xcodeproj}"
           echo "workspace=$WORKSPACE scheme=$SCHEME"
-          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/HyperCodeIOS.xcarchive" archive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="HyperCode iOS App Store" DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+          xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/HyperCodeIOS.xcarchive" archive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="HyperCode AI App Store" DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
           echo "--- archive contents ---"
           find "$RUNNER_TEMP/HyperCodeIOS.xcarchive" -maxdepth 3 | head -n 20
           test -d "$RUNNER_TEMP/HyperCodeIOS.xcarchive/Products/Applications"
@@ -84,7 +84,7 @@ jobs:
         run: |
           set -euo pipefail
           ARCHIVE="$RUNNER_TEMP/HyperCodeIOS.xcarchive"
-          python3 -c 'import os,plistlib; o={"method":"app-store-connect","teamID":os.environ["APPLE_TEAM_ID"],"signingStyle":"manual","provisioningProfiles":{"ai.awareliquid.hypercode.ios":"HyperCode iOS App Store"},"uploadSymbols":True,"destination":"export"}; open(os.path.join(os.environ["RUNNER_TEMP"],"ExportOptions.plist"),"wb").write(plistlib.dumps(o))'
+          python3 -c 'import os,plistlib; o={"method":"app-store-connect","teamID":os.environ["APPLE_TEAM_ID"],"signingStyle":"manual","provisioningProfiles":{"ai.awareliquid.hypercode":"HyperCode AI App Store"},"uploadSymbols":True,"destination":"export"}; open(os.path.join(os.environ["RUNNER_TEMP"],"ExportOptions.plist"),"wb").write(plistlib.dumps(o))'
           cat "$RUNNER_TEMP/ExportOptions.plist"
           xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" -allowProvisioningUpdates
           ls -la "$RUNNER_TEMP/export"

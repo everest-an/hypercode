@@ -10,8 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ai.awareliquid.hypercode.ios",
-      "buildNumber": "10",
+      "bundleIdentifier": "ai.awareliquid.hypercode",
+      "buildNumber": "11",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocalNetworkUsageDescription": "HyperCode connects to your computer on the same network to open your workspace.",
