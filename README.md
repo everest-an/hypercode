@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **Product line.** The shipped product is **`workbench/`** — one Expo codebase that ships iOS, Android and web, backed by the cloud workspace. **`packages/`** (the Electron desktop IDE) is legacy: see [`packages/LEGACY.md`](packages/LEGACY.md).
+
 <p align="center">
   <a href="https://opencode.ai">
     <picture>
